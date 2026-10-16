@@ -123,7 +123,38 @@ func _career(main: Node) -> void:
 	flow.screens.current.finished.emit()
 	await seconds(0.5)
 	await shot("career_job_board")
+	await _restored_day(main, flow)
 	flow.career = null
+
+
+## A day saved to JSON and laid back over a freshly built office, as Continue
+## does: the incident, its faults and the automation should all come back.
+func _restored_day(main: Node, flow: Node) -> void:
+	const JsonIO = preload("res://addons/hatchery/core/json_io.gd")
+	const Snapshot = preload("res://scripts/sim/office_snapshot.gd")
+	const CareerScript = preload("res://scripts/sim/career.gd")
+	main.start_job("accounting_firm", 31337, flow.career.patch)
+	Engine.time_scale = 4.0
+	await _until(main, 540.0)
+	var desk: RefCounted = main.office.patch_desk
+	desk.forced = "backfire"
+	desk.forced_backfire = "everyone_admin"
+	desk.approve(main.office, desk.propose_category(main.office, "new_employee") if main.office.patch.has("onboarding_blueprint") else desk.propose_queue(main.office, "organize_queue"), false)
+	desk.approve(main.office, desk.propose_category(main.office, "password") if not desk.categories(main.office).is_empty() else desk.propose_queue(main.office, "archive_resolved"), false)
+	await _until(main, 600.0)
+	Engine.time_scale = 1.0
+	flow.career.current_job = {"archetype": "accounting_firm", "seed": 31337, "day": 1, "state": Snapshot.capture(main.office)}
+	var text: String = JsonIO.bytes(flow.career.to_dict()).get_string_from_utf8()
+	var data: Dictionary = JsonIO.parse(text)
+	print("career valid after JSON round trip: ", CareerScript.valid(data))
+	var back: RefCounted = CareerScript.from_dict(data)
+	main.start_job("accounting_firm", 31337, back.patch, back.current_job.state, 2)
+	print("restored: %d tickets, %d incidents, %d automations, confidence %d" % [main.office.helpdesk.queue.tickets.size(),
+		main.office.patch_desk.incidents.size(), main.office.patch_desk.automations.size(), roundi(main.office.metrics.confidence)])
+	main.camera.overview = true
+	await seconds(1.5)
+	await shot("career_restored_day")
+	main.camera.overview = false
 
 
 func _until(main: Node, minute: float) -> void:
