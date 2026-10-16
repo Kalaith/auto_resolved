@@ -34,8 +34,9 @@ Read before working:
 
 ## Project checks
 
-- Headless checks: `tools/sim_checks.gd` running `tools/checks/checks_*.gd` (data, building generation, elevator). Add a check module when a sim system lands.
-- Screenshot tour: `tools/capture.gd` (one building per archetype, close and overview, plus an elevator ride). Look at the images after any visual change.
+- Headless checks: `tools/sim_checks.gd` running `tools/checks/checks_*.gd` (data, building generation, elevator). The project owner has asked for no new tests; do not add check modules unless asked.
+- Screenshot tour: `tools/capture.gd` in parts (`--only=career|buildings|day|patch|menus`): every archetype close and overview, a ride, a day from arrival to evening, PATCH proposals and a forced incident, the menus, and the career screens with a save round trip. Look at the images after any visual change. The career parts use a throwaway career with saving switched off.
+- Balancing: `tools/headcount_report.gd` prints staff per archetype over many seeds; keep each tier inside the guide's table.
 - Commands are in README.md. Exports and headless tooling use the standard (non-mono) editor at `..\small_following\exports\tooling\Godot_v4.2.2-stable_win64_console.exe`, or `GODOT_EXE`.
 
 ## Commit voice

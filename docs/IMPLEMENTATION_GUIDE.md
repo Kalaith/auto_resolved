@@ -9,6 +9,10 @@ the same change.
 Status legend: **Built** is in the code and checked. **Next** is the
 following milestone. **Planned** is designed here but not started.
 
+Milestones M0 to M7 are **Built**. Section 4 records M0 in detail and
+section 4.4 maps every later system to its files; section 5 keeps each
+milestone's plan with notes on how it was built.
+
 ---
 
 ## 1. Decisions that adjust the GDD
@@ -95,15 +99,21 @@ it_guy/
   docs/                   .gdignore'd: this guide, reference/, captures
   scenes/main.tscn        a Node2D running scripts/main.gd
   scripts/
-    main.gd               owns the current job, steps the sim, routes input
-    core/catalog.gd       loads and validates every catalog and balance key
+    main.gd               owns the office while a job runs, steps the sim, routes input
+    career_flow.gd        title, end of day, exit interview, upgrades, job board, save
+    settings_flow.gd      preferences and the toolkit settings page
+    audio_director.gd     synthesised sound
+    debug_keys.gd         F-key debug controls (debug builds only)
+    core/catalog*.gd      loads and validates every catalog and balance key
+    core/career_store.gd  the career file (toolkit JsonSave)
     sim/                  RefCounted rules and state (no nodes)
     world/                Node2D views and the player
-    ui/                   CanvasLayer HUD and panels
+    ui/                   CanvasLayer HUD and panels; ui/screens/ between jobs
   tools/
-    sim_checks.gd         headless check runner
+    sim_checks.gd         headless check runner (M0 modules)
     checks/checks_*.gd    one module per system
-    capture.gd            screenshot tour
+    capture.gd            screenshot tour, in parts (--only=career|buildings|day|patch|menus)
+    headcount_report.gd   staff per archetype over many seeds, for tuning
 ```
 
 ### Toolkit modules
@@ -115,10 +125,11 @@ it_guy/
 | `core/det.gd` | seeded picks, weighted keys, shuffles, `fork` streams | Built |
 | `ui/palette.gd`, `ui/ui_kit.gd` | HUD and panels | Built |
 | `testing/check_runner.gd`, `expect.gd`, `capture_runner.gd` | tools/ | Built |
-| `storage/json_save.gd` | career save (section 8) | Planned, M6 |
-| `settings/settings_store.gd`, `ui/settings_panel.gd`, `input/*` | settings, rebinding | Planned, M7 |
-| `ui/screen_switcher.gd`, `ui/focus.gd` | title, job board, exit interview | Planned, M5-M6 |
-| `audio/synth.gd`, `voice_pool.gd`, `ambience.gd` | office hum, elevator ding, printer | Planned, M7 |
+| `core/text_catalog.gd` | PATCH and staff dialogue | Built |
+| `storage/json_save.gd` | career save (section 8) | Built |
+| `settings/settings_store.gd`, `ui/settings_panel.gd`, `input/key_bindings.gd` | settings, rebinding | Built |
+| `ui/screen_switcher.gd` | title, job board, exit interview, upgrades | Built |
+| `audio/synth.gd`, `voice_pool.gd`, `ambience.gd`, `levels.gd` | office hum, lift ding, printer, alarm | Built |
 | `input/pointer_tap.gd` | if click-to-move needs drag rejection on touch | Planned |
 
 ---
@@ -138,7 +149,7 @@ it_guy/
   they never edit sim state directly.
 - **ui**: `CanvasLayer` HUD and panels built with `UiKit`.
 
-### 3.2 The office simulation (Planned, M1)
+### 3.2 The office simulation (Built)
 
 One `OfficeSim` (`scripts/sim/office_sim.gd`) owns everything for the current
 job and is stepped at a fixed rate from `main.gd`:
@@ -157,13 +168,13 @@ OfficeSim
   job: Job                    archetype, seed, pay, tier           (Built)
   plan: BuildingPlan          floors, rooms, shaft, colours        (Built)
   elevator: Elevator          car state machine                    (Built)
-  clock: WorkClock            day, minute, phase (morning/lunch/afternoon)
-  staff: Array[Employee]      people with routines and walkers
-  devices: Array[Device]      workstations, printers, racks, router
-  tickets: TicketQueue        lifecycle, deadlines, history
-  patch: PatchState           version, upgrades, guardrails, memory  (persists)
-  automations, executions, incidents
-  metrics: CompanyMetrics     confidence, productivity, backlog
+  clock: WorkClock            day, minute, phase (morning/lunch/afternoon)  (Built)
+  staff: Array[Employee]      people with routines and walkers            (Built)
+  devices: Array[Device]      workstations, printers, racks, router, lift (Built)
+  helpdesk: Helpdesk          TicketQueue, IssueRoller, fixes             (Built)
+  patch: PatchState           version, upgrades, guardrails, memory  (persists, Built)
+  patch_desk: PatchDesk       chat, proposals, automations, executions, incidents (Built)
+  metrics: CompanyMetrics     confidence, productivity, tallies           (Built)
   rng streams: Det.fork(job.seed, "staff" | "issues" | "patch_risk" | ...)
   events: Array[Dictionary]   emitted this tick, drained by views and HUD
 ```
@@ -263,6 +274,48 @@ Planned improvements, in order, each with a check:
   is generated for 60 seeds.
 - Keep the `required` rooms' minimum widths well below half the narrowest
   building width, or a floor overflows. The tiling check will catch it.
+- After changing sizes or weights, run `tools/headcount_report.gd` and keep
+  each archetype's mean staff inside its tier's band (section 7.1).
+
+### 4.4 Built since M0: where things live
+
+| System | Files |
+| --- | --- |
+| Clock, staff, routes | `sim/work_clock.gd`, `employee.gd`, `staff_factory.gd`, `walker.gd`, `schedule.gd`, `room_layout.gd` |
+| Office | `sim/office_sim.gd` (owner), `office_snapshot.gd` (end-of-day save state) |
+| Devices and tickets | `sim/device.gd`, `device_factory.gd`, `ticket.gd`, `ticket_queue.gd`, `issue_roller.gd`, `helpdesk.gd`, `company_metrics.gd` |
+| PATCH | `sim/patch_state.gd` (persists), `patch_desk.gd`, `proposal.gd`, `risk.gd`, `patch_executor.gd`, `patch_effects.gd`, `backfire_effects.gd`, `automation.gd`, `incident.gd` |
+| Career | `sim/career.gd`, `career_rules.gd`, `job_board.gd`; `core/career_store.gd`; `scripts/career_flow.gd` |
+| World views | `world/staff_view.gd`, `figure_art.gd`, `device_view.gd`, `fault_art.gd`, `bubble_view.gd`, `sky_view.gd`, `window_shade.gd`, `work_controller.gd` |
+| UI | `ui/hud.gd`, `clock_bar.gd`, `ticket_panel.gd`, `patch_panel.gd`, `proposal_card.gd`, `incident_panel.gd`, `person_card.gd`, `notice_panel.gd`, `day_report.gd`, `ui/screens/*` |
+
+Notes on how the plan was built:
+
+- The player's walker is stepped in real time by `world/player.gd`; staff
+  walkers are stepped by the sim. Pausing stops the office but not the lift,
+  so the player can always move. The player may squeeze into a full car.
+- Manual fixes and incident recoveries are both "tasks" in
+  `work_controller.gd`: walk to a valid place (the device, the IT desk, or
+  with Remote session the desk for both), stand there, and the seconds count.
+- PATCH talks through structured intents only. Every execution is rolled from
+  the job's `patch_risk` stream; guardrails stop their archetype half the time
+  (shown as a near miss), which is exactly the risk reduction the card shows.
+- Delayed backfires apply their effects later; false successes apply at once
+  but stay hidden until their delay passes; partial ones apply success too.
+- Firing takes three bad evenings in a row (warning, final warning,
+  dismissal); a good evening withdraws a warning. A manager walks down to the
+  IT office the morning after a warning.
+- The career saves at the end of every workday (with the office snapshot:
+  tickets, incidents and the faults they left, automations, guardrails, staff
+  names and moods) and at every between-jobs step. Quitting to the title loses
+  only the current day.
+- Content beyond the plan's minimum: twelve company archetypes (M0's six
+  plus game studio, university, hospital, government office, bank and data
+  centre company, with M0's sizes retuned), each later one with its own rooms,
+  props, palette and one issue family that only happens there.
+- Per the project owner's instruction, no new headless check modules were
+  added after M0; behaviour was verified by running the game and the capture
+  tour, and the M0 checks still run.
 
 ---
 
@@ -272,7 +325,7 @@ Each milestone ends with: headless checks passing, a parse/import check, the
 capture tour looked at, a short manual play, and a commit. Size limits from
 AGENTS.md apply throughout; split before a file nears 800 lines.
 
-### M1 The living office (Next)
+### M1 The living office (Built)
 
 Goal: the building fills with people who arrive, work, take lunch and leave,
 using the elevator.
@@ -298,7 +351,7 @@ using the elevator.
 - Checks: staff count equals desks; a scripted day ends with everyone home;
   no one changes floor outside the car; determinism of a full day by seed.
 
-### M2 Devices and tickets (Planned)
+### M2 Devices and tickets (Built)
 
 Goal: things break where people work, and the player fixes them by hand.
 
@@ -324,7 +377,7 @@ Goal: things break where people work, and the player fixes them by hand.
 - Checks: issues only target valid devices; a fix resolves exactly its
   ticket; confidence responds in the right direction.
 
-### M3 PATCH, proposals and execution (Planned)
+### M3 PATCH, proposals and execution (Built)
 
 Goal: talk to PATCH, review a proposal, approve it, see it work.
 
@@ -350,7 +403,7 @@ Goal: talk to PATCH, review a proposal, approve it, see it work.
 - Checks: risk formula matches the table; an approved one-device action never
   touches another device; a recorded seed replays the same outcome.
 
-### M4 Automations, backfires and incidents (Planned)
+### M4 Automations, backfires and incidents (Built)
 
 Goal: PATCH can run things on a schedule; sometimes that goes wrong in a
 funny, recoverable, physically visible way.
@@ -375,7 +428,7 @@ funny, recoverable, physically visible way.
 - Checks: every backfire's effects match its action's domain and scope; the
   cascade cap holds; a guardrail stops its archetype firing identically.
 
-### M5 The end of a job (Planned)
+### M5 The end of a job (Built)
 
 - Firing: company confidence below thresholds gives a warning from your
   manager (an email toast and an exec visiting the IT office), then a final
@@ -388,7 +441,7 @@ funny, recoverable, physically visible way.
 - PATCH Points (section 7.2) and reputation change are computed in
   `sim/career_rules.gd` so checks can verify them.
 
-### M6 Career, PATCH upgrades and the job board (Planned)
+### M6 Career, PATCH upgrades and the job board (Built)
 
 - `sim/career.gd`: the persistent owner: PATCH version and upgrades, learned
   failure archetypes, promoted guardrails, unlocked blueprints, reputation,
@@ -407,7 +460,7 @@ funny, recoverable, physically visible way.
   headcount and a one-line hint of what is new there.
 - Title screen: Continue career / New career / Settings.
 
-### M7 Content and polish (Planned)
+### M7 Content and polish (Built)
 
 - More archetypes: hospital, game studio, bank, university, government
   office, data centre company; each with one new issue family or legacy
@@ -425,11 +478,20 @@ funny, recoverable, physically visible way.
 
 ## 6. Data catalogs
 
-Built catalogs: `balance.json`, `rooms.json`, `companies.json`. Every new
-catalog gets `schema_version`, validation in `catalog.gd` (or a split
-`catalog_<topic>.gd` before that file passes ~500 lines) and a check.
+Built catalogs: `balance.json`, `rooms.json`, `companies.json`,
+`people.json`, `issues.json`, `actions.json`, `backfires.json`,
+`patch_upgrades.json`, `text_patch.json`, `text_staff.json`. Every catalog
+has `schema_version` and validation in `catalog.gd` or a split
+`catalog_<topic>.gd` (people, issues, patch). The game's text catalogs are
+checked for every key the code will ask for.
 
-Shapes for the planned catalogs, to be refined when built:
+The shapes below were the plan; the built files follow them with these
+refinements: issues carry `title`, `fault`, `blocks`, `spread` (device,
+floor, building) and optional `archetypes`; actions list `success` effects
+(`resolve_ticket`, `resolve_open`, `prevent`, `tune_elevator`,
+`triage_queue`, `archive`); backfires hold `archetypes` (with each one's
+guardrail), `recoveries` and `pools`; upgrades have `label`, `says` and an
+`effects` list.
 
 ```json
 // issues.json
@@ -504,7 +566,7 @@ meets; a firing can still offer the same tier. Pay feeds lifetime earnings
 
 ---
 
-## 8. Save design (Planned, M6)
+## 8. Save design (Built)
 
 One career file, `user://career.json`, through the toolkit `JsonSave`
 (staged write, `.bak` rotation, recovery, version migration). Written at the
@@ -553,14 +615,20 @@ the capture tour shows every archetype, so check it after palette changes.
 
 ## 10. Verification
 
-| Milestone | Headless checks to add | Capture shots to add |
-| --- | --- | --- |
-| M0 (Built) | data, building tiling, required rooms, lobby by shaft, determinism, archetypes differ, elevator | each archetype close and overview, a ride |
-| M1 | staff from desks, a full day completes, floor changes only by car, day determinism | morning arrival, lunch crowd at the elevator |
-| M2 | issue targets, fix resolves its ticket, confidence direction | printer broken, ticket panel |
-| M3 | risk formula, scope bounds, replay by seed | proposal card |
-| M4 | backfire domain, cascade cap, guardrails | each backfire's visible state, incident view |
-| M5-M6 | points and reputation rules, save round trip, failed save spends nothing | exit interview, upgrade screen, job board |
+The headless checks are M0's (data, building tiling for every archetype,
+required rooms, lobby by shaft, determinism, archetypes differ, elevator);
+the project owner asked for no further tests, so later milestones were
+verified through the capture tour and by playing. The planned check ideas
+(staff from desks, risk formula, save round trip and so on) remain good
+candidates if that changes.
+
+| Capture part (`--only=`) | Shots |
+| --- | --- |
+| `career` | title, exit interview, PATCH update, job board, a day saved to JSON and restored |
+| `buildings` | every archetype close and overview, a ride |
+| `day` | morning arrival, a manual fix, working, lunch crowd, evening |
+| `patch` | ticket proposal, approval, automation card, a forced incident and its view |
+| `menus` | paper flood, job menu, settings, end of a bad day with a warning |
 
 Headless checks never prove feel. After each milestone, play a full day with
 mouse and with touch emulation, and once in the web export
