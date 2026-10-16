@@ -54,6 +54,8 @@ func _ready() -> void:
 	add_child(work)
 	work.message.connect(func(text: String) -> void: hud.toast(text))
 	hud.tickets.ticket_chosen.connect(func(id: int) -> void: work.request(id))
+	hud.tickets.patch_asked.connect(func(id: int) -> void: hud.open_patch(office, id))
+	hud.patch_button.pressed.connect(func() -> void: hud.open_patch(office))
 	camera = OfficeCamera.new()
 	add_child(camera)
 	var problems: Array[String] = Catalog.problems()
@@ -93,6 +95,7 @@ func start_job(archetype: String, job_seed: int) -> void:
 	camera.setup(player, building.shell_rect())
 	work.setup(office, player, device_view)
 	hud.show_job(job, plan)
+	hud.patch_panel.close_panel()
 	RenderingServer.set_default_clear_color(plan.colours.sky)
 	_accumulator = 0.0
 	office.begin_day(1)

@@ -3,6 +3,7 @@ extends PanelContainer
 ## productivity and the open tickets, most urgent first. Tapping a ticket sends
 ## the player to the nearest place it can be fixed.
 signal ticket_chosen(id: int)
+signal patch_asked(id: int)
 
 const Catalog = preload("res://scripts/core/catalog.gd")
 const BuildingView = preload("res://scripts/world/building_view.gd")
@@ -16,6 +17,7 @@ var _summary: Label
 var _rows: VBoxContainer
 var _more: Label
 var _buttons: Array[Button] = []
+var _asks: Array[Button] = []
 var _ids: Array[int] = []
 
 
@@ -38,13 +40,21 @@ func build(kit: RefCounted) -> void:
 	column.add_child(_rows)
 	for i in range(ROWS):
 		var index: int = i
+		var line: HBoxContainer = ui.hbox(3)
+		_rows.add_child(line)
 		var button: Button = ui.button("", func() -> void: _choose(index), false, 13)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.custom_minimum_size = Vector2(310, 34)
+		button.custom_minimum_size = Vector2(270, 34)
 		button.focus_mode = Control.FOCUS_NONE
 		button.clip_text = true
-		_rows.add_child(button)
+		line.add_child(button)
 		_buttons.append(button)
+		var ask: Button = ui.button("AI", func() -> void: _ask(index), false, 12)
+		ask.custom_minimum_size = Vector2(38, 34)
+		ask.focus_mode = Control.FOCUS_NONE
+		ask.tooltip_text = "Ask PATCH about this ticket"
+		line.add_child(ask)
+		_asks.append(ask)
 	_more = ui.label("", 12, ui.palette.muted)
 	column.add_child(_more)
 
@@ -60,8 +70,8 @@ func show_office(office: RefCounted) -> void:
 	_ids.clear()
 	for i in range(ROWS):
 		var button: Button = _buttons[i]
-		button.visible = i < tickets.size()
-		if not button.visible:
+		button.get_parent().visible = i < tickets.size()
+		if i >= tickets.size():
 			continue
 		var ticket: RefCounted = tickets[i]
 		_ids.append(ticket.id)
@@ -95,3 +105,8 @@ func _urgency_colour(ticket: RefCounted, now: float) -> Color:
 func _choose(index: int) -> void:
 	if index < _ids.size():
 		ticket_chosen.emit(_ids[index])
+
+
+func _ask(index: int) -> void:
+	if index < _ids.size():
+		patch_asked.emit(_ids[index])

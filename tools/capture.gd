@@ -16,6 +16,8 @@ func tour() -> void:
 		await _buildings(main)
 	if only.is_empty() or only == "day":
 		await _day(main)
+	if only.is_empty() or only == "patch":
+		await _patch(main)
 
 
 func _buildings(main: Node) -> void:
@@ -56,6 +58,26 @@ func _day(main: Node) -> void:
 	await _until(main, 735.0)
 	await shot("day_lunch_crowd")
 	Engine.time_scale = 1.0
+
+
+## Talking to PATCH: a ticket proposal, the approval, an automation card.
+func _patch(main: Node) -> void:
+	main.start_job("startup", 777)
+	Engine.time_scale = 4.0
+	await _until(main, 540.0)
+	Engine.time_scale = 1.0
+	var open: Array = main.office.helpdesk.queue.by_urgency()
+	main.hud.open_patch(main.office, open[0].id if not open.is_empty() else -1)
+	await seconds(0.5)
+	await shot("patch_ticket_proposal")
+	main.hud.patch_panel._card._approve(false)
+	await seconds(0.5)
+	await shot("patch_after_approval")
+	var desk: RefCounted = main.office.patch_desk
+	main.hud.patch_panel._show_proposal(desk.propose_category(main.office, "password"))
+	await seconds(0.5)
+	await shot("patch_automation_card")
+	main.hud.patch_panel.close_panel()
 
 
 func _until(main: Node, minute: float) -> void:

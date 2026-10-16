@@ -10,6 +10,7 @@ const ClockBar = preload("res://scripts/ui/clock_bar.gd")
 const PersonCard = preload("res://scripts/ui/person_card.gd")
 const NoticePanel = preload("res://scripts/ui/notice_panel.gd")
 const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
+const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
 
 const TOAST_SECONDS: float = 3.5
 
@@ -21,6 +22,8 @@ var clock_bar: ClockBar
 var person_card: PersonCard
 var notice: NoticePanel
 var tickets: TicketPanel
+var patch_panel: PatchPanel
+var patch_button: Button
 var _toast: Label
 var _toast_left: float = 0.0
 var _company: Label
@@ -82,6 +85,26 @@ func _ready() -> void:
 	person_card.offset_left = 16.0
 	person_card.offset_bottom = -48.0
 	root.add_child(person_card)
+	patch_panel = PatchPanel.new()
+	patch_panel.build(ui)
+	patch_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	patch_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	patch_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	patch_panel.offset_right = -16.0
+	patch_panel.offset_bottom = -16.0
+	patch_panel.closed.connect(func() -> void:
+		tickets.visible = true
+		patch_button.visible = true)
+	root.add_child(patch_panel)
+	patch_button = ui.button("PATCH", Callable(), true, 18)
+	patch_button.custom_minimum_size = Vector2(120, 52)
+	patch_button.focus_mode = Control.FOCUS_NONE
+	patch_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	patch_button.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	patch_button.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	patch_button.offset_right = -16.0
+	patch_button.offset_bottom = -16.0
+	root.add_child(patch_button)
 	notice = NoticePanel.new()
 	notice.build(ui)
 	root.add_child(notice)
@@ -119,6 +142,17 @@ func _process(delta: float) -> void:
 		_toast.visible = _toast_left > 0.0
 
 
+## Opens PATCH (on a ticket's proposal when `ticket_id` is set); the ticket
+## panel steps aside while it is open.
+func open_patch(office: RefCounted, ticket_id: int = -1) -> void:
+	tickets.visible = false
+	patch_button.visible = false
+	if ticket_id >= 0:
+		patch_panel.ask_about_ticket(office, ticket_id)
+	else:
+		patch_panel.open_for(office)
+
+
 func show_problems(problems: Array[String]) -> void:
 	_company.text = "Data problems"
 	_details.text = "\n".join(problems.slice(0, 12))
@@ -135,7 +169,7 @@ func covers(screen_point: Vector2) -> bool:
 
 
 func _blocking_controls() -> Array[Control]:
-	return [clock_bar, person_card, notice, tickets]
+	return [clock_bar, person_card, notice, tickets, patch_panel, patch_button]
 
 
 func _accent_box(accent: Color) -> StyleBoxFlat:
