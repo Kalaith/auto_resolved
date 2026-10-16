@@ -279,9 +279,17 @@ func categories(office: RefCounted) -> Array[String]:
 		counts[ticket.issue] = int(counts.get(ticket.issue, 0)) + 1
 	var result: Array[String] = []
 	for issue in Catalog.issue_ids:
-		if int(counts.get(issue, 0)) >= 2:
+		if int(counts.get(issue, 0)) >= 2 and _has_automation(issue):
 			result.append(issue)
 	return result
+
+
+func _has_automation(issue: String) -> bool:
+	for id in Catalog.action_ids:
+		var action: Dictionary = Catalog.action(id)
+		if action.kind == "automation" and action.intents.has(issue):
+			return true
+	return false
 
 
 ## A safer version of `proposal` and PATCH's line about it, or [null, line].

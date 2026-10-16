@@ -48,6 +48,24 @@
 			"devices": ["server"], "per_device_per_day": 0.12, "min_tier": 3, "severity": 3,
 			"patience_minutes": 60, "manual": {"at": "device", "seconds": 8.0},
 			"fault": "crashed", "blocks": 0.3, "spread": "building"
+		},
+		{
+			"id": "build_server", "label": "Build server", "title": "The nightly build is broken",
+			"devices": ["server"], "per_device_per_day": 0.4, "min_tier": 2, "severity": 2,
+			"patience_minutes": 70, "manual": {"at": "device", "seconds": 7.0},
+			"fault": "crashed", "blocks": 0.35, "spread": "building", "archetypes": ["game_studio"]
+		},
+		{
+			"id": "pager_outage", "label": "Pager outage", "title": "The pagers on a whole floor went quiet",
+			"devices": ["network_core"], "per_device_per_day": 0.4, "min_tier": 3, "severity": 3,
+			"patience_minutes": 30, "manual": {"at": "device", "seconds": 6.0},
+			"fault": "no_network", "blocks": 0.6, "spread": "floor", "archetypes": ["hospital"]
+		},
+		{
+			"id": "trading_terminal", "label": "Trading terminal", "title": "Terminal froze mid-trade",
+			"devices": ["workstation"], "per_device_per_day": 0.15, "min_tier": 4, "severity": 2,
+			"patience_minutes": 30, "manual": {"at": "device", "seconds": 5.0},
+			"fault": "dark", "blocks": 1.0, "spread": "device", "archetypes": ["bank"]
 		}
 	]
 }

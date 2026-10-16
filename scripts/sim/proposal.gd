@@ -5,6 +5,7 @@ extends RefCounted
 const Catalog = preload("res://scripts/core/catalog.gd")
 const Risk = preload("res://scripts/sim/risk.gd")
 const BuildingPlan = preload("res://scripts/sim/building_plan.gd")
+const PatchEffects = preload("res://scripts/sim/patch_effects.gd")
 
 var action_id: String = ""
 ## ticket, floor or building
@@ -51,9 +52,7 @@ func target_text(office: RefCounted) -> String:
 		var person: RefCounted = office.employee(ticket.reporter)
 		if person != null:
 			return person.name
-		if ticket.issue == "network":
-			return "floor " + BuildingPlan.floor_name(ticket.floor_index)
-		return "floor " + BuildingPlan.floor_name(office.device(ticket.device_id).floor_index)
+		return "floor " + BuildingPlan.floor_name(PatchEffects.ticket_floor(office, ticket))
 	return scope_text(office)
 
 

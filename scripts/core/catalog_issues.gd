@@ -22,7 +22,9 @@ const FAULTS: Array = [
 
 
 ## id -> issue entry, in file order through `order`; problems go to `errors`.
-static func load_into(errors: Array[String], schema: int, order: Array[String]) -> Dictionary:
+## An issue may name the company `archetypes` it belongs to (a legacy system
+## or a trade's own equipment); those must exist in `companies`.
+static func load_into(errors: Array[String], schema: int, order: Array[String], companies: Dictionary = {}) -> Dictionary:
 	var data: Dictionary = JsonIO.read_object(PATH, errors, schema)
 	var result: Dictionary = {}
 	if data.is_empty():
@@ -35,6 +37,9 @@ static func load_into(errors: Array[String], schema: int, order: Array[String]) 
 		if not entry is Dictionary:
 			continue
 		var check: RefCounted = rules.at("issues[%s]" % str(entry.get("id", "?")))
+		if entry.has("archetypes") and (not entry.archetypes is Array or entry.archetypes.is_empty() 				or not entry.archetypes.all(func(id: Variant) -> bool: return companies.has(id))):
+			check.fail("archetypes must list known company archetypes")
+			continue
 		if _check(check, entry):
 			result[entry.id] = entry
 			order.append(str(entry.id))

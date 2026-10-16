@@ -57,6 +57,8 @@ func _roll(office: RefCounted, minute: float) -> void:
 		var issue: Dictionary = Catalog.issue(issue_id)
 		if int(issue.min_tier) > office.job.tier:
 			continue
+		if issue.has("archetypes") and not issue.archetypes.has(office.job.archetype_id):
+			continue
 		for kind in issue.devices:
 			for device in _candidates(office, issue, str(kind)):
 				var chance: float = float(issue.per_device_per_day) * window * scale * office.issue_factor(issue_id, device)

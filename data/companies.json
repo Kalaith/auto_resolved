@@ -103,6 +103,33 @@
 			}
 		},
 		{
+			"id": "game_studio",
+			"label": "Game studio",
+			"tier": 2,
+			"pay_per_day": 240,
+			"floors": [3, 4],
+			"basement": false,
+			"width": [1600, 1900],
+			"elevator_position": [0.25, 0.75],
+			"names": {"first": ["Pixel", "Crunch", "Glitch", "Respawn"], "second": ["Forge", "Interactive", "Games", "Studios"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "server_room", "floor": "top"},
+				{"room": "game_lounge", "floor": "any"},
+				{"room": "dev_floor", "floor": "any"},
+				{"room": "dev_floor", "floor": "any"}
+			],
+			"room_weights": {"dev_floor": 7, "meeting_room": 1, "break_room": 1},
+			"theme": {
+				"sky": "2a1b3d", "exterior": "1f2433", "slab": "151924", "trim": "ff4f9a", "floor": "2b3245",
+				"walls": ["3b4a6b", "2f5a5a", "5a3b6b", "44506b"],
+				"furniture": "222838", "accent": "39e6c4", "hue_jitter": 0.04
+			}
+		},
+		{
 			"id": "law_firm",
 			"label": "Law firm",
 			"tier": 3,
@@ -128,6 +155,33 @@
 			}
 		},
 		{
+			"id": "hospital",
+			"label": "Hospital",
+			"tier": 3,
+			"pay_per_day": 340,
+			"floors": [4, 5],
+			"basement": true,
+			"width": [1700, 2000],
+			"elevator_position": [0.4, 0.6],
+			"names": {"first": ["St Brigid's", "Riverside", "Mercy", "Northgate"], "second": ["Hospital", "General", "Infirmary", "Medical Centre"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "basement"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "nurse_station", "floor": "any"},
+				{"room": "nurse_station", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"ward": 4, "nurse_station": 4, "open_office": 2, "meeting_room": 1},
+			"theme": {
+				"sky": "cfe8f2", "exterior": "dfe7ea", "slab": "9fb0ba", "trim": "4aa3a8", "floor": "c4d3d9",
+				"walls": ["f4fbfb", "e3f3f2", "eef5fa", "dff0ee"],
+				"furniture": "7f97a3", "accent": "2f9e8f", "hue_jitter": 0.015
+			}
+		},
+		{
 			"id": "megacorp",
 			"label": "Megacorp",
 			"tier": 4,
@@ -150,6 +204,32 @@
 				"sky": "1b2236", "exterior": "5b6b80", "slab": "3a4456", "trim": "9fb3c8", "floor": "4a5568",
 				"walls": ["e8edf2", "dbe4ec", "cfd9e4", "f0f3f6"],
 				"furniture": "2d3748", "accent": "00a3c4", "hue_jitter": 0.01
+			}
+		},
+		{
+			"id": "bank",
+			"label": "Bank",
+			"tier": 4,
+			"pay_per_day": 520,
+			"floors": [5, 6],
+			"basement": true,
+			"width": [1700, 1900],
+			"elevator_position": [0.45, 0.55],
+			"names": {"first": ["Sterling", "Gilt", "Bastion", "Crown"], "second": ["& Mortimer Bank", "Trust", "Savings", "Capital"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "vault", "floor": "basement"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"trading_floor": 3, "open_office": 2, "meeting_room": 3, "exec_office": 2},
+			"theme": {
+				"sky": "d8cdb4", "exterior": "4b3b2a", "slab": "2e241a", "trim": "c9a24a", "floor": "6b5236",
+				"walls": ["e9e1cf", "d7cbb0", "3f5a4a", "efe8d8"],
+				"furniture": "3a2a1c", "accent": "1f6b4a", "hue_jitter": 0.01
 			}
 		}
 	]

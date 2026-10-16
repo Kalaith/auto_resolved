@@ -11,7 +11,10 @@ const Employee = preload("res://scripts/sim/employee.gd")
 const Walker = preload("res://scripts/sim/walker.gd")
 
 ## Room types whose desks are staffed, and the role sitting there.
-const STAFFED: Dictionary = {"open_office": "worker", "exec_office": "manager"}
+const STAFFED: Dictionary = {
+	"open_office": "worker", "dev_floor": "worker", "nurse_station": "worker", "trading_floor": "worker",
+	"exec_office": "manager",
+}
 ## Employees sit on the chair just left of the desk's centre.
 const CHAIR_OFFSET: float = -14.0
 

@@ -38,8 +38,10 @@ static func _resolve_in_scope(office: RefCounted, proposal: RefCounted, by: Stri
 	return count
 
 
+## The floor a ticket is about: an outage's floor for the network core,
+## otherwise where the broken device stands.
 static func ticket_floor(office: RefCounted, ticket: RefCounted) -> int:
-	if ticket.issue == "network":
-		return ticket.floor_index
 	var device: RefCounted = office.device(ticket.device_id)
-	return device.floor_index if device != null else ticket.floor_index
+	if device == null or device.kind == "network_core":
+		return ticket.floor_index
+	return device.floor_index

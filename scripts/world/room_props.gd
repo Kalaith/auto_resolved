@@ -54,6 +54,9 @@ static func draw_prop(canvas: CanvasItem, prop: String, at: Vector2, colours: Di
 			_box(canvas, at + Vector2(-6, -24), Vector2(28, 64), Color("#2a3140"))
 			for row in range(4):
 				_box(canvas, at + Vector2(-6, -30 - row * 15), Vector2(24, 4), Color.from_hsv(0.08 * row, 0.6, 0.95))
+		"arcade": _arcade(canvas, at, accent)
+		"bed": _bed(canvas, at, colours)
+		"vault_door": _vault(canvas, at, colours)
 
 
 ## A rectangle standing on `feet` (bottom centre).
@@ -114,3 +117,41 @@ static func _shelf(canvas: CanvasItem, at: Vector2, wood: Color, accent: Color, 
 		for book in range(5):
 			var tint: Color = accent if (row + book) % 3 == 0 else wall.darkened(0.15 + 0.1 * (book % 2))
 			canvas.draw_rect(Rect2(at.x - 22 + book * 9, base - 24 + (book % 2) * 3, 7, 24 - (book % 2) * 3), tint)
+
+
+static func _arcade(canvas: CanvasItem, at: Vector2, accent: Color) -> void:
+	_box(canvas, at, Vector2(44, 108), Color("#1d1f2b"))
+	_box(canvas, at + Vector2(0, -98), Vector2(44, 14), accent)
+	_box(canvas, at + Vector2(0, -56), Vector2(34, 32), Color("#0d0f16"))
+	_box(canvas, at + Vector2(0, -60), Vector2(28, 24), accent.lightened(0.2).darkened(0.35))
+	canvas.draw_circle(at + Vector2(-8, -44), 3.0, Color("#e0483e"))
+	canvas.draw_circle(at + Vector2(6, -44), 2.5, Color("#f2c94c"))
+
+
+## A hospital bed: frame, white sheets, a pillow and a drip stand.
+static func _bed(canvas: CanvasItem, at: Vector2, colours: Dictionary) -> void:
+	var frame: Color = Color(colours.furniture).lightened(0.25)
+	_box(canvas, at + Vector2(0, -16), Vector2(90, 6), frame)
+	_box(canvas, at + Vector2(-40, 0), Vector2(4, 18), frame)
+	_box(canvas, at + Vector2(40, 0), Vector2(4, 18), frame)
+	_box(canvas, at + Vector2(-44, -16), Vector2(6, 26), frame)
+	_box(canvas, at + Vector2(0, -22), Vector2(86, 10), Color("#f4f6f8"))
+	_box(canvas, at + Vector2(-30, -30), Vector2(22, 8), Color("#ffffff"))
+	_box(canvas, at + Vector2(10, -28), Vector2(52, 8), colours.accent)
+	canvas.draw_line(at + Vector2(52, 0), at + Vector2(52, -84), Color("#9aa3ad"), 2.0)
+	_box(canvas, at + Vector2(52, -76), Vector2(10, 14), Color("#bfe3f2", 0.9))
+
+
+static func _vault(canvas: CanvasItem, at: Vector2, colours: Dictionary) -> void:
+	var steel: Color = Color("#8d949c")
+	_box(canvas, at, Vector2(120, 124), Color(colours.slab).darkened(0.2))
+	var centre: Vector2 = at + Vector2(0, -62)
+	canvas.draw_circle(centre, 52.0, steel.darkened(0.3))
+	canvas.draw_circle(centre, 46.0, steel)
+	canvas.draw_circle(centre, 14.0, steel.darkened(0.4))
+	for spoke in range(3):
+		var angle: float = PI * 2.0 * float(spoke) / 3.0 + 0.3
+		canvas.draw_line(centre, centre + Vector2(cos(angle), sin(angle)) * 30.0, Color(colours.accent).lightened(0.3), 4.0)
+	for bolt in range(8):
+		var angle: float = PI * 2.0 * float(bolt) / 8.0
+		canvas.draw_circle(centre + Vector2(cos(angle), sin(angle)) * 40.0, 3.0, steel.darkened(0.45))

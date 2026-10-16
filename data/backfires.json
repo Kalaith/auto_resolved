@@ -120,6 +120,30 @@
 				"effects": [{"do": "area_fault", "fault": "crashed", "block": 0.3, "on": "scope_floors"}],
 				"recoveries": ["rollback"]}
 		],
+		"build": [
+			{"id": "shipped_debug_build", "weight": 2, "severity": 2, "delay": "false_success", "delay_minutes": 40, "archetype": "false_success",
+				"effects": [{"do": "area_fault", "fault": "crashed", "block": 0.3, "on": "scope_floors"}],
+				"recoveries": ["rollback"]},
+			{"id": "cleaned_every_cache", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "device_fault", "fault": "slow", "block": 0.5, "on": "random", "count": 4}],
+				"recoveries": ["rollback"]}
+		],
+		"pagers": [
+			{"id": "paged_everyone", "weight": 3, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "mood", "amount": -0.25, "on": "scope"}, {"do": "confidence", "amount": -4}],
+				"recoveries": ["restore_rule"]},
+			{"id": "pagers_on_silent", "weight": 1, "severity": 3, "delay": "false_success", "delay_minutes": 30, "archetype": "false_success",
+				"effects": [{"do": "area_fault", "fault": "no_network", "block": 0.6, "on": "other_floor"}],
+				"recoveries": ["restore_rule", "rollback"]}
+		],
+		"terminal": [
+			{"id": "sold_the_coffee_fund", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_command",
+				"effects": [{"do": "confidence", "amount": -5}, {"do": "mood", "amount": -0.2, "on": "target"}],
+				"recoveries": ["rollback"]},
+			{"id": "froze_the_desk_row", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "device_fault", "fault": "dark", "block": 1.0, "on": "random", "count": 3}],
+				"recoveries": ["rollback", "repair_on_site"]}
+		],
 		"organize_queue": [
 			{"id": "deleted_all_tickets", "weight": 3, "severity": 3, "delay": "immediate", "delay_minutes": 0, "archetype": "bulk_misread",
 				"effects": [{"do": "delete_tickets"}],

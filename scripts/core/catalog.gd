@@ -17,7 +17,7 @@ const COMPANIES_PATH: String = "res://data/companies.json"
 ## Props the world view knows how to draw (scripts/world/room_props.gd).
 const PROPS: Array = [
 	"window", "reception_desk", "plant", "couch", "desk_pc", "server_rack", "whiteboard",
-	"table", "fridge", "water_cooler", "printer", "bookshelf", "vending",
+	"table", "fridge", "water_cooler", "printer", "bookshelf", "vending", "arcade", "bed", "vault_door",
 ]
 const FLOOR_RULES: Array = ["ground", "top", "basement", "any"]
 ## Every balance number the code reads, checked once so a missing one is a
@@ -87,7 +87,7 @@ static func ensure_loaded() -> void:
 	_load_archetypes()
 	people = CatalogPeople.load_into(_errors, SCHEMA_VERSION)
 	issue_ids.clear()
-	issues = CatalogIssues.load_into(_errors, SCHEMA_VERSION, issue_ids)
+	issues = CatalogIssues.load_into(_errors, SCHEMA_VERSION, issue_ids, archetypes)
 	var patch: Dictionary = CatalogPatch.load_into(_errors, SCHEMA_VERSION, issues)
 	actions = patch.actions
 	action_ids = patch.action_ids
