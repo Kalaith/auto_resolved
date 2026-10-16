@@ -183,6 +183,26 @@
 			{"id": "archived_into_void", "weight": 1, "severity": 3, "delay": "immediate", "delay_minutes": 0, "archetype": "bulk_misread",
 				"effects": [{"do": "delete_tickets"}],
 				"recoveries": ["restore_snapshot", "audit_losses"]}
+		],
+		"shared_drive": [
+			{"id": "mounted_wrong_share", "weight": 1, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "device_fault", "fault": "offline", "block": 0.25, "on": "target"}],
+				"recoveries": ["repair_on_site", "rollback"]}
+		],
+		"month_end_export": [
+			{"id": "reused_stale_export", "weight": 1, "severity": 2, "delay": "delayed", "delay_minutes": 30, "archetype": "dependency",
+				"effects": [{"do": "device_fault", "fault": "slow", "block": 0.3, "on": "target"}],
+				"recoveries": ["repair_on_site", "rollback"]}
+		],
+		"render_queue": [
+			{"id": "sorted_render_into_done", "weight": 1, "severity": 2, "delay": "false_success", "delay_minutes": 25, "archetype": "false_success",
+				"effects": [{"do": "false_close", "which": "intent"}],
+				"recoveries": ["reopen_history", "rollback"]}
+		],
+		"case_index": [
+			{"id": "locked_every_case", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "area_fault", "fault": "locked", "block": 0.6, "on": "target_floor"}],
+				"recoveries": ["repair_on_site", "rollback"]}
 		]
 	}
 }

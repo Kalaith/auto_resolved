@@ -76,6 +76,18 @@
 			"backfires": "organize_queue", "rollback": false, "requires": ""},
 		{"id": "archive_resolved", "label": "Archive resolved tickets", "kind": "one_off", "intents": ["queue"],
 			"risk_class": "multi", "scopes": ["building"], "success": [{"do": "archive"}],
-			"backfires": "archive_resolved", "rollback": false, "requires": ""}
+			"backfires": "archive_resolved", "rollback": false, "requires": ""},
+		{"id": "restart_shared_drive", "label": "Reconnect the shared drive", "kind": "one_off", "intents": ["shared_drive_offline"],
+			"risk_class": "simple", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "shared_drive", "rollback": true, "requires": ""},
+		{"id": "rerun_month_end_export", "label": "Restart the month-end export", "kind": "one_off", "intents": ["month_end_export"],
+			"risk_class": "multi", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "month_end_export", "rollback": true, "requires": ""},
+		{"id": "restart_render_queue", "label": "Restart the render queue", "kind": "one_off", "intents": ["render_queue"],
+			"risk_class": "simple", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "render_queue", "rollback": true, "requires": ""},
+		{"id": "unlock_case_index", "label": "Unlock the case index", "kind": "one_off", "intents": ["case_index_locked"],
+			"risk_class": "multi", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "case_index", "rollback": true, "requires": ""}
 	]
 }
