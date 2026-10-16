@@ -23,6 +23,7 @@ const DebugKeys = preload("res://scripts/debug_keys.gd")
 const CareerFlow = preload("res://scripts/career_flow.gd")
 const SettingsFlow = preload("res://scripts/settings_flow.gd")
 const AudioDirector = preload("res://scripts/audio_director.gd")
+const Tutorial = preload("res://scripts/tutorial.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -53,6 +54,7 @@ var work: Node
 var flow: Node
 var settings: Node
 var audio: Node
+var tutorial: Node
 ## 0 pauses the office; the player and the elevator still move.
 var time_scale: float = 1.0
 var _world: Node2D
@@ -81,6 +83,12 @@ func _ready() -> void:
 	audio = AudioDirector.new()
 	audio.main = self
 	add_child(audio)
+	tutorial = Tutorial.new()
+	tutorial.main = self
+	tutorial.panel = hud.tutorial
+	add_child(tutorial)
+	hud.tutorial.acknowledged.connect(func() -> void: tutorial.acknowledge())
+	hud.tutorial.skipped.connect(func() -> void: tutorial.stop())
 	_connect_hud()
 	var problems: Array[String] = Catalog.problems()
 	if not problems.is_empty():
@@ -163,6 +171,7 @@ func _build_world() -> void:
 
 ## Takes the office down (between jobs, at the title).
 func end_job() -> void:
+	tutorial.stop()
 	if _world != null:
 		_world.queue_free()
 		_world = null
@@ -242,6 +251,7 @@ func _process(delta: float) -> void:
 		return
 	hud.show_points(office, delta, flow.career != null)
 	_report_worker()
+	tutorial.update()
 	hud.show_position(player, elevator)
 	hud.clock_bar.show_clock(office.clock, office.day_running)
 	hud.person_card.refresh(office)
@@ -264,6 +274,7 @@ func _report_worker() -> void:
 func _on_event(event: Dictionary) -> void:
 	bubbles.on_event(event)
 	audio.on_event(event)
+	tutorial.on_event(event)
 	match str(event.type):
 		"day_ended":
 			hud.patch_panel.close_panel()

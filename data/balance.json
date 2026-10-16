@@ -154,7 +154,7 @@
 		"starving_walk": 0.8,
 		"snap_confidence": 6.0,
 		"snap_stress_after": 65.0,
-		"idle_grace_minutes": 6.0,
+		"idle_grace_minutes": 12.0,
 		"idle_confidence_per_hour": 4.0,
 		"eat_seconds": 4.0,
 		"eat_minutes": 25.0

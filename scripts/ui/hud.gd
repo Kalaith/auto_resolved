@@ -12,6 +12,7 @@ const NoticePanel = preload("res://scripts/ui/notice_panel.gd")
 const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
 const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
 const IncidentPanel = preload("res://scripts/ui/incident_panel.gd")
+const TutorialPanel = preload("res://scripts/ui/tutorial_panel.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
 const CareerRules = preload("res://scripts/sim/career_rules.gd")
 
@@ -29,6 +30,7 @@ var tickets: TicketPanel
 var patch_panel: PatchPanel
 var patch_button: Button
 var incidents: IncidentPanel
+var tutorial: TutorialPanel
 ## The single high-priority alert: an active incident. Tap to open it.
 var alert: Button
 var _toast: Label
@@ -138,6 +140,10 @@ func _ready() -> void:
 	alert.add_theme_color_override("font_color", ui.palette.bad)
 	alert.visible = false
 	root.add_child(alert)
+	tutorial = TutorialPanel.new()
+	tutorial.build(ui)
+	tutorial.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	root.add_child(tutorial)
 	notice = NoticePanel.new()
 	notice.build(ui)
 	root.add_child(notice)
@@ -266,7 +272,7 @@ func covers(screen_point: Vector2) -> bool:
 
 
 func _blocking_controls() -> Array[Control]:
-	return [clock_bar, person_card, notice, tickets, patch_panel, patch_button, incidents, alert]
+	return [clock_bar, person_card, notice, tickets, patch_panel, patch_button, incidents, alert, tutorial]
 
 
 func _accent_box(accent: Color) -> StyleBoxFlat:

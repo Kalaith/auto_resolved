@@ -93,6 +93,8 @@ func _resume() -> void:
 func _start_job() -> void:
 	var job: Dictionary = career.current_job
 	main.start_job(str(job.archetype), int(job.seed), career.patch, job.state, int(job.day) + 1)
+	if career.history.is_empty() and int(job.day) == 0:
+		main.tutorial.start()
 
 
 ## Removes whichever between-jobs screen is showing (a job is starting).

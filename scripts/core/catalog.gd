@@ -10,6 +10,7 @@ const DataRules = preload("res://addons/hatchery/core/data_rules.gd")
 const CatalogPeople = preload("res://scripts/core/catalog_people.gd")
 const CatalogIssues = preload("res://scripts/core/catalog_issues.gd")
 const CatalogPatch = preload("res://scripts/core/catalog_patch.gd")
+const CatalogTutorial = preload("res://scripts/core/catalog_tutorial.gd")
 
 const SCHEMA_VERSION: int = 1
 const ROOMS_PATH: String = "res://data/rooms.json"
@@ -105,6 +106,7 @@ static func ensure_loaded() -> void:
 	upgrades = patch.upgrades
 	upgrade_ids = patch.upgrade_ids
 	CatalogPeople.check_staff_text(_errors, issue_ids, failure_archetypes.keys())
+	CatalogTutorial.check(_errors)
 
 
 ## Every data problem found while loading; empty means the catalogs are usable.

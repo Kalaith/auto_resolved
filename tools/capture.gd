@@ -114,7 +114,11 @@ func _career(main: Node) -> void:
 	flow.store.file.enabled = false
 	flow.career = preload("res://scripts/sim/career.gd").fresh(4242)
 	flow._resume()
-	await seconds(0.5)
+	await seconds(0.8)
+	await shot("career_tutorial_welcome")
+	main.tutorial.acknowledge()
+	await seconds(0.3)
+	await shot("career_tutorial_it")
 	main.office.metrics.end_day()
 	main.office.day_summaries.append(main.office.metrics.day.duplicate(true))
 	main.office.patch_desk.add_guardrail("bulk_misread")

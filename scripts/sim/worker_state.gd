@@ -9,7 +9,8 @@ extends RefCounted
 ## while eating. A stressed worker fixes more slowly; at 100 they snap at
 ## someone, which management notices. Hunger only falls by eating. Wandering
 ## the building with nothing to do looks lazy and costs confidence; the IT
-## office, any task, eating and the lunch hour all count as busy.
+## office, any task, eating, the arrival rush and the lunch hour all count as
+## busy.
 const Balance = preload("res://addons/hatchery/core/balance.gd")
 
 var stress: float = 0.0
@@ -57,7 +58,7 @@ func is_starving() -> bool:
 
 ## Whether staff would call this slacking right now.
 func looks_idle(phase: String) -> bool:
-	return not working and not eating and not at_it() and phase != "lunch"
+	return not working and not eating and not at_it() and phase != "lunch" and phase != "arrival"
 
 
 func is_seen_slacking() -> bool:

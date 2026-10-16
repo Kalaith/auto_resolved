@@ -313,6 +313,16 @@ Notes on how the plan was built:
   plus game studio, university, hospital, government office, bank and data
   centre company, with M0's sizes retuned), each later one with its own rooms,
   props, palette and one issue family that only happens there.
+- After first playtests (too easy, a bit dull): every issue and recovery has
+  `effort_minutes`, and the office clock runs through them while the player
+  works, so manual capacity per day is limited and PATCH becomes necessary.
+  `sim/worker_state.gd` adds the IT worker's stress (fixes, backlog,
+  overdue; worse when hungry; slows fixes; snapping costs confidence),
+  hunger (eat in a kitchen or break room) and looking idle outside the IT
+  office (costs confidence). Ticket rates rose 1.5x with a morning and
+  post-lunch rush (`issues.phase.*`) and a gentler first day. A skippable
+  day-1 tutorial (`scripts/tutorial.gd`, `data/text_tutorial.json`) runs on a
+  career's first job.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
   tour, and the M0 checks still run.

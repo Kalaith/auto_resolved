@@ -39,11 +39,18 @@ job ends with an exit interview, PATCH's update and the job board.
 | Ticket list | Tap a ticket to walk to the nearest place to fix it; AI asks PATCH about it |
 | PATCH button | Talk to PATCH: a ticket, a recurring category, the queue, running automations |
 | Incident alert | Open the incident view: timeline, recoveries, guardrails |
+| Eat button, kitchen fridge / vending | Eat (resets hunger, calms you down; costs office time) |
 | P, 1 / 2 / 3 | Pause, normal, double, fast |
 | Tab | Whole-building overview |
 | Esc, Menu | Hand in notice, settings, quit to title |
 | F1 / F2 / F6 (debug builds) | Force PATCH's next execution to succeed / backfire / pick the backfire |
 | F3 / F4 (debug builds) | Open a random ticket / skip to the end of the day |
+
+Your own state matters: every fix uses office minutes (the clock races
+while you work), so a day only holds so many manual fixes. Fixes and a
+backlog raise your stress, hunger makes it worse, and wandering about idle
+outside the IT office costs confidence. The first job's first day has a
+skippable tutorial.
 
 The career saves to `user://career.json` at the end of each workday and at
 every step between jobs.
