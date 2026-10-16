@@ -59,6 +59,8 @@ func _day(main: Node) -> void:
 	main.camera.overview = true
 	await _until(main, 735.0)
 	await shot("day_lunch_crowd")
+	await _until(main, 1075.0)
+	await shot("day_evening")
 	Engine.time_scale = 1.0
 
 

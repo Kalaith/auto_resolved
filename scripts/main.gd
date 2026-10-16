@@ -12,6 +12,8 @@ const BuildingView = preload("res://scripts/world/building_view.gd")
 const ElevatorView = preload("res://scripts/world/elevator_view.gd")
 const StaffView = preload("res://scripts/world/staff_view.gd")
 const DeviceView = preload("res://scripts/world/device_view.gd")
+const SkyView = preload("res://scripts/world/sky_view.gd")
+const WindowShade = preload("res://scripts/world/window_shade.gd")
 const WorkController = preload("res://scripts/world/work_controller.gd")
 const Player = preload("res://scripts/world/player.gd")
 const OfficeCamera = preload("res://scripts/world/office_camera.gd")
@@ -42,6 +44,8 @@ var camera: Camera2D
 var hud: CanvasLayer
 var staff_view: Node2D
 var device_view: Node2D
+var sky_view: Node2D
+var window_shade: Node2D
 var work: Node
 var flow: Node
 var settings: Node
@@ -121,9 +125,15 @@ func _build_world() -> void:
 	_world = Node2D.new()
 	_world.name = "World"
 	add_child(_world)
+	sky_view = SkyView.new()
+	sky_view.setup(plan, job.seed_value)
+	_world.add_child(sky_view)
 	var building: Node2D = BuildingView.new()
-	building.setup(plan, job.seed_value)
+	building.setup(plan, job.seed_value, job.company_name)
 	_world.add_child(building)
+	window_shade = WindowShade.new()
+	window_shade.setup(plan)
+	_world.add_child(window_shade)
 	device_view = DeviceView.new()
 	device_view.setup(office)
 	_world.add_child(device_view)
@@ -222,6 +232,8 @@ func _process(_delta: float) -> void:
 	hud.person_card.refresh(office)
 	hud.tickets.show_office(office)
 	hud.show_alert(office)
+	sky_view.set_progress(office.clock.progress())
+	window_shade.set_light(sky_view.tint)
 
 
 func _on_event(event: Dictionary) -> void:

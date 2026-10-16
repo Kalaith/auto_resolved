@@ -88,7 +88,12 @@ func step(office: RefCounted, minutes: float) -> void:
 			overdue += float(ticket.severity)
 			day.overdue_minutes = float(day.overdue_minutes) + minutes
 			job.overdue_minutes = float(job.overdue_minutes) + minutes
-	add_confidence(-_drain * overdue * hours)
+	# A long backlog hurts, but past a point more late tickets add no new
+	# information; a calm hour with nothing late slowly rebuilds trust.
+	if overdue > 0.0:
+		add_confidence(-_drain * minf(overdue, Balance.number("metrics.overdue_cap")) * hours)
+	else:
+		add_confidence(Balance.number("metrics.calm_gain_per_hour") * hours)
 	var total: float = 0.0
 	var present: int = 0
 	for person in office.staff:

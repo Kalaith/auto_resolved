@@ -35,6 +35,7 @@ const BALANCE_NUMBERS: Array[String] = [
 	"issues.roll_every_minutes", "issues.tier_scale", "issues.day_scale", "issues.max_open",
 	"metrics.confidence_start", "metrics.overdue_drain_per_hour", "metrics.fix_gain", "metrics.fast_fix_gain",
 	"metrics.mood_drop_per_hour", "metrics.mood_recover_per_hour", "metrics.mood_rest",
+	"metrics.overdue_cap", "metrics.calm_gain_per_hour",
 	"risk.base.diagnosis", "risk.base.simple", "risk.base.multi", "risk.base.destructive",
 	"risk.scope.ticket", "risk.scope.floor", "risk.scope.building", "risk.staged", "risk.dry_run",
 	"risk.confirm_delete", "risk.guardrail", "risk.tier_step", "risk.minimum", "risk.maximum",

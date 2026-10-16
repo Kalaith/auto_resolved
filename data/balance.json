@@ -56,7 +56,9 @@
 		"fast_fix_gain": 1.0,
 		"mood_drop_per_hour": 0.35,
 		"mood_recover_per_hour": 0.1,
-		"mood_rest": 0.7
+		"mood_rest": 0.7,
+		"overdue_cap": 5.0,
+		"calm_gain_per_hour": 1.0
 	},
 	"risk": {
 		"base": {

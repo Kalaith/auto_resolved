@@ -1,10 +1,10 @@
 extends Node2D
-## Draws a BuildingPlan as a cutaway: sky and skyline, ground, the building
-## shell, every floor's rooms with their walls, props and labels, slabs, and
-## the elevator shaft with its landing frames. The car and its doors are drawn
-## by elevator_view.gd so they can sit either side of the player.
+## Draws a BuildingPlan as a cutaway: the building shell, every floor's rooms
+## with their walls, props and labels, slabs, the elevator shaft with its
+## landing frames, and the company's name on the roof. The sky, skyline and
+## ground are sky_view.gd (they change through the day); the car and its doors
+## are elevator_view.gd so they can sit either side of the player.
 const RoomProps = preload("res://scripts/world/room_props.gd")
-const Det = preload("res://addons/hatchery/core/det.gd")
 const Balance = preload("res://addons/hatchery/core/balance.gd")
 const BuildingPlan = preload("res://scripts/sim/building_plan.gd")
 
@@ -16,13 +16,15 @@ const DIVIDER: float = 8.0
 
 var plan: RefCounted
 var job_seed: int = 0
+var company: String = ""
 var _slab: float = 14.0
 var _font: Font
 
 
-func setup(building: RefCounted, seed_value: int) -> void:
+func setup(building: RefCounted, seed_value: int, company_name: String = "") -> void:
 	plan = building
 	job_seed = seed_value
+	company = company_name
 	_slab = Balance.number("building.slab")
 	_font = ThemeDB.fallback_font
 	queue_redraw()
@@ -42,32 +44,12 @@ func shell_rect() -> Rect2:
 func _draw() -> void:
 	if plan == null:
 		return
-	_draw_backdrop()
 	var shell: Rect2 = shell_rect()
 	draw_rect(shell, plan.colours.exterior)
 	for index in plan.floor_indices():
 		_draw_floor(index)
 	_draw_shaft()
 	_draw_roof(shell)
-
-
-func _draw_backdrop() -> void:
-	var sky: Color = plan.colours.sky
-	var reach: float = maxf(plan.width, 2000.0) * 2.0
-	var top: float = plan.floor_y(plan.highest) - plan.floor_height * 4.0
-	draw_rect(Rect2(-reach, top - 2000.0, plan.width + reach * 2.0, 2000.0 - top), sky)
-	# Distant skyline: blocks a shade off the sky, seeded by the job.
-	var rng: RandomNumberGenerator = Det.fork(job_seed, "skyline")
-	var x: float = -reach
-	while x < plan.width + reach:
-		var block_width: float = rng.randf_range(80.0, 220.0)
-		var height: float = rng.randf_range(120.0, plan.floor_height * float(plan.highest + 2))
-		draw_rect(Rect2(x, -height, block_width - 10.0, height), sky.darkened(0.12 + rng.randf() * 0.1))
-		x += block_width
-	var ground: Color = Color(plan.colours.exterior).darkened(0.45)
-	var depth: float = Balance.number("building.ground_depth") + plan.floor_height * float(1 - plan.lowest) + 600.0
-	draw_rect(Rect2(-reach, 0.0, plan.width + reach * 2.0, depth), ground)
-	draw_rect(Rect2(-reach, 0.0, plan.width + reach * 2.0, 10.0), ground.lightened(0.2))
 
 
 func _draw_floor(index: int) -> void:
@@ -127,3 +109,14 @@ func _draw_roof(shell: Rect2) -> void:
 	var roof := Rect2(shell.position.x - 10.0, shell.position.y, shell.size.x + 20.0, ROOF)
 	draw_rect(roof, Color(plan.colours.slab).darkened(0.2))
 	draw_rect(Rect2(roof.position.x, roof.end.y - 4.0, roof.size.x, 4.0), plan.colours.trim)
+	if company.is_empty():
+		return
+	# A rooftop sign in the company colour, on two posts.
+	var size: int = 30
+	var width: float = _font.get_string_size(company.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x + 36.0
+	var sign := Rect2(shell.get_center().x - width * 0.5, roof.position.y - 58.0, width, 44.0)
+	for post in [sign.position.x + 20.0, sign.end.x - 24.0]:
+		draw_rect(Rect2(post, sign.end.y, 4.0, 14.0), Color(plan.colours.slab).darkened(0.3))
+	draw_rect(sign, Color(plan.colours.accent).darkened(0.25))
+	draw_rect(sign.grow(-3.0), plan.colours.accent, false, 2.0)
+	draw_string(_font, Vector2(sign.position.x + 18.0, sign.end.y - 12.0), company.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE)

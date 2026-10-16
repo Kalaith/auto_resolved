@@ -31,6 +31,7 @@ var incidents: IncidentPanel
 ## The single high-priority alert: an active incident. Tap to open it.
 var alert: Button
 var _toast: Label
+var _toast_box: PanelContainer
 var _toast_left: float = 0.0
 var _company: Label
 var _details: Label
@@ -78,13 +79,16 @@ func _ready() -> void:
 	tickets.offset_right = -16.0
 	tickets.offset_top = 128.0
 	root.add_child(tickets)
+	_toast_box = ui.panel(0.9, 10)
+	_toast_box.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_toast_box.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_toast_box.offset_top = 112.0
+	_toast_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast_box.visible = false
+	root.add_child(_toast_box)
 	_toast = ui.label("", 17)
-	_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_toast.offset_top = 20.0
-	_toast.visible = false
-	root.add_child(_toast)
+	_toast_box.add_child(_toast)
 	person_card = PersonCard.new()
 	person_card.build(ui)
 	person_card.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -149,16 +153,19 @@ func show_position(player: Node2D, elevator: RefCounted) -> void:
 ## A one-line message at the top of the screen that fades on its own.
 func toast(text: String) -> void:
 	_toast.text = text
-	_toast.visible = true
-	_toast.modulate.a = 1.0
+	_toast_box.visible = true
+	_toast_box.modulate.a = 1.0
+	_toast_box.reset_size()
+	_toast_box.offset_left = -_toast_box.size.x * 0.5
+	_toast_box.offset_right = _toast_box.size.x * 0.5
 	_toast_left = TOAST_SECONDS
 
 
 func _process(delta: float) -> void:
 	if _toast_left > 0.0:
 		_toast_left -= delta
-		_toast.modulate.a = clampf(_toast_left / 0.6, 0.0, 1.0)
-		_toast.visible = _toast_left > 0.0
+		_toast_box.modulate.a = clampf(_toast_left / 0.6, 0.0, 1.0)
+		_toast_box.visible = _toast_left > 0.0
 
 
 ## Opens PATCH (on a ticket's proposal when `ticket_id` is set); the ticket
