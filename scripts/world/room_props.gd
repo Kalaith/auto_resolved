@@ -57,6 +57,23 @@ static func draw_prop(canvas: CanvasItem, prop: String, at: Vector2, colours: Di
 		"arcade": _arcade(canvas, at, accent)
 		"bed": _bed(canvas, at, colours)
 		"vault_door": _vault(canvas, at, colours)
+		"lectern":
+			_box(canvas, at, Vector2(30, 58), wood)
+			_box(canvas, at + Vector2(0, -58), Vector2(40, 8), wood.lightened(0.15))
+			_box(canvas, at + Vector2(-4, -108), Vector2(80, 44), Color("#f4f4ee"))
+			canvas.draw_line(at + Vector2(-36, -96), at + Vector2(20, -96), accent, 2.0)
+			canvas.draw_line(at + Vector2(-36, -84), at + Vector2(6, -84), Color("#9aa3ad"), 2.0)
+		"bench":
+			_box(canvas, at + Vector2(0, -24), Vector2(64, 6), wood)
+			_box(canvas, at + Vector2(0, -44), Vector2(64, 4), wood.darkened(0.15))
+			_box(canvas, at + Vector2(-26, 0), Vector2(4, 24), wood.darkened(0.25))
+			_box(canvas, at + Vector2(26, 0), Vector2(4, 24), wood.darkened(0.25))
+		"filing_cabinet":
+			_box(canvas, at, Vector2(40, 96), Color("#8d949c"))
+			for drawer in range(4):
+				var y: float = at.y - 8.0 - drawer * 23.0
+				canvas.draw_rect(Rect2(at.x - 17, y - 19, 34, 19), Color("#a3aab2"))
+				canvas.draw_rect(Rect2(at.x - 6, y - 12, 12, 3), Color("#5a6068"))
 
 
 ## A rectangle standing on `feet` (bottom centre).

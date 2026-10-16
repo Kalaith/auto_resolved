@@ -144,6 +144,30 @@
 				"effects": [{"do": "device_fault", "fault": "dark", "block": 1.0, "on": "random", "count": 3}],
 				"recoveries": ["rollback", "repair_on_site"]}
 		],
+		"portal": [
+			{"id": "logged_everyone_out", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 3, "on": "target_floor"}],
+				"recoveries": ["reissue_credentials"]},
+			{"id": "portal_lets_anyone_in", "weight": 1, "severity": 2, "delay": "false_success", "delay_minutes": 40, "archetype": "permissions",
+				"effects": [{"do": "device_fault", "fault": "admin", "block": 0.0, "on": "random", "count": 3}, {"do": "confidence", "amount": -3}],
+				"recoveries": ["revoke_rights"]}
+		],
+		"fax": [
+			{"id": "faxed_the_archive", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "runaway_job",
+				"effects": [{"do": "confidence", "amount": -4}, {"do": "area_fault", "fault": "crashed", "block": 0.2, "on": "scope_floors"}],
+				"recoveries": ["rollback"]},
+			{"id": "restored_1992_settings", "weight": 2, "severity": 2, "delay": "false_success", "delay_minutes": 35, "archetype": "wrong_command",
+				"effects": [{"do": "area_fault", "fault": "crashed", "block": 0.3, "on": "scope_floors"}],
+				"recoveries": ["rollback"]}
+		],
+		"cooling": [
+			{"id": "cooled_a_floor_of_desks", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "area_fault", "fault": "dark", "block": 0.4, "on": "other_floor"}],
+				"recoveries": ["restore_rule", "rollback"]},
+			{"id": "throttled_the_racks", "weight": 2, "severity": 3, "delay": "delayed", "delay_minutes": 30, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "crashed", "block": 0.0, "on": "target"}, {"do": "area_fault", "fault": "crashed", "block": 0.3, "on": "scope_floors"}],
+				"recoveries": ["rollback", "repair_on_site"]}
+		],
 		"organize_queue": [
 			{"id": "deleted_all_tickets", "weight": 3, "severity": 3, "delay": "immediate", "delay_minutes": 0, "archetype": "bulk_misread",
 				"effects": [{"do": "delete_tickets"}],

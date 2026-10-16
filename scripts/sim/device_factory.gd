@@ -1,9 +1,10 @@
 extends RefCounted
 ## Turns the building's props into devices: every desk PC a workstation owned
 ## by whoever sits there (the IT office's desk is the IT desk), every printer a
-## printer, the server room's racks servers with the network core in the
-## first, and the lift controller beside the ground-floor landing. Ids are
-## `<room id>_d<slot>`, so they are stable for a given building.
+## printer, the server room's racks (and a data centre's rack halls) servers
+## with the network core in the server room's first, and the lift controller
+## beside the ground-floor landing. Ids are `<room id>_d<slot>`, so they are
+## stable for a given building.
 const RoomLayout = preload("res://scripts/sim/room_layout.gd")
 const Device = preload("res://scripts/sim/device.gd")
 
@@ -23,7 +24,7 @@ static func create(plan: RefCounted, staff: Array) -> Array:
 				var kind: String = _kind(room.type, str(item.prop))
 				if kind.is_empty():
 					continue
-				if kind == "server" and first_rack:
+				if kind == "server" and first_rack and room.type == "server_room":
 					first_rack = false
 					kind = "network_core"
 				var device := Device.new()
@@ -54,5 +55,5 @@ static func _kind(room_type: String, prop: String) -> String:
 		"printer":
 			return "printer"
 		"server_rack":
-			return "server" if room_type == "server_room" else ""
+			return "server" if room_type == "server_room" or room_type == "server_hall" else ""
 	return ""

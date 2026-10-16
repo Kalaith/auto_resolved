@@ -15,6 +15,9 @@
 		{"id": "ward", "label": "Ward", "min_width": 260, "max_width": 460, "wall_shift": 0.06, "props": ["window"], "fill": "bed", "fill_spacing": 112},
 		{"id": "nurse_station", "label": "Nurses", "min_width": 220, "max_width": 380, "wall_shift": 0.03, "props": ["plant"], "fill": "desk_pc", "fill_spacing": 92},
 		{"id": "vault", "label": "Vault", "min_width": 200, "max_width": 260, "wall_shift": -0.3, "props": ["vault_door"]},
+		{"id": "lecture_hall", "label": "Lecture", "min_width": 260, "max_width": 420, "wall_shift": 0.04, "props": ["lectern", "window"], "fill": "bench", "fill_spacing": 84},
+		{"id": "records_room", "label": "Records", "min_width": 200, "max_width": 280, "wall_shift": -0.1, "props": ["filing_cabinet", "filing_cabinet", "filing_cabinet"]},
+		{"id": "server_hall", "label": "Racks", "min_width": 240, "max_width": 400, "wall_shift": -0.28, "props": [], "fill": "server_rack", "fill_spacing": 60},
 		{"id": "trading_floor", "label": "Trading", "min_width": 300, "max_width": 560, "wall_shift": -0.02, "props": ["window"], "fill": "desk_pc", "fill_spacing": 86}
 	]
 }

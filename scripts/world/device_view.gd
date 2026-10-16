@@ -52,9 +52,11 @@ func _draw() -> void:
 			_ring(Vector2(device.x, floor_line(device)) + Vector2(0, -140), work_progress)
 
 
+## Floor-wide outages show on every PC of the floor they cover.
 func _draw_area_faults(device: RefCounted, at: Vector2) -> void:
-	if office.floor_has("no_network", device.floor_index):
-		FaultArt.draw_fault(self, "workstation", "no_network", at, _time)
+	for fault in ["no_network", "dark"]:
+		if office.floor_has(fault, device.floor_index):
+			FaultArt.draw_fault(self, "workstation", fault, at, _time)
 
 
 func _bubble_offset(device: RefCounted) -> Vector2:

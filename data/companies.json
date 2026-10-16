@@ -130,6 +130,33 @@
 			}
 		},
 		{
+			"id": "university",
+			"label": "University",
+			"tier": 2,
+			"pay_per_day": 200,
+			"floors": [3, 4],
+			"basement": false,
+			"width": [1600, 1900],
+			"elevator_position": [0.3, 0.7],
+			"names": {"first": ["Oldbridge", "Fernhill", "Greyfriars", "Wexley"], "second": ["University", "College", "Institute", "Polytechnic"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "server_room", "floor": "top"},
+				{"room": "lecture_hall", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"}
+			],
+			"room_weights": {"open_office": 6, "lecture_hall": 2, "meeting_room": 1, "break_room": 1},
+			"theme": {
+				"sky": "a8c8e8", "exterior": "7a2e2e", "slab": "4a1c1c", "trim": "e0c08a", "floor": "8a5a3a",
+				"walls": ["efe4d0", "d9e3d0", "e8d8c0", "dcd4e8"],
+				"furniture": "5a3a28", "accent": "7a1f2b", "hue_jitter": 0.03
+			}
+		},
+		{
 			"id": "law_firm",
 			"label": "Law firm",
 			"tier": 3,
@@ -182,6 +209,32 @@
 			}
 		},
 		{
+			"id": "government_office",
+			"label": "Government office",
+			"tier": 3,
+			"pay_per_day": 300,
+			"floors": [4, 5],
+			"basement": true,
+			"width": [1700, 1950],
+			"elevator_position": [0.45, 0.55],
+			"names": {"first": ["Department of", "Ministry of", "Office of", "Bureau of"], "second": ["Forms", "Paperwork", "Standards", "Approvals"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "records_room", "floor": "basement"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"open_office": 6, "records_room": 2, "meeting_room": 2},
+			"theme": {
+				"sky": "b8bec4", "exterior": "8a8f94", "slab": "5a5f64", "trim": "6a7a5a", "floor": "7a7a6a",
+				"walls": ["d8d8c8", "c8ccc0", "dcd8c8", "c0c8c8"],
+				"furniture": "5a5a4a", "accent": "3a5a8a", "hue_jitter": 0.01
+			}
+		},
+		{
 			"id": "megacorp",
 			"label": "Megacorp",
 			"tier": 4,
@@ -230,6 +283,33 @@
 				"sky": "d8cdb4", "exterior": "4b3b2a", "slab": "2e241a", "trim": "c9a24a", "floor": "6b5236",
 				"walls": ["e9e1cf", "d7cbb0", "3f5a4a", "efe8d8"],
 				"furniture": "3a2a1c", "accent": "1f6b4a", "hue_jitter": 0.01
+			}
+		},
+		{
+			"id": "data_centre",
+			"label": "Data centre company",
+			"tier": 4,
+			"pay_per_day": 500,
+			"floors": [5, 6],
+			"basement": true,
+			"width": [1800, 2000],
+			"elevator_position": [0.45, 0.55],
+			"names": {"first": ["Coldline", "Rackspire", "Nimbus", "Hyperhall"], "second": ["Hosting", "Data", "Cloud", "Systems"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "server_hall", "floor": "basement"},
+				{"room": "server_hall", "floor": "any"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"open_office": 5, "server_hall": 2, "meeting_room": 2},
+			"theme": {
+				"sky": "0e1a24", "exterior": "2a3440", "slab": "1a222c", "trim": "3ad0ff", "floor": "2a3440",
+				"walls": ["2c3a48", "24323e", "34404c", "2a3644"],
+				"furniture": "1a222c", "accent": "3ad0ff", "hue_jitter": 0.02
 			}
 		}
 	]

@@ -18,6 +18,7 @@ const COMPANIES_PATH: String = "res://data/companies.json"
 const PROPS: Array = [
 	"window", "reception_desk", "plant", "couch", "desk_pc", "server_rack", "whiteboard",
 	"table", "fridge", "water_cooler", "printer", "bookshelf", "vending", "arcade", "bed", "vault_door",
+	"lectern", "bench", "filing_cabinet",
 ]
 const FLOOR_RULES: Array = ["ground", "top", "basement", "any"]
 ## Every balance number the code reads, checked once so a missing one is a
