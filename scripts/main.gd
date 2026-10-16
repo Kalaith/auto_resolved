@@ -22,6 +22,7 @@ const Hud = preload("res://scripts/ui/hud.gd")
 const DebugKeys = preload("res://scripts/debug_keys.gd")
 const CareerFlow = preload("res://scripts/career_flow.gd")
 const SettingsFlow = preload("res://scripts/settings_flow.gd")
+const AudioDirector = preload("res://scripts/audio_director.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -51,6 +52,7 @@ var bubbles: Node2D
 var work: Node
 var flow: Node
 var settings: Node
+var audio: Node
 ## 0 pauses the office; the player and the elevator still move.
 var time_scale: float = 1.0
 var _world: Node2D
@@ -76,6 +78,9 @@ func _ready() -> void:
 	flow = CareerFlow.new()
 	flow.main = self
 	add_child(flow)
+	audio = AudioDirector.new()
+	audio.main = self
+	add_child(audio)
 	_connect_hud()
 	var problems: Array[String] = Catalog.problems()
 	if not problems.is_empty():
@@ -243,6 +248,7 @@ func _process(_delta: float) -> void:
 
 func _on_event(event: Dictionary) -> void:
 	bubbles.on_event(event)
+	audio.on_event(event)
 	match str(event.type):
 		"day_ended":
 			hud.patch_panel.close_panel()
