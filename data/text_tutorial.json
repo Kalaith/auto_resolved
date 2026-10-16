@@ -2,20 +2,20 @@
 	"schema_version": 1,
 	"labels": {
 		"tutorial.welcome.title": "Welcome to {company}",
-		"tutorial.welcome.body": "You are the IT department. Tap anywhere to walk there. The lift is the only way between floors: walk up to it and it takes you where you tapped.",
+		"tutorial.welcome.body": "You are the IT department. Tap anywhere to walk there. The lift is the only way between floors: walk up to it and it takes you where you tapped. It is reliable, but it has its own schedule and no sense of urgency.",
 		"tutorial.go_to_it.title": "Find your desk",
-		"tutorial.go_to_it.body": "Your IT office is on floor {it_floor}. When nothing needs fixing, wait there. Staff who see you wandering about decide you are slacking, and management hears about it.",
+		"tutorial.go_to_it.body": "Your IT office is on floor {it_floor}. When nothing needs fixing, wait there. Staff who see you wandering about decide you are slacking, and management hears about it. The office has several definitions of visible productivity.",
 		"tutorial.first_ticket.title": "Your first ticket",
-		"tutorial.first_ticket.body": "Something broke. The list on the right shows open tickets: tap one to walk to it, then stand still beside it while you fix it. Password resets can be done right here at the IT desk.",
+		"tutorial.first_ticket.body": "Something broke. The list on the right shows open tickets: tap one to walk to it, then stand still beside it while you fix it. Password resets can be done right here at the IT desk. The ticket is a request for help, not a suggestion to move the furniture.",
 		"tutorial.capacity.title": "Fixes take office time",
-		"tutorial.capacity.body": "Did you see the clock jump? Every fix uses office minutes (the 'fix 35m' on each ticket) and the clock races while you work. More tickets will arrive in a day than you can fix by hand.",
+		"tutorial.capacity.body": "Did you see the clock jump? Every fix uses office minutes (the 'fix 35m' on each ticket) and the clock races while you work. More tickets will arrive in a day than you can fix by hand. This is considered a staffing plan.",
 		"tutorial.patch.title": "Meet PATCH",
-		"tutorial.patch.body": "That is what PATCH is for. Tap AI next to a ticket and read the proposal card before approving. PATCH works instantly, but every action has a chance to backfire.",
+		"tutorial.patch.body": "That is what PATCH is for. Tap AI next to a ticket and read the proposal card before approving. PATCH works instantly, but every action has a chance to backfire. The risk is shown as a range because PATCH is confident, not psychic.",
 		"tutorial.automate.title": "Automate the repeats",
-		"tutorial.automate.body": "When the same kind of ticket keeps coming, open PATCH and choose 'We keep getting the same tickets'. An automation runs every hour on its own, and each run is a fresh risk. Start small: one floor, staged.",
+		"tutorial.automate.body": "When the same kind of ticket keeps coming, open PATCH and choose 'We keep getting the same tickets'. An automation runs every hour on its own, and each run is a fresh risk. Start small: one floor, staged. Repetition is useful; repeated mistakes are still repetition.",
 		"tutorial.needs.title": "Look after yourself",
-		"tutorial.needs.body": "Fixes and a growing backlog raise your Stress; Hunger makes it rise faster. Stressed, you fix more slowly, and at the top you snap at someone. Tap Eat (or a kitchen fridge) to eat; lunch is the cheapest time.",
+		"tutorial.needs.body": "Fixes and a growing backlog raise your Stress; Hunger makes it rise faster. Stressed, you fix more slowly, and at the top you snap at someone. Tap Eat (or a kitchen fridge) to eat; lunch is the cheapest time. A vending machine is not a balanced meal, but it is a recognised department.",
 		"tutorial.end.title": "Stay or go",
-		"tutorial.end.body": "At the end of each day you can carry on or hand in notice. Quitting is not failing: you keep every PATCH Point, PATCH keeps its upgrades, and the next job pays better. Good luck."
+		"tutorial.end.body": "At the end of each day you can carry on or hand in notice. Quitting is not failing: you keep every PATCH Point, PATCH keeps its upgrades, and the next job pays better. Good luck. You are allowed to leave before management writes a longer list."
 	}
 }
