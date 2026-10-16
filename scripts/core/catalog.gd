@@ -96,6 +96,7 @@ static func ensure_loaded() -> void:
 	recoveries = patch.recoveries
 	upgrades = patch.upgrades
 	upgrade_ids = patch.upgrade_ids
+	CatalogPeople.check_staff_text(_errors, issue_ids, failure_archetypes.keys())
 
 
 ## Every data problem found while loading; empty means the catalogs are usable.

@@ -1,0 +1,33 @@
+{
+	"schema_version": 1,
+	"labels": {
+		"staff.ticket.password": "I'm locked out. Again.|What was my password... Password2?|It says my account is locked!|I changed it on Friday and now it hates me.",
+		"staff.ticket.printer_offline": "The printer says OFFLINE.|Has anyone printed today? At all?|Printer's dead. I need these by ten.|Why does it say PC LOAD LETTER?",
+		"staff.ticket.software_install": "I need the new version installed.|Can IT put the spreadsheet thing on here?|It says I need an administrator.|Can I get the program everyone else has?",
+		"staff.ticket.slow_pc": "My PC is so slow.|It takes five minutes to open an email.|The little wheel just keeps spinning.|I could knit a jumper while this loads.",
+		"staff.ticket.new_employee": "Hi! First day. I don't have a login.|Where do I get an account?|They said IT would set me up?",
+		"staff.ticket.network": "Is the internet down for everyone?|Nothing loads on this floor!|The network's gone. Again.",
+		"staff.ticket.elevator_fault": "The lift stopped at every floor. Every one.|Is the lift possessed?|I could have walked. If we had stairs.",
+		"staff.ticket.legacy_app": "The case system crashed again.|Who still knows how the 1997 system works?|It's showing the green screen of doom.",
+		"staff.thanks.player": "Thanks!|You're a lifesaver.|Back in business.|Oh, that was quick.|Cheers, IT.",
+		"staff.thanks.patch": "Huh, it just fixed itself.|Thanks, PATCH. I think?|Did the robot do that?|Fixed before I finished complaining.",
+		"staff.late": "Still waiting on IT...|Did my ticket get lost?|Is anyone looking at this?|I'll just stare at the wall, then.",
+		"staff.incident.wrong_target": "Why did I get a password reset email?|That change was meant for someone else!",
+		"staff.incident.overreach": "Everything changed and nobody asked us.|Who did this to the whole floor?",
+		"staff.incident.runaway_job": "The printer won't stop printing!|We're drowning in test pages!",
+		"staff.incident.wrong_command": "It was working five minutes ago.|What did IT just do?",
+		"staff.incident.dependency": "The accounts package won't open now.|Something updated and now nothing works.",
+		"staff.incident.permissions": "I can install anything now. Is that... fine?|Why am I an administrator?",
+		"staff.incident.bulk_misread": "My ticket disappeared!|Where did all the tickets go?",
+		"staff.incident.false_success": "It says resolved. It is not resolved.|My ticket closed itself but I'm still stuck.",
+		"staff.remember.wrong_target": "Make sure it's MY account this time.",
+		"staff.remember.overreach": "Just my machine, please. Not the whole floor.",
+		"staff.remember.runaway_job": "Is PATCH printing again?",
+		"staff.remember.wrong_command": "Please don't let the robot touch it.",
+		"staff.remember.dependency": "Will this break the accounts package again?",
+		"staff.remember.permissions": "Am I still an administrator? Asking for a friend.",
+		"staff.remember.bulk_misread": "Is my ticket going to vanish again?",
+		"staff.remember.false_success": "Don't mark it done until it actually works.",
+		"staff.manager_visit": "We need to talk about all these tickets.|Management has some questions.|Have you got a minute? Several, actually."
+	}
+}

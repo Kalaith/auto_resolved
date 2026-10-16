@@ -141,7 +141,29 @@ static func _reveal(office: RefCounted, desk: RefCounted, incident: Incident, la
 			automation.enabled = false
 			automation.paused_by = "incident"
 			desk.say(Catalog.say("patch.automation_paused", {"name": automation.name()}))
-	office.emit("incident_opened", {"incident": incident.id, "backfire": incident.backfire_id, "first": first})
+	var people: Array[String] = _affected_people(office, incident)
+	for id in people:
+		office.employee(id).remember("incident:" + incident.archetype)
+	office.emit("incident_opened", {"incident": incident.id, "backfire": incident.backfire_id, "first": first,
+		"archetype": incident.archetype, "people": people})
+
+
+## Who felt it: owners of touched devices, staff on touched floors, and the
+## reporters of tickets PATCH deleted or closed.
+static func _affected_people(office: RefCounted, incident: Incident) -> Array[String]:
+	var result: Array[String] = []
+	for id in incident.devices:
+		var device: RefCounted = office.device(id)
+		if device != null and not device.owner.is_empty() and not result.has(device.owner):
+			result.append(device.owner)
+	for person in office.staff:
+		if incident.floors.has(person.desk_floor) and not result.has(person.id):
+			result.append(person.id)
+	for id in incident.deleted_tickets + incident.closed_tickets:
+		var ticket: RefCounted = office.helpdesk.queue.get_ticket(id)
+		if ticket != null and not ticket.reporter.is_empty() and not result.has(ticket.reporter):
+			result.append(ticket.reporter)
+	return result
 
 
 ## Applies a finished recovery to `incident`. False if it is not offered.

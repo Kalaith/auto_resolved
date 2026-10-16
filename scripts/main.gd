@@ -14,6 +14,7 @@ const StaffView = preload("res://scripts/world/staff_view.gd")
 const DeviceView = preload("res://scripts/world/device_view.gd")
 const SkyView = preload("res://scripts/world/sky_view.gd")
 const WindowShade = preload("res://scripts/world/window_shade.gd")
+const BubbleView = preload("res://scripts/world/bubble_view.gd")
 const WorkController = preload("res://scripts/world/work_controller.gd")
 const Player = preload("res://scripts/world/player.gd")
 const OfficeCamera = preload("res://scripts/world/office_camera.gd")
@@ -46,6 +47,7 @@ var staff_view: Node2D
 var device_view: Node2D
 var sky_view: Node2D
 var window_shade: Node2D
+var bubbles: Node2D
 var work: Node
 var flow: Node
 var settings: Node
@@ -142,6 +144,9 @@ func _build_world() -> void:
 	_world.add_child(_elevator_layer(ElevatorView.Layer.DOORS, Z_DOORS))
 	staff_view = _staff_layer(StaffView.Layer.WALKING, Z_STAFF)
 	_world.add_child(staff_view)
+	bubbles = BubbleView.new()
+	bubbles.setup(office)
+	_world.add_child(bubbles)
 	player = Player.new()
 	var entrance: float = office.entrance_x()
 	player.setup(plan, elevator, 0, entrance + (40.0 if entrance < plan.shaft_x else -40.0))
@@ -237,6 +242,7 @@ func _process(_delta: float) -> void:
 
 
 func _on_event(event: Dictionary) -> void:
+	bubbles.on_event(event)
 	match str(event.type):
 		"day_ended":
 			hud.patch_panel.close_panel()

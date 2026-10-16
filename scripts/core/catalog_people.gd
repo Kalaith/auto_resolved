@@ -3,9 +3,28 @@ extends RefCounted
 ## shirt colours, and the trait ranges staff are rolled from.
 const JsonIO = preload("res://addons/hatchery/core/json_io.gd")
 const DataRules = preload("res://addons/hatchery/core/data_rules.gd")
+const TextCatalog = preload("res://addons/hatchery/core/text_catalog.gd")
 
 const PATH: String = "res://data/people.json"
 const TRAITS: Array[String] = ["tech_confidence", "patience"]
+
+## What staff say (scripts/world/bubble_view.gd): "|"-separated variants.
+static var staff_text: TextCatalog = TextCatalog.new(["res://data/text_staff.json"])
+
+
+## Every line the staff will be asked for exists: one per issue, one per
+## failure archetype (reaction and memory) and the fixed ones.
+static func check_staff_text(errors: Array[String], issue_ids: Array[String], archetypes: Array) -> void:
+	staff_text.reload()
+	errors.append_array(staff_text.problems())
+	var required: Array = ["staff.thanks.player", "staff.thanks.patch", "staff.late", "staff.manager_visit"]
+	for id in issue_ids:
+		required.append("staff.ticket." + id)
+	for id in archetypes:
+		required.append("staff.incident." + str(id))
+		required.append("staff.remember." + str(id))
+	for key in staff_text.missing(required):
+		errors.append("text_staff.json: missing label " + key)
 
 
 ## The validated catalog, or {} with the problems appended to `errors`.
