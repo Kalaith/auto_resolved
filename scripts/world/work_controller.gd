@@ -114,6 +114,21 @@ func _is_at(wanted: Dictionary) -> bool:
 	return place != null and _is_beside(place)
 
 
+## Plays games at the IT desk (the player must be standing at it).
+func play_games() -> bool:
+	for desk in office.devices_of("it_desk"):
+		if _is_beside(desk):
+			_cancel()
+			_start({"kind": "games", "device": desk.id, "seconds": Balance.number("worker.games_seconds")})
+			return true
+	message.emit("Games are on the IT desk's PC. Head to the IT office first.")
+	return false
+
+
+func is_playing() -> bool:
+	return task.get("kind") == "games"
+
+
 func has_pending() -> bool:
 	return not _pending.is_empty()
 
@@ -204,6 +219,8 @@ func _effort(wanted: Dictionary) -> float:
 	match str(wanted.kind):
 		"ticket":
 			return office.helpdesk.fix_effort(wanted.ticket)
+		"games":
+			return Balance.number("worker.games_minutes")
 		"recovery":
 			return office.patch_desk.recovery_effort(str(wanted.recovery))
 	return Balance.number("worker.eat_minutes")
@@ -224,7 +241,7 @@ func _cancel() -> void:
 
 
 func _still_wanted(wanted: Dictionary) -> bool:
-	if wanted.kind == "eat":
+	if wanted.kind == "eat" or wanted.kind == "games":
 		return true
 	if wanted.kind == "ticket":
 		return wanted.ticket.is_open()
@@ -252,7 +269,7 @@ func _work(delta: float) -> void:
 	if not _is_at(task) or player.is_routing():
 		_cancel()
 		return
-	var scale: float = 1.0 if task.kind == "eat" else office.worker.fix_time_scale()
+	var scale: float = 1.0 if task.kind == "eat" or task.kind == "games" else office.worker.fix_time_scale()
 	var step: float = minf(delta / (float(task.seconds) * scale), 1.0 - progress)
 	progress += step
 	spent_minutes += float(task.effort) * step
@@ -264,6 +281,10 @@ func _work(delta: float) -> void:
 	if done.kind == "eat":
 		office.worker.ate()
 		message.emit("Lunch. Hunger gone, and you feel calmer.")
+		return
+	if done.kind == "games":
+		office.worker.played_games()
+		message.emit("One more round... Stress down, half an hour gone.")
 		return
 	var place: RefCounted = office.device(done.device)
 	if done.kind == "ticket":

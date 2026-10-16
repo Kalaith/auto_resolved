@@ -40,6 +40,7 @@ job ends with an exit interview, PATCH's update and the job board.
 | PATCH button | Talk to PATCH: a ticket, a recurring category, the queue, running automations |
 | Incident alert | Open the incident view: timeline, recoveries, guardrails |
 | Eat button, kitchen fridge / vending | Eat (resets hunger, calms you down; costs office time) |
+| Games button (in the IT office) | Play games at the IT desk: a big stress drop for 30 office minutes |
 | P, 1 / 2 / 3 | Pause, normal, double, fast |
 | Tab | Whole-building overview |
 | Esc, Menu | Hand in notice, settings, quit to title |
@@ -63,6 +64,7 @@ $godot = '..\small_following\exports\tooling\Godot_v4.2.2-stable_win64_console.e
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
 & $godot --path . --script res://tools/capture.gd -- captures --size=1280x720   # screenshots (--only=career|buildings|day|patch|menus)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
+& $godot --headless --path . --script res://tools/day_report.gd        # tickets vs hand-fixing capacity per day
 ```
 
 Captures need a window (not `--headless`); write them outside the project or

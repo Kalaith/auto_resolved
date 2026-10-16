@@ -53,7 +53,7 @@ const BALANCE_NUMBERS: Array[String] = [
 	"career.tier_reputation.2", "career.tier_reputation.3", "career.tier_reputation.4",
 	"career.summon_minute", "career.summon_minutes",
 	"issues.phase.arrival", "issues.phase.morning", "issues.phase.lunch", "issues.phase.afternoon",
-	"issues.phase.leaving", "issues.first_day_scale", "worker.eat_minutes", "worker.stress_start", "worker.hunger_start", "worker.overnight_stress_keep",
+	"issues.phase.leaving", "issues.first_day_scale", "worker.eat_minutes", "worker.games_minutes", "worker.games_seconds", "worker.games_stress_relief", "worker.stress_start", "worker.hunger_start", "worker.overnight_stress_keep",
 	"worker.hunger_per_hour", "worker.hungry_at", "worker.starving_at", "worker.stress_per_fix",
 	"worker.stress_per_open_hour", "worker.open_cap", "worker.stress_per_overdue_hour", "worker.hungry_stress_scale",
 	"worker.calm_at_it_per_hour", "worker.calm_eating_per_hour", "worker.fix_slowdown", "worker.starving_slowdown",

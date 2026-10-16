@@ -45,7 +45,7 @@
 	},
 	"issues": {
 		"roll_every_minutes": 10,
-		"tier_scale": 0.2,
+		"tier_scale": 0.1,
 		"day_scale": 0.08,
 		"max_open": 40,
 		"phase": {
@@ -55,7 +55,7 @@
 			"afternoon": 1.35,
 			"leaving": 0.5
 		},
-		"first_day_scale": 0.7
+		"first_day_scale": 1.0
 	},
 	"metrics": {
 		"confidence_start": 60.0,
@@ -157,6 +157,9 @@
 		"idle_grace_minutes": 12.0,
 		"idle_confidence_per_hour": 4.0,
 		"eat_seconds": 4.0,
-		"eat_minutes": 25.0
+		"eat_minutes": 25.0,
+		"games_minutes": 30.0,
+		"games_seconds": 3.0,
+		"games_stress_relief": 30.0
 	}
 }

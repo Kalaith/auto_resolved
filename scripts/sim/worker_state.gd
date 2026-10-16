@@ -22,6 +22,8 @@ var snaps: int = 0
 var room_type: String = ""
 var working: bool = false
 var eating: bool = false
+## Playing games at the IT desk (it is the IT office, so it looks fine).
+var gaming: bool = false
 var _warned_idle: bool = false
 
 
@@ -38,10 +40,11 @@ func begin_day() -> void:
 	_warned_idle = false
 
 
-func report(room: String, is_working: bool, is_eating: bool) -> void:
+func report(room: String, is_working: bool, is_eating: bool, is_gaming: bool = false) -> void:
 	room_type = room
 	working = is_working
 	eating = is_eating
+	gaming = is_gaming
 
 
 func at_it() -> bool:
@@ -85,6 +88,11 @@ func on_fix(effort_minutes: float) -> void:
 
 func ate() -> void:
 	hunger = 0.0
+
+
+## A round of games at the IT desk: a big drop in stress, paid for in time.
+func played_games() -> void:
+	stress = maxf(0.0, stress - Balance.number("worker.games_stress_relief"))
 
 
 func _hunger_scale() -> float:

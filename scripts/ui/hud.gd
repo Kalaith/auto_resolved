@@ -45,6 +45,8 @@ var _hunger: ProgressBar
 var _status: Label
 ## Sends the player to the nearest kitchen or break room to eat.
 var eat_button: Button
+## Plays games at the IT desk; shown only in the IT office.
+var games_button: Button
 var _points_left: float = 0.0
 var _hint: Label
 var _top: PanelContainer
@@ -221,12 +223,18 @@ func _build_needs() -> HBoxContainer:
 	eat_button.custom_minimum_size = Vector2(56, 32)
 	eat_button.focus_mode = Control.FOCUS_NONE
 	row.add_child(eat_button)
+	games_button = ui.button("Games", Callable(), false, 13)
+	games_button.custom_minimum_size = Vector2(70, 32)
+	games_button.focus_mode = Control.FOCUS_NONE
+	games_button.tooltip_text = "Play games at the IT desk: less stress, but 30 office minutes gone"
+	row.add_child(games_button)
 	return row
 
 
 ## Stress, hunger and how the IT worker looks to the office right now.
 func show_worker(office: RefCounted) -> void:
 	var worker: RefCounted = office.worker
+	games_button.visible = worker.at_it()
 	_stress.value = worker.stress
 	_stress.add_theme_stylebox_override("fill", ui.box(ui.palette.level_color(1.0 - worker.stress / 100.0), Color(0, 0, 0, 0), 4, 0))
 	_hunger.value = worker.hunger
@@ -239,6 +247,8 @@ func show_worker(office: RefCounted) -> void:
 		_status.add_theme_color_override("font_color", ui.palette.warn)
 	else:
 		_status.text = "At IT" if worker.at_it() else ("Eating" if worker.eating else "Busy")
+		if worker.gaming:
+			_status.text = "Gaming"
 		_status.add_theme_color_override("font_color", ui.palette.good)
 
 

@@ -113,6 +113,7 @@ func _connect_hud() -> void:
 	hud.incidents.recovery_chosen.connect(func(incident: RefCounted, recovery: String) -> void: work.request_recovery(incident, recovery))
 	hud.menu_button.pressed.connect(open_menu)
 	hud.eat_button.pressed.connect(func() -> void: work.request_eat())
+	hud.games_button.pressed.connect(func() -> void: work.play_games())
 
 
 ## Replaces the whole office with the building for a job. A saved `state`
@@ -265,8 +266,8 @@ func _process(delta: float) -> void:
 ## hunger slow their walk.
 func _report_worker() -> void:
 	var room: Dictionary = {} if player.riding else plan.room_at(player.floor_index, player.world_x())
-	var busy: bool = (work.is_working() and not work.is_eating()) or work.has_pending() or player.riding
-	office.worker.report(str(room.get("type", "")), busy, work.is_eating())
+	var busy: bool = (work.is_working() and not work.is_eating() and not work.is_playing()) or work.has_pending() or player.riding
+	office.worker.report(str(room.get("type", "")), busy, work.is_eating(), work.is_playing())
 	player.walker.speed = player.base_speed * office.worker.walk_scale()
 	hud.show_worker(office)
 

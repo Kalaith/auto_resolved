@@ -3,85 +3,85 @@
 	"issues": [
 		{
 			"id": "password", "label": "Forgotten password", "title": "Locked out of their account",
-			"devices": ["workstation"], "per_device_per_day": 0.48, "min_tier": 1, "severity": 1,
-			"patience_minutes": 80, "manual": {"at": "desk_or_device", "seconds": 3.0, "effort_minutes": 20},
+			"devices": ["workstation"], "per_device_per_day": 0.768, "min_tier": 1, "severity": 1,
+			"patience_minutes": 80, "manual": {"at": "desk_or_device", "seconds": 3.0, "effort_minutes": 25},
 			"fault": "locked", "blocks": 0.9, "spread": "device"
 		},
 		{
 			"id": "printer_offline", "label": "Printer offline", "title": "Printer says OFFLINE again",
-			"devices": ["printer"], "per_device_per_day": 1.65, "min_tier": 1, "severity": 2,
+			"devices": ["printer"], "per_device_per_day": 2.64, "min_tier": 1, "severity": 2,
 			"patience_minutes": 100, "manual": {"at": "device", "seconds": 4.0, "effort_minutes": 35},
 			"fault": "offline", "blocks": 0.15, "spread": "floor"
 		},
 		{
 			"id": "software_install", "label": "Software install", "title": "Needs a program installed",
-			"devices": ["workstation"], "per_device_per_day": 0.33, "min_tier": 1, "severity": 1,
+			"devices": ["workstation"], "per_device_per_day": 0.528, "min_tier": 1, "severity": 1,
 			"patience_minutes": 140, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 50},
 			"fault": "install", "blocks": 0.35, "spread": "device"
 		},
 		{
 			"id": "slow_pc", "label": "Slow PC", "title": "Computer is slow as treacle",
-			"devices": ["workstation"], "per_device_per_day": 0.27, "min_tier": 1, "severity": 1,
+			"devices": ["workstation"], "per_device_per_day": 0.432, "min_tier": 1, "severity": 1,
 			"patience_minutes": 160, "manual": {"at": "device", "seconds": 5.0, "effort_minutes": 45},
 			"fault": "slow", "blocks": 0.4, "spread": "device"
 		},
 		{
 			"id": "new_employee", "label": "New employee", "title": "New starter has no account",
-			"devices": ["workstation"], "per_device_per_day": 0.075, "min_tier": 1, "severity": 2,
+			"devices": ["workstation"], "per_device_per_day": 0.12, "min_tier": 1, "severity": 2,
 			"patience_minutes": 120, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 60},
 			"fault": "no_account", "blocks": 1.0, "spread": "device"
 		},
 		{
 			"id": "network", "label": "Network interruption", "title": "A whole floor dropped off the network",
-			"devices": ["network_core"], "per_device_per_day": 0.525, "min_tier": 2, "severity": 3,
+			"devices": ["network_core"], "per_device_per_day": 0.84, "min_tier": 2, "severity": 3,
 			"patience_minutes": 45, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 55},
 			"fault": "no_network", "blocks": 0.8, "spread": "floor"
 		},
 		{
 			"id": "elevator_fault", "label": "Elevator controller", "title": "The lift is stopping at every floor",
-			"devices": ["elevator"], "per_device_per_day": 0.45, "min_tier": 2, "severity": 2,
+			"devices": ["elevator"], "per_device_per_day": 0.72, "min_tier": 2, "severity": 2,
 			"patience_minutes": 70, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 40},
 			"fault": "confused", "blocks": 0.0, "spread": "device"
 		},
 		{
 			"id": "legacy_app", "label": "Legacy system", "title": "The 1997 case system crashed again",
-			"devices": ["server"], "per_device_per_day": 0.18, "min_tier": 3, "severity": 3,
+			"devices": ["server"], "per_device_per_day": 0.288, "min_tier": 3, "severity": 3,
 			"patience_minutes": 60, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 75},
 			"fault": "crashed", "blocks": 0.3, "spread": "building"
 		},
 		{
 			"id": "build_server", "label": "Build server", "title": "The nightly build is broken",
-			"devices": ["server"], "per_device_per_day": 0.6, "min_tier": 2, "severity": 2,
+			"devices": ["server"], "per_device_per_day": 0.96, "min_tier": 2, "severity": 2,
 			"patience_minutes": 70, "manual": {"at": "device", "seconds": 7.0, "effort_minutes": 60},
 			"fault": "crashed", "blocks": 0.35, "spread": "building", "archetypes": ["game_studio"]
 		},
 		{
 			"id": "pager_outage", "label": "Pager outage", "title": "The pagers on a whole floor went quiet",
-			"devices": ["network_core"], "per_device_per_day": 0.6, "min_tier": 3, "severity": 3,
+			"devices": ["network_core"], "per_device_per_day": 0.96, "min_tier": 3, "severity": 3,
 			"patience_minutes": 30, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 45},
 			"fault": "no_network", "blocks": 0.6, "spread": "floor", "archetypes": ["hospital"]
 		},
 		{
 			"id": "trading_terminal", "label": "Trading terminal", "title": "Terminal froze mid-trade",
-			"devices": ["workstation"], "per_device_per_day": 0.225, "min_tier": 4, "severity": 2,
+			"devices": ["workstation"], "per_device_per_day": 0.36, "min_tier": 4, "severity": 2,
 			"patience_minutes": 30, "manual": {"at": "device", "seconds": 5.0, "effort_minutes": 30},
 			"fault": "dark", "blocks": 1.0, "spread": "device", "archetypes": ["bank"]
 		},
 		{
 			"id": "wifi_portal", "label": "Campus wifi", "title": "The wifi login page loops forever",
-			"devices": ["network_core"], "per_device_per_day": 0.675, "min_tier": 2, "severity": 2,
+			"devices": ["network_core"], "per_device_per_day": 1.08, "min_tier": 2, "severity": 2,
 			"patience_minutes": 60, "manual": {"at": "device", "seconds": 5.0, "effort_minutes": 40},
 			"fault": "no_network", "blocks": 0.5, "spread": "floor", "archetypes": ["university"]
 		},
 		{
 			"id": "fax_gateway", "label": "Fax gateway", "title": "The fax gateway jammed in 1992 mode",
-			"devices": ["server"], "per_device_per_day": 0.45, "min_tier": 3, "severity": 2,
+			"devices": ["server"], "per_device_per_day": 0.72, "min_tier": 3, "severity": 2,
 			"patience_minutes": 80, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 60},
 			"fault": "crashed", "blocks": 0.25, "spread": "building", "archetypes": ["government_office"]
 		},
 		{
 			"id": "cooling_alarm", "label": "Cooling alarm", "title": "A hot aisle is overheating",
-			"devices": ["server"], "per_device_per_day": 0.18, "min_tier": 4, "severity": 3,
+			"devices": ["server"], "per_device_per_day": 0.288, "min_tier": 4, "severity": 3,
 			"patience_minutes": 30, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 50},
 			"fault": "crashed", "blocks": 0.3, "spread": "building", "archetypes": ["data_centre"]
 		}

@@ -323,6 +323,10 @@ Notes on how the plan was built:
   post-lunch rush (`issues.phase.*`) and a gentler first day. A skippable
   day-1 tutorial (`scripts/tutorial.gd`, `data/text_tutorial.json`) runs on a
   career's first job.
+- Second pass: rates up 1.6x again and no gentler first day, so even a
+  tier-1 office opens about 20 tickets a day against about 14 a perfect
+  hand-fixer could clear (`tools/day_report.gd`); playing games at the IT
+  desk trades 30 office minutes for a big drop in stress.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
   tour, and the M0 checks still run.
