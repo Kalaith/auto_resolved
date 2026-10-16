@@ -84,6 +84,12 @@ func fix_seconds(ticket: Ticket) -> float:
 	return float(Catalog.issue(ticket.issue).manual.seconds)
 
 
+## Office minutes a manual fix uses up: the clock runs through them while the
+## player works, so a day only holds so many fixes.
+func fix_effort(ticket: Ticket) -> float:
+	return float(Catalog.issue(ticket.issue).manual.effort_minutes)
+
+
 ## The player started working on `ticket`.
 func begin_manual(office: RefCounted, ticket: Ticket) -> void:
 	if ticket.is_open() and ticket.status != "in_progress":
@@ -96,6 +102,7 @@ func begin_manual(office: RefCounted, ticket: Ticket) -> void:
 func complete_manual(office: RefCounted, ticket: Ticket, device_id: String) -> bool:
 	if ticket == null or not ticket.is_open() or not fix_places(office, ticket).has(device_id):
 		return false
+	office.worker.on_fix(fix_effort(ticket))
 	resolve(office, ticket, "player")
 	return true
 

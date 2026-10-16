@@ -1,7 +1,8 @@
 extends RefCounted
 ## Decides when things break. Every few office minutes each device rolls for
 ## each issue that can hit it, at the issue's rate per device per day, scaled
-## up by company tier and by how many days you have worked there, and down by
+## up by company tier, by how many days you have worked there and by the time
+## of day (a rush after arrival and after lunch, quiet over lunch), and down by
 ## whatever prevention PATCH has in place. The first day opens with three
 ## teaching tickets so there is something to do straight away. All draws come
 ## from the job's "issues" stream.
@@ -52,7 +53,10 @@ func _roll(office: RefCounted, minute: float) -> void:
 	var clock: RefCounted = office.clock
 	var window: float = _every / (clock.end_minute - clock.start_minute)
 	var scale: float = (1.0 + Balance.number("issues.tier_scale") * float(office.job.tier - 1)) \
-		* (1.0 + Balance.number("issues.day_scale") * float(clock.day - 1))
+		* (1.0 + Balance.number("issues.day_scale") * float(clock.day - 1)) \
+		* Balance.number("issues.phase." + clock.phase())
+	if clock.day == 1:
+		scale *= Balance.number("issues.first_day_scale")
 	for issue_id in Catalog.issue_ids:
 		var issue: Dictionary = Catalog.issue(issue_id)
 		if int(issue.min_tier) > office.job.tier:

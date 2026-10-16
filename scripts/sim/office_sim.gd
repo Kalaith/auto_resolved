@@ -16,6 +16,7 @@ const Helpdesk = preload("res://scripts/sim/helpdesk.gd")
 const CompanyMetrics = preload("res://scripts/sim/company_metrics.gd")
 const PatchState = preload("res://scripts/sim/patch_state.gd")
 const PatchDesk = preload("res://scripts/sim/patch_desk.gd")
+const WorkerState = preload("res://scripts/sim/worker_state.gd")
 
 ## Issues the Remote session upgrade lets the player fix from the IT desk.
 const REMOTE_ISSUES: Array[String] = ["password", "software_install", "slow_pc", "new_employee"]
@@ -33,6 +34,8 @@ var metrics: CompanyMetrics
 ## PATCH as a character (carried between jobs) and its work at this job.
 var patch: PatchState
 var patch_desk: PatchDesk
+## The IT worker's stress, hunger and how busy they look.
+var worker: WorkerState = WorkerState.new()
 ## Outages covering whole floors: source -> {"fault", "block", "floors"}.
 var area_faults: Dictionary = {}
 var events: Array[Dictionary] = []
@@ -91,6 +94,8 @@ func begin_day(index: int) -> void:
 	helpdesk.roller.begin_day(index, clock.start_minute)
 	metrics.begin_day()
 	patch_desk.begin_day()
+	if index > 1:
+		worker.begin_day()
 	day_running = true
 	emit("day_started", {"day": index})
 
@@ -108,6 +113,7 @@ func step(delta: float) -> void:
 	helpdesk.roller.step(self, clock.minute)
 	patch_desk.step(self)
 	metrics.step(self, clock.minute - before)
+	worker.step(self, clock.minute - before)
 	_sync_elevator()
 	if ended:
 		_end_day()

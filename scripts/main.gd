@@ -29,7 +29,7 @@ const Z_RIDERS: int = 2
 const Z_DOORS: int = 3
 const Z_STAFF: int = 4
 ## The most sim ticks one frame may run, so a slow frame cannot snowball.
-const MAX_TICKS_PER_FRAME: int = 12
+const MAX_TICKS_PER_FRAME: int = 40
 
 ## True opens straight into a job (captures, quick tests) instead of the title.
 @export var skip_title: bool = false
@@ -104,6 +104,7 @@ func _connect_hud() -> void:
 	hud.alert.pressed.connect(func() -> void: hud.incidents.open_for(office))
 	hud.incidents.recovery_chosen.connect(func(incident: RefCounted, recovery: String) -> void: work.request_recovery(incident, recovery))
 	hud.menu_button.pressed.connect(open_menu)
+	hud.eat_button.pressed.connect(func() -> void: work.request_eat())
 
 
 ## Replaces the whole office with the building for a job. A saved `state`
@@ -217,17 +218,19 @@ func open_menu() -> void:
 func _physics_process(delta: float) -> void:
 	if office == null:
 		return
-	if time_scale <= 0.0 or not office.day_running:
+	# Working on a task runs the clock through its effort, paused or not.
+	var worked: float = work.take_spent_minutes() / office.clock.minutes_per_second
+	if (time_scale <= 0.0 and worked <= 0.0) or not office.day_running:
 		office.step_paused(delta)
 		_accumulator = 0.0
 	else:
-		_accumulator += delta * time_scale
+		_accumulator += delta * time_scale + worked
 		var ticks: int = 0
 		while _accumulator >= OfficeSim.TICK and ticks < MAX_TICKS_PER_FRAME and office.day_running:
 			office.step(OfficeSim.TICK)
 			_accumulator -= OfficeSim.TICK
 			ticks += 1
-		_accumulator = minf(_accumulator, OfficeSim.TICK * 2.0)
+		_accumulator = minf(_accumulator, OfficeSim.TICK * float(MAX_TICKS_PER_FRAME))
 	for event in office.drain_events():
 		_on_event(event)
 		if office == null:
@@ -238,6 +241,7 @@ func _process(delta: float) -> void:
 	if office == null or player == null:
 		return
 	hud.show_points(office, delta, flow.career != null)
+	_report_worker()
 	hud.show_position(player, elevator)
 	hud.clock_bar.show_clock(office.clock, office.day_running)
 	hud.person_card.refresh(office)
@@ -245,6 +249,16 @@ func _process(delta: float) -> void:
 	hud.show_alert(office)
 	sky_view.set_progress(office.clock.progress())
 	window_shade.set_light(sky_view.tint)
+
+
+## Tells the office where the IT worker is and what they are doing, and lets
+## hunger slow their walk.
+func _report_worker() -> void:
+	var room: Dictionary = {} if player.riding else plan.room_at(player.floor_index, player.world_x())
+	var busy: bool = (work.is_working() and not work.is_eating()) or work.has_pending() or player.riding
+	office.worker.report(str(room.get("type", "")), busy, work.is_eating())
+	player.walker.speed = player.base_speed * office.worker.walk_scale()
+	hud.show_worker(office)
 
 
 func _on_event(event: Dictionary) -> void:
@@ -260,6 +274,10 @@ func _on_event(event: Dictionary) -> void:
 			hud.toast("A manager is on the way to the IT office.")
 		"new_starter":
 			hud.toast("A new starter has arrived, and needs an account.")
+		"worker_snapped":
+			hud.toast("You snapped at someone. Management heard about it.")
+		"worker_slacking":
+			hud.toast("People have noticed you wandering about. Look busy: go back to IT.")
 		"ticket_opened":
 			if int(event.ticket) <= 3:
 				hud.toast("New ticket: %s" % office.helpdesk.queue.get_ticket(int(event.ticket)).title)
@@ -294,6 +312,9 @@ func _click(at: Vector2) -> void:
 	var person: RefCounted = staff_view.employee_at(at)
 	if person != null:
 		hud.person_card.open_for(person)
+		return
+	if not work.eat_spot_at(at).is_empty():
+		work.request_eat()
 		return
 	var device: RefCounted = device_view.device_at(at)
 	if device != null:

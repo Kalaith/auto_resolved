@@ -24,7 +24,7 @@ var _ids: Array[int] = []
 func build(kit: RefCounted) -> void:
 	ui = kit
 	add_theme_stylebox_override("panel", ui.panel_box(0.88, 10))
-	custom_minimum_size = Vector2(330, 0)
+	custom_minimum_size = Vector2(380, 0)
 	var column: VBoxContainer = ui.vbox(6)
 	add_child(column)
 	var top: HBoxContainer = ui.hbox(8)
@@ -44,7 +44,7 @@ func build(kit: RefCounted) -> void:
 		_rows.add_child(line)
 		var button: Button = ui.button("", func() -> void: _choose(index), false, 13)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.custom_minimum_size = Vector2(270, 34)
+		button.custom_minimum_size = Vector2(320, 34)
 		button.focus_mode = Control.FOCUS_NONE
 		button.clip_text = true
 		line.add_child(button)
@@ -85,13 +85,14 @@ func _row_text(office: RefCounted, ticket: RefCounted, now: float) -> String:
 	var device: RefCounted = office.device(ticket.device_id)
 	var where: String = BuildingView.floor_name(ticket.floor_index if device == null else device.floor_index)
 	var left: float = ticket.minutes_left(now)
-	var due: String = "LATE" if left < 0.0 else "%dm" % int(left)
+	var due: String = "LATE" if left < 0.0 else "due %dm" % int(left)
 	var who: String = ""
 	var reporter: RefCounted = office.employee(ticket.reporter)
 	if reporter != null:
 		who = " - " + reporter.name.get_slice(" ", 0)
 	var state: String = " [fixing]" if ticket.status == "in_progress" else ""
-	return "#%d %s  F%s%s  %s%s" % [ticket.id, str(Catalog.issue(ticket.issue).label), where, who, due, state]
+	var effort: int = int(Catalog.issue(ticket.issue).manual.effort_minutes)
+	return "#%d %s F%s%s  %s  fix %dm%s" % [ticket.id, str(Catalog.issue(ticket.issue).label), where, who, due, effort, state]
 
 
 func _urgency_colour(ticket: RefCounted, now: float) -> Color:

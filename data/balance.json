@@ -47,11 +47,19 @@
 		"roll_every_minutes": 10,
 		"tier_scale": 0.2,
 		"day_scale": 0.08,
-		"max_open": 40
+		"max_open": 40,
+		"phase": {
+			"arrival": 1.5,
+			"morning": 1.15,
+			"lunch": 0.55,
+			"afternoon": 1.35,
+			"leaving": 0.5
+		},
+		"first_day_scale": 0.7
 	},
 	"metrics": {
 		"confidence_start": 60.0,
-		"overdue_drain_per_hour": 3.0,
+		"overdue_drain_per_hour": 2.0,
 		"fix_gain": 1.5,
 		"fast_fix_gain": 1.0,
 		"mood_drop_per_hour": 0.35,
@@ -126,5 +134,29 @@
 		},
 		"summon_minute": 570,
 		"summon_minutes": 25
+	},
+	"worker": {
+		"stress_start": 10.0,
+		"hunger_start": 15.0,
+		"overnight_stress_keep": 0.4,
+		"hunger_per_hour": 11.0,
+		"hungry_at": 60.0,
+		"starving_at": 85.0,
+		"stress_per_fix": 4.0,
+		"stress_per_open_hour": 1.2,
+		"open_cap": 8.0,
+		"stress_per_overdue_hour": 5.0,
+		"hungry_stress_scale": 1.7,
+		"calm_at_it_per_hour": 14.0,
+		"calm_eating_per_hour": 30.0,
+		"fix_slowdown": 0.8,
+		"starving_slowdown": 1.25,
+		"starving_walk": 0.8,
+		"snap_confidence": 6.0,
+		"snap_stress_after": 65.0,
+		"idle_grace_minutes": 6.0,
+		"idle_confidence_per_hour": 4.0,
+		"eat_seconds": 4.0,
+		"eat_minutes": 25.0
 	}
 }

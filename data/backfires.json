@@ -11,17 +11,17 @@
 		"false_success": {"label": "False success", "guardrail": "Only call a ticket done when the user is working"}
 	},
 	"recoveries": {
-		"reissue_credentials": {"label": "Reissue credentials and tell people", "at": "desk", "seconds": 4.0, "does": ["close_tickets", "clear_faults"], "requires": "", "confidence": 0},
-		"cancel_queue": {"label": "Cancel the print queue", "at": "desk", "seconds": 3.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
-		"clear_jam": {"label": "Clear the paper by hand", "at": "site", "seconds": 2.5, "does": ["clear_faults"], "requires": "", "confidence": 0},
-		"rollback": {"label": "Roll back PATCH's change", "at": "desk", "seconds": 4.0, "does": ["clear_faults", "close_tickets"], "requires": "rollback", "confidence": 0},
-		"repair_on_site": {"label": "Repair it on site", "at": "site", "seconds": 8.0, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
-		"revoke_rights": {"label": "Revoke the extra rights and audit", "at": "desk", "seconds": 5.0, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
-		"restore_rule": {"label": "Restore the network rule", "at": "desk", "seconds": 4.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
-		"reset_controller": {"label": "Reset the lift controller", "at": "site", "seconds": 4.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
-		"restore_snapshot": {"label": "Restore the queue from the snapshot", "at": "desk", "seconds": 3.0, "does": ["restore_tickets", "reopen_tickets"], "requires": "backup", "confidence": 0},
-		"audit_losses": {"label": "Rebuild the queue from email, one by one", "at": "desk", "seconds": 12.0, "does": ["restore_tickets", "reopen_tickets"], "requires": "", "confidence": -3},
-		"reopen_history": {"label": "Reopen them from history", "at": "desk", "seconds": 5.0, "does": ["reopen_tickets"], "requires": "", "confidence": 0}
+		"reissue_credentials": {"label": "Reissue credentials and tell people", "at": "desk", "seconds": 4.0, "effort_minutes": 25, "does": ["close_tickets", "clear_faults"], "requires": "", "confidence": 0},
+		"cancel_queue": {"label": "Cancel the print queue", "at": "desk", "seconds": 3.0, "effort_minutes": 10, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"clear_jam": {"label": "Clear the paper by hand", "at": "site", "seconds": 2.5, "effort_minutes": 15, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"rollback": {"label": "Roll back PATCH's change", "at": "desk", "seconds": 4.0, "effort_minutes": 30, "does": ["clear_faults", "close_tickets"], "requires": "rollback", "confidence": 0},
+		"repair_on_site": {"label": "Repair it on site", "at": "site", "seconds": 8.0, "effort_minutes": 60, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
+		"revoke_rights": {"label": "Revoke the extra rights and audit", "at": "desk", "seconds": 5.0, "effort_minutes": 35, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
+		"restore_rule": {"label": "Restore the network rule", "at": "desk", "seconds": 4.0, "effort_minutes": 25, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"reset_controller": {"label": "Reset the lift controller", "at": "site", "seconds": 4.0, "effort_minutes": 25, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"restore_snapshot": {"label": "Restore the queue from the snapshot", "at": "desk", "seconds": 3.0, "effort_minutes": 15, "does": ["restore_tickets", "reopen_tickets"], "requires": "backup", "confidence": 0},
+		"audit_losses": {"label": "Rebuild the queue from email, one by one", "at": "desk", "seconds": 12.0, "effort_minutes": 90, "does": ["restore_tickets", "reopen_tickets"], "requires": "", "confidence": -3},
+		"reopen_history": {"label": "Reopen them from history", "at": "desk", "seconds": 5.0, "effort_minutes": 30, "does": ["reopen_tickets"], "requires": "", "confidence": 0}
 	},
 	"pools": {
 		"reset_password": [

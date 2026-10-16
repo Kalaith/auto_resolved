@@ -12,6 +12,8 @@ var office: RefCounted
 ## The device the player is working at and how far along (0..1), or "".
 var work_device: String = ""
 var work_progress: float = 0.0
+## Where the player is eating (progress ring there), or INF.
+var eat_at: Vector2 = Vector2.INF
 var _time: float = 0.0
 var _font: Font
 
@@ -46,6 +48,8 @@ func _draw() -> void:
 		var device: RefCounted = office.device(ticket.device_id)
 		if device != null:
 			_bubble(Vector2(device.x, floor_line(device)) + _bubble_offset(device), ticket, now)
+	if eat_at != Vector2.INF:
+		_ring(eat_at + Vector2(0, -140), work_progress)
 	if not work_device.is_empty():
 		var device: RefCounted = office.device(work_device)
 		if device != null:

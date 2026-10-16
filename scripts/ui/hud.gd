@@ -38,6 +38,11 @@ var _company: Label
 var _details: Label
 var _where: Label
 var _points: Label
+var _stress: ProgressBar
+var _hunger: ProgressBar
+var _status: Label
+## Sends the player to the nearest kitchen or break room to eat.
+var eat_button: Button
 var _points_left: float = 0.0
 var _hint: Label
 var _top: PanelContainer
@@ -62,6 +67,7 @@ func _ready() -> void:
 	_points = ui.label("", 14, ui.palette.accent)
 	for label in [_company, _details, _where, _points]:
 		column.add_child(label)
+	column.add_child(_build_needs())
 	_hint = ui.label(HINT, 13, ui.palette.muted)
 	_hint.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_hint.offset_left = 16.0
@@ -191,6 +197,43 @@ func show_alert(office: RefCounted) -> void:
 		var newest: RefCounted = active[active.size() - 1]
 		var more: String = "  (+%d more)" % (active.size() - 1) if active.size() > 1 else ""
 		alert.text = "INCIDENT: PATCH managed to %s%s" % [Catalog.say("backfire.%s.label" % newest.backfire_id), more]
+
+
+func _build_needs() -> HBoxContainer:
+	var row: HBoxContainer = ui.hbox(8)
+	row.add_child(ui.label("Stress", 13, ui.palette.muted))
+	_stress = ui.meter(0.0, 100.0, 90.0)
+	_stress.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(_stress)
+	row.add_child(ui.label("Hunger", 13, ui.palette.muted))
+	_hunger = ui.meter(0.0, 100.0, 90.0)
+	_hunger.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(_hunger)
+	_status = ui.label("", 13)
+	row.add_child(_status)
+	eat_button = ui.button("Eat", Callable(), false, 13)
+	eat_button.custom_minimum_size = Vector2(56, 32)
+	eat_button.focus_mode = Control.FOCUS_NONE
+	row.add_child(eat_button)
+	return row
+
+
+## Stress, hunger and how the IT worker looks to the office right now.
+func show_worker(office: RefCounted) -> void:
+	var worker: RefCounted = office.worker
+	_stress.value = worker.stress
+	_stress.add_theme_stylebox_override("fill", ui.box(ui.palette.level_color(1.0 - worker.stress / 100.0), Color(0, 0, 0, 0), 4, 0))
+	_hunger.value = worker.hunger
+	_hunger.add_theme_stylebox_override("fill", ui.box(ui.palette.level_color(1.0 - worker.hunger / 100.0), Color(0, 0, 0, 0), 4, 0))
+	if worker.is_seen_slacking():
+		_status.text = "Seen slacking!"
+		_status.add_theme_color_override("font_color", ui.palette.bad)
+	elif worker.looks_idle(office.clock.phase()):
+		_status.text = "Looks idle"
+		_status.add_theme_color_override("font_color", ui.palette.warn)
+	else:
+		_status.text = "At IT" if worker.at_it() else ("Eating" if worker.eating else "Busy")
+		_status.add_theme_color_override("font_color", ui.palette.good)
 
 
 ## The PATCH Points this job would pay if you handed in notice now, refreshed

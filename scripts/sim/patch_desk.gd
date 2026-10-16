@@ -144,6 +144,10 @@ func recovery_label(recovery_id: String) -> String:
 	return str(Catalog.recoveries[recovery_id].label)
 
 
+func recovery_effort(recovery_id: String) -> float:
+	return float(Catalog.recoveries[recovery_id].effort_minutes)
+
+
 func recovery_seconds(office: RefCounted, recovery_id: String) -> float:
 	return float(Catalog.recoveries[recovery_id].seconds) * office.patch.recovery_scale()
 

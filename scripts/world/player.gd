@@ -26,6 +26,8 @@ var floor_index: int:
 var riding: bool:
 	get:
 		return walker.riding
+## The walk speed before hunger slows it (main.gd scales walker.speed).
+var base_speed: float = 0.0
 var _reach: float = 0.0
 var _walk_time: float = 0.0
 var _look: Dictionary = {}
@@ -37,6 +39,7 @@ func setup(building: RefCounted, car: RefCounted, start_floor: int, start_x: flo
 	elevator = car
 	walker = Walker.new(ID, start_floor, start_x, Balance.number("player.walk_speed"))
 	walker.squeeze = true
+	base_speed = walker.speed
 	walker.wait_offset = 0.0
 	selected_floor = start_floor
 	_reach = Balance.number("player.interact_reach")

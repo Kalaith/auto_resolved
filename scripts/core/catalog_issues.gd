@@ -62,4 +62,5 @@ static func _check(check: RefCounted, entry: Dictionary) -> bool:
 	if not manual is Dictionary:
 		return check.fail("manual must be an object")
 	ok = check.one_of(manual, "at", FIX_PLACES) and check.number_between(manual, "seconds", 0.5, 30.0) and ok
+	ok = check.integer_between(manual, "effort_minutes", 5, 240) and ok
 	return ok

@@ -73,6 +73,7 @@ static func _load_backfires(errors: Array[String], data: Dictionary, result: Dic
 		var ok: bool = check.text(entry, "label") and check.one_of(entry, "at", RECOVERY_AT)
 		ok = check.number_between(entry, "seconds", 0.5, 60.0) and check.one_of(entry, "requires", RECOVERY_REQUIRES) and ok
 		ok = check.integer_between(entry, "confidence", -20, 20) and ok
+		ok = check.integer_between(entry, "effort_minutes", 5, 240) and ok
 		if not entry.get("does") is Array or entry.does.is_empty() or not entry.does.all(func(item: Variant) -> bool: return RECOVERY_DOES.has(item)):
 			ok = check.fail("does must list known recovery steps")
 		if ok:
