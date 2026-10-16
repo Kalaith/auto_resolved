@@ -1,0 +1,8 @@
+{
+  "slug": "it_guy",
+  "display_name": "IT Guy",
+  "description": "A Godot workplace sim: keep a multi-floor office running with PATCH, an overconfident new AI assistant, and carry it from job to job.",
+  "godot_version": "4.2.2",
+  "itch_target": "kalaith/it-guy",
+  "itch_channels": { "html5": "html5", "windows": "windows" }
+}

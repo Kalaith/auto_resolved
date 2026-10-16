@@ -1,0 +1,22 @@
+{
+	"schema_version": 1,
+	"building": {
+		"floor_height": 200.0,
+		"slab": 14.0,
+		"shaft_width": 96.0,
+		"ground_depth": 80.0
+	},
+	"elevator": {
+		"speed_floors_per_second": 1.6,
+		"door_seconds": 0.4,
+		"dwell_seconds": 1.4
+	},
+	"player": {
+		"walk_speed": 240.0,
+		"interact_reach": 44.0
+	},
+	"camera": {
+		"follow_rate": 6.0,
+		"overview_margin": 80.0
+	}
+}

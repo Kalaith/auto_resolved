@@ -1,0 +1,150 @@
+{
+	"schema_version": 1,
+	"archetypes": [
+		{
+			"id": "family_business",
+			"label": "Family business",
+			"tier": 1,
+			"pay_per_day": 120,
+			"floors": [2, 2],
+			"basement": false,
+			"width": [1100, 1300],
+			"elevator_position": [0.3, 0.7],
+			"names": {"first": ["Kettleby", "Hobbs", "Marlow", "Pennant"], "second": ["Plumbing Supplies", "& Sons Hardware", "Office Furniture", "Bakery Wholesale"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "server_room", "floor": "top"}
+			],
+			"room_weights": {"open_office": 4, "kitchen": 2, "exec_office": 1, "break_room": 1},
+			"theme": {
+				"sky": "f2b77a", "exterior": "7d4f3a", "slab": "5e3a2a", "trim": "a8754f", "floor": "8a6446",
+				"walls": ["eadbc4", "e3cfa9", "d9c2a0", "efe3cf"],
+				"furniture": "6b4a36", "accent": "c8553d", "hue_jitter": 0.02
+			}
+		},
+		{
+			"id": "startup",
+			"label": "Startup",
+			"tier": 1,
+			"pay_per_day": 150,
+			"floors": [2, 3],
+			"basement": false,
+			"width": [1200, 1500],
+			"elevator_position": [0.15, 0.85],
+			"names": {"first": ["Synergly", "Bloop", "Kwik", "Nimbl"], "second": ["Labs", ".io", "HQ", "Collective"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "server_room", "floor": "top"}
+			],
+			"room_weights": {"open_office": 5, "break_room": 2, "meeting_room": 1},
+			"theme": {
+				"sky": "9fd8e8", "exterior": "2e3a4f", "slab": "22293a", "trim": "f26d85", "floor": "3c4660",
+				"walls": ["c6f0e0", "fff1b8", "f9c6d8", "cfe1ff"],
+				"furniture": "39405a", "accent": "28c2a6", "hue_jitter": 0.05
+			}
+		},
+		{
+			"id": "accounting_firm",
+			"label": "Accounting firm",
+			"tier": 2,
+			"pay_per_day": 210,
+			"floors": [3, 4],
+			"basement": false,
+			"width": [1400, 1700],
+			"elevator_position": [0.4, 0.6],
+			"names": {"first": ["Ledger", "Abacus", "Tally", "Crumb"], "second": ["& Partners", "Accountancy", "Tax Group", "Audit LLP"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "server_room", "floor": "top"}
+			],
+			"room_weights": {"open_office": 5, "meeting_room": 2, "exec_office": 1},
+			"theme": {
+				"sky": "c7d3e0", "exterior": "4a5568", "slab": "343c4c", "trim": "8d99ae", "floor": "6b7280",
+				"walls": ["dfe5ec", "cfd8e3", "e6e9ee", "d4dbe4"],
+				"furniture": "3d4656", "accent": "2f6fb0", "hue_jitter": 0.015
+			}
+		},
+		{
+			"id": "design_agency",
+			"label": "Design agency",
+			"tier": 2,
+			"pay_per_day": 230,
+			"floors": [3, 4],
+			"basement": false,
+			"width": [1400, 1800],
+			"elevator_position": [0.2, 0.8],
+			"names": {"first": ["Pastel", "Kern", "Gradient", "Moodboard"], "second": ["Studio", "& Co", "Creative", "Atelier"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "server_room", "floor": "top"}
+			],
+			"room_weights": {"open_office": 4, "break_room": 2, "meeting_room": 2},
+			"theme": {
+				"sky": "f4a26b", "exterior": "6a3d5c", "slab": "5a2f4c", "trim": "e58fb0", "floor": "7a4a68",
+				"walls": ["f6c9d4", "c9c4f0", "f3d1e8", "e9b7c8"],
+				"furniture": "4c3a5c", "accent": "8f5fd6", "hue_jitter": 0.04
+			}
+		},
+		{
+			"id": "law_firm",
+			"label": "Law firm",
+			"tier": 3,
+			"pay_per_day": 320,
+			"floors": [4, 5],
+			"basement": true,
+			"width": [1600, 2000],
+			"elevator_position": [0.45, 0.55],
+			"names": {"first": ["Whitlock", "Ashgrove", "Pemberton", "Holloway"], "second": ["& Vane", "Chambers", "Legal", "& Associates"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "basement"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"open_office": 3, "exec_office": 2, "meeting_room": 2},
+			"theme": {
+				"sky": "34445e", "exterior": "3b2a22", "slab": "2a1d17", "trim": "b08d57", "floor": "5a3d2b",
+				"walls": ["2f4a3a", "3d5a46", "6b4f3a", "e4dcc8"],
+				"furniture": "4a2f22", "accent": "c9a24a", "hue_jitter": 0.015
+			}
+		},
+		{
+			"id": "megacorp",
+			"label": "Megacorp",
+			"tier": 4,
+			"pay_per_day": 480,
+			"floors": [6, 8],
+			"basement": true,
+			"width": [1800, 2300],
+			"elevator_position": [0.48, 0.52],
+			"names": {"first": ["Omnivex", "Globacore", "Verimax", "Synthia"], "second": ["Holdings", "Global", "Group", "International"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"}
+			],
+			"room_weights": {"open_office": 6, "meeting_room": 2, "break_room": 1, "printer_bay": 1},
+			"theme": {
+				"sky": "1b2236", "exterior": "5b6b80", "slab": "3a4456", "trim": "9fb3c8", "floor": "4a5568",
+				"walls": ["e8edf2", "dbe4ec", "cfd9e4", "f0f3f6"],
+				"furniture": "2d3748", "accent": "00a3c4", "hue_jitter": 0.01
+			}
+		}
+	]
+}

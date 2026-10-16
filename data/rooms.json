@@ -1,0 +1,14 @@
+{
+	"schema_version": 1,
+	"rooms": [
+		{"id": "lobby", "label": "Lobby", "min_width": 260, "max_width": 420, "wall_shift": 0.0, "props": ["window", "reception_desk", "plant", "couch"]},
+		{"id": "it_office", "label": "IT", "min_width": 240, "max_width": 320, "wall_shift": -0.08, "props": ["desk_pc", "server_rack", "whiteboard", "plant"]},
+		{"id": "open_office", "label": "Office", "min_width": 260, "max_width": 520, "wall_shift": 0.0, "props": ["window", "plant"], "fill": "desk_pc", "fill_spacing": 92},
+		{"id": "meeting_room", "label": "Meeting", "min_width": 200, "max_width": 300, "wall_shift": 0.05, "props": ["whiteboard", "table", "window"]},
+		{"id": "kitchen", "label": "Kitchen", "min_width": 200, "max_width": 300, "wall_shift": 0.06, "props": ["fridge", "table", "water_cooler"]},
+		{"id": "printer_bay", "label": "Print", "min_width": 140, "max_width": 200, "wall_shift": -0.04, "props": ["printer", "bookshelf"]},
+		{"id": "server_room", "label": "Servers", "min_width": 180, "max_width": 260, "wall_shift": -0.25, "props": ["server_rack", "server_rack", "server_rack"]},
+		{"id": "exec_office", "label": "Exec", "min_width": 220, "max_width": 300, "wall_shift": 0.1, "props": ["bookshelf", "desk_pc", "plant", "window"]},
+		{"id": "break_room", "label": "Break", "min_width": 200, "max_width": 300, "wall_shift": 0.08, "props": ["couch", "vending", "plant"]}
+	]
+}
