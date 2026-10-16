@@ -53,6 +53,32 @@
 			}
 		},
 		{
+			"id": "charity_office",
+			"label": "Charity office",
+			"tier": 1,
+			"pay_per_day": 135,
+			"floors": [2, 3],
+			"basement": false,
+			"width": [1500, 1700],
+			"elevator_position": [0.25, 0.75],
+			"names": {"first": ["Kindred", "Neighbourly", "Goodwill", "Openhand"], "second": ["Foundation", "Trust", "Community Fund", "Charity"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "any"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "server_room", "floor": "top"},
+				{"room": "open_office", "floor": "ground"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "fundraising_room", "floor": "any"}
+			],
+			"room_weights": {"open_office": 7, "fundraising_room": 2, "meeting_room": 1, "break_room": 1},
+			"theme": {
+				"sky": "e8d9a8", "exterior": "42644f", "slab": "294338", "trim": "d89b42", "floor": "b89d6b",
+				"walls": ["f3e9c9", "dce9c4", "f0d3a5", "d9e4dc"],
+				"furniture": "4f5c48", "accent": "d85b45", "hue_jitter": 0.025
+			}
+		},
+		{
 			"id": "accounting_firm",
 			"label": "Accounting firm",
 			"tier": 2,
@@ -232,6 +258,35 @@
 				"sky": "b8bec4", "exterior": "8a8f94", "slab": "5a5f64", "trim": "6a7a5a", "floor": "7a7a6a",
 				"walls": ["d8d8c8", "c8ccc0", "dcd8c8", "c0c8c8"],
 				"furniture": "5a5a4a", "accent": "3a5a8a", "hue_jitter": 0.01
+			}
+		},
+		{
+			"id": "museum",
+			"label": "Museum and archives",
+			"tier": 3,
+			"pay_per_day": 330,
+			"floors": [4, 5],
+			"basement": true,
+			"width": [1750, 1950],
+			"elevator_position": [0.42, 0.58],
+			"names": {"first": ["Aster", "Westmere", "Oldstone", "Marrow"], "second": ["Museum", "Museum and Archive", "History Centre", "Gallery"]},
+			"required": [
+				{"room": "lobby", "floor": "ground"},
+				{"room": "it_office", "floor": "basement"},
+				{"room": "server_room", "floor": "basement"},
+				{"room": "printer_bay", "floor": "any"},
+				{"room": "kitchen", "floor": "any"},
+				{"room": "exec_office", "floor": "top"},
+				{"room": "gallery", "floor": "any"},
+				{"room": "archive_room", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"}
+			],
+			"room_weights": {"open_office": 4, "gallery": 2, "archive_room": 2, "meeting_room": 1, "break_room": 1},
+			"theme": {
+				"sky": "a8b7c5", "exterior": "5a4f46", "slab": "332f2a", "trim": "b18a58", "floor": "83735f",
+				"walls": ["e3ddcf", "ccc7ba", "d9d4c7", "d1dce1"],
+				"furniture": "463f37", "accent": "3f7891", "hue_jitter": 0.015
 			}
 		},
 		{
