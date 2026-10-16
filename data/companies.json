@@ -361,9 +361,13 @@
 				{"room": "it_office", "floor": "any"},
 				{"room": "printer_bay", "floor": "any"},
 				{"room": "kitchen", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
 				{"room": "exec_office", "floor": "top"}
 			],
-			"room_weights": {"open_office": 5, "server_hall": 2, "meeting_room": 2},
+			"room_weights": {"open_office": 8, "server_hall": 2, "meeting_room": 2},
 			"theme": {
 				"sky": "0e1a24", "exterior": "2a3440", "slab": "1a222c", "trim": "3ad0ff", "floor": "2a3440",
 				"walls": ["2c3a48", "24323e", "34404c", "2a3644"],
