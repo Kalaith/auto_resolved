@@ -42,5 +42,20 @@
 		"trip_minutes_min": 5,
 		"trip_minutes_max": 18,
 		"decide_every_minutes": 12
+	},
+	"issues": {
+		"roll_every_minutes": 10,
+		"tier_scale": 0.2,
+		"day_scale": 0.08,
+		"max_open": 40
+	},
+	"metrics": {
+		"confidence_start": 60.0,
+		"overdue_drain_per_hour": 3.0,
+		"fix_gain": 1.5,
+		"fast_fix_gain": 1.0,
+		"mood_drop_per_hour": 0.35,
+		"mood_recover_per_hour": 0.1,
+		"mood_rest": 0.7
 	}
 }

@@ -8,6 +8,7 @@ const JsonIO = preload("res://addons/hatchery/core/json_io.gd")
 const Balance = preload("res://addons/hatchery/core/balance.gd")
 const DataRules = preload("res://addons/hatchery/core/data_rules.gd")
 const CatalogPeople = preload("res://scripts/core/catalog_people.gd")
+const CatalogIssues = preload("res://scripts/core/catalog_issues.gd")
 
 const SCHEMA_VERSION: int = 1
 const ROOMS_PATH: String = "res://data/rooms.json"
@@ -30,6 +31,9 @@ const BALANCE_NUMBERS: Array[String] = [
 	"staff.walk_speed_min", "staff.walk_speed_max", "staff.arrive_first_minute", "staff.arrive_last_minute",
 	"staff.leave_last_minute", "staff.lunch_out_chance", "staff.lunch_minutes_min", "staff.lunch_minutes_max",
 	"staff.trip_chance_per_hour", "staff.trip_minutes_min", "staff.trip_minutes_max", "staff.decide_every_minutes",
+	"issues.roll_every_minutes", "issues.tier_scale", "issues.day_scale", "issues.max_open",
+	"metrics.confidence_start", "metrics.overdue_drain_per_hour", "metrics.fix_gain", "metrics.fast_fix_gain",
+	"metrics.mood_drop_per_hour", "metrics.mood_recover_per_hour", "metrics.mood_rest",
 ]
 const THEME_COLOURS: Array = ["sky", "exterior", "slab", "trim", "floor", "furniture", "accent"]
 
@@ -39,6 +43,9 @@ static var archetypes: Dictionary = {}
 static var archetype_ids: Array[String] = []
 ## data/people.json: name parts, departments, trait ranges.
 static var people: Dictionary = {}
+## data/issues.json by id, and the ids in file order.
+static var issues: Dictionary = {}
+static var issue_ids: Array[String] = []
 static var _errors: Array[String] = []
 static var _loaded: bool = false
 
@@ -55,6 +62,8 @@ static func ensure_loaded() -> void:
 	_load_rooms()
 	_load_archetypes()
 	people = CatalogPeople.load_into(_errors, SCHEMA_VERSION)
+	issue_ids.clear()
+	issues = CatalogIssues.load_into(_errors, SCHEMA_VERSION, issue_ids)
 
 
 ## Every data problem found while loading; empty means the catalogs are usable.
@@ -71,6 +80,11 @@ static func room(id: String) -> Dictionary:
 static func archetype(id: String) -> Dictionary:
 	ensure_loaded()
 	return archetypes[id]
+
+
+static func issue(id: String) -> Dictionary:
+	ensure_loaded()
+	return issues[id]
 
 
 static func _check_balance() -> void:

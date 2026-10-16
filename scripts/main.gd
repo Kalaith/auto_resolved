@@ -10,9 +10,12 @@ const OfficeSim = preload("res://scripts/sim/office_sim.gd")
 const BuildingView = preload("res://scripts/world/building_view.gd")
 const ElevatorView = preload("res://scripts/world/elevator_view.gd")
 const StaffView = preload("res://scripts/world/staff_view.gd")
+const DeviceView = preload("res://scripts/world/device_view.gd")
+const WorkController = preload("res://scripts/world/work_controller.gd")
 const Player = preload("res://scripts/world/player.gd")
 const OfficeCamera = preload("res://scripts/world/office_camera.gd")
 const Hud = preload("res://scripts/ui/hud.gd")
+const DayReport = preload("res://scripts/ui/day_report.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -33,6 +36,8 @@ var player: Node2D
 var camera: Camera2D
 var hud: CanvasLayer
 var staff_view: Node2D
+var device_view: Node2D
+var work: Node
 ## 0 pauses the office; the player and the elevator still move.
 var time_scale: float = 1.0
 var _world: Node2D
@@ -45,6 +50,10 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	hud.clock_bar.speed_chosen.connect(set_speed)
+	work = WorkController.new()
+	add_child(work)
+	work.message.connect(func(text: String) -> void: hud.toast(text))
+	hud.tickets.ticket_chosen.connect(func(id: int) -> void: work.request(id))
 	camera = OfficeCamera.new()
 	add_child(camera)
 	var problems: Array[String] = Catalog.problems()
@@ -70,6 +79,9 @@ func start_job(archetype: String, job_seed: int) -> void:
 	var building: Node2D = BuildingView.new()
 	building.setup(plan, job.seed_value)
 	_world.add_child(building)
+	device_view = DeviceView.new()
+	device_view.setup(office)
+	_world.add_child(device_view)
 	_world.add_child(_elevator_layer(ElevatorView.Layer.CAR, Z_CAR))
 	_world.add_child(_staff_layer(StaffView.Layer.RIDING, Z_RIDERS))
 	_world.add_child(_elevator_layer(ElevatorView.Layer.DOORS, Z_DOORS))
@@ -79,6 +91,7 @@ func start_job(archetype: String, job_seed: int) -> void:
 	player.setup(plan, elevator, 0, office.entrance_x() + (40.0 if office.entrance_x() < plan.shaft_x else -40.0))
 	_world.add_child(player)
 	camera.setup(player, building.shell_rect())
+	work.setup(office, player, device_view)
 	hud.show_job(job, plan)
 	RenderingServer.set_default_clear_color(plan.colours.sky)
 	_accumulator = 0.0
@@ -129,6 +142,7 @@ func _process(_delta: float) -> void:
 	hud.show_position(player, elevator)
 	hud.clock_bar.show_clock(office.clock, office.day_running)
 	hud.person_card.refresh(office)
+	hud.tickets.show_office(office)
 
 
 func _on_event(event: Dictionary) -> void:
@@ -138,14 +152,16 @@ func _on_event(event: Dictionary) -> void:
 
 
 func _show_day_summary(day: int) -> void:
-	var body: String = "Everyone has gone home. %d staff work here across %d floors." % [office.staff.size(), plan.floor_count()]
+	var body: String = DayReport.body(office)
 	hud.notice.open("Day %d is over" % day, body, [["Start day %d" % (day + 1), func() -> void: office.begin_day(day + 1), true]])
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if plan == null:
 		return
-	if event.is_action_pressed("toggle_overview"):
+	if event.is_action_pressed("interact"):
+		work.interact_here()
+	elif event.is_action_pressed("toggle_overview"):
 		camera.overview = not camera.overview
 	elif event.is_action_pressed("pause"):
 		set_speed(1.0 if time_scale <= 0.0 else 0.0)
@@ -166,6 +182,14 @@ func _click(at: Vector2) -> void:
 	var person: RefCounted = staff_view.employee_at(at)
 	if person != null:
 		hud.person_card.open_for(person)
+		return
+	var device: RefCounted = device_view.device_at(at)
+	if device != null:
+		var waiting: Array = office.helpdesk.queue.open_for_device(device.id)
+		if not waiting.is_empty():
+			work.request(waiting[0].id)
+			return
+		player.go_to(device.floor_index, work.stand_x(device))
 		return
 	player.go_to(plan.floor_at_y(at.y), at.x)
 

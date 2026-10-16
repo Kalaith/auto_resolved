@@ -1,6 +1,7 @@
 extends RefCounted
 ## Everything about the current job's office, stepped at a fixed rate by
-## main.gd: the building, the elevator, the clock and the staff. It never
+## main.gd: the building, the elevator, the clock, the staff, their devices,
+## the helpdesk's tickets and the company's view of IT. It never
 ## touches nodes; views read its state and send commands, and whatever
 ## happened in a step is appended to `events` for views and the HUD to drain.
 const Det = preload("res://addons/hatchery/core/det.gd")
@@ -10,6 +11,9 @@ const WorkClock = preload("res://scripts/sim/work_clock.gd")
 const StaffFactory = preload("res://scripts/sim/staff_factory.gd")
 const Schedule = preload("res://scripts/sim/schedule.gd")
 const RoomLayout = preload("res://scripts/sim/room_layout.gd")
+const DeviceFactory = preload("res://scripts/sim/device_factory.gd")
+const Helpdesk = preload("res://scripts/sim/helpdesk.gd")
+const CompanyMetrics = preload("res://scripts/sim/company_metrics.gd")
 
 const TICK: float = 1.0 / 30.0
 
@@ -18,11 +22,19 @@ var plan: RefCounted
 var elevator: Elevator
 var clock: WorkClock
 var staff: Array = []
+var devices: Array = []
+var helpdesk: Helpdesk
+var metrics: CompanyMetrics
+## Outages covering whole floors: source -> {"fault", "block", "floors"}.
+var area_faults: Dictionary = {}
 var events: Array[Dictionary] = []
 ## False between the end of one workday and the start of the next.
 var day_running: bool = false
 var _staff_rng: RandomNumberGenerator
+var _starter_rng: RandomNumberGenerator
 var _by_id: Dictionary = {}
+var _devices_by_id: Dictionary = {}
+var _used_names: Dictionary = {}
 
 
 static func create(for_job: RefCounted) -> RefCounted:
@@ -39,7 +51,14 @@ func _setup(for_job: RefCounted) -> void:
 	staff = StaffFactory.create(job, plan)
 	for person in staff:
 		_by_id[person.id] = person
+		_used_names[person.name] = true
+	devices = DeviceFactory.create(plan, staff)
+	for device in devices:
+		_devices_by_id[device.id] = device
+	helpdesk = Helpdesk.new(job.seed_value)
+	metrics = CompanyMetrics.new()
 	_staff_rng = Det.fork(job.seed_value, "staff_days")
+	_starter_rng = Det.fork(job.seed_value, "new_starters")
 
 
 ## Opens the office for workday `index`: everyone is at home with a fresh
@@ -49,6 +68,8 @@ func begin_day(index: int) -> void:
 	elevator.reset_to(0)
 	for person in staff:
 		Schedule.plan_day(person, _staff_rng)
+	helpdesk.roller.begin_day(index, clock.start_minute)
+	metrics.begin_day()
 	day_running = true
 	emit("day_started", {"day": index})
 
@@ -57,11 +78,15 @@ func step(delta: float) -> void:
 	elevator.step(delta)
 	if not day_running:
 		return
+	var before: float = clock.minute
 	var ended: bool = clock.step(delta)
 	for person in staff:
 		Schedule.update(person, self, clock.minute, _staff_rng)
 		if person.present:
 			person.walker.step(delta, elevator, plan)
+	helpdesk.roller.step(self, clock.minute)
+	metrics.step(self, clock.minute - before)
+	_sync_elevator()
 	if ended:
 		_end_day()
 
@@ -78,6 +103,7 @@ func _end_day() -> void:
 			elevator.leave(person.id)
 		person.present = false
 		person.activity = "home"
+	metrics.end_day()
 	emit("day_ended", {"day": clock.day})
 
 
@@ -129,3 +155,90 @@ func errand_spot(errand: String, types: Array, near: int, rng: RandomNumberGener
 			if item.prop == "printer":
 				x = float(item.x) + rng.randf_range(30.0, 46.0)
 	return {"floor": int(room.floor), "x": x}
+
+
+func device(id: String) -> RefCounted:
+	return _devices_by_id.get(id)
+
+
+func devices_of(kind: String) -> Array:
+	return devices.filter(func(item: RefCounted) -> bool: return item.kind == kind)
+
+
+func tickets_for_person(person_id: String) -> Array:
+	return helpdesk.queue.open_for_person(person_id)
+
+
+## Floors where somebody has a desk, lowest first.
+func staffed_floors() -> Array[int]:
+	var result: Array[int] = []
+	for person in staff:
+		if not result.has(person.desk_floor):
+			result.append(person.desk_floor)
+	result.sort()
+	return result
+
+
+func pick_staffed_floor(rng: RandomNumberGenerator) -> int:
+	return int(Det.pick(rng, staffed_floors(), 0))
+
+
+func add_area_fault(source: String, fault: String, block: float, floors: Array) -> void:
+	area_faults[source] = {"fault": fault, "block": block, "floors": floors.duplicate()}
+
+
+## Takes away everything one ticket or incident did to devices and floors.
+func clear_source(source: String) -> void:
+	area_faults.erase(source)
+	for item in devices:
+		item.clear_source(source)
+
+
+## Whether an area fault of `fault` covers floor `index`.
+func floor_has(fault: String, index: int) -> bool:
+	for source in area_faults:
+		var area: Dictionary = area_faults[source]
+		if area.fault == fault and area.floors.has(index):
+			return true
+	return false
+
+
+## The share of work IT problems take from `person` right now, 0..1.
+func block_for(person: RefCounted) -> float:
+	var worst: float = 0.0
+	var desk: RefCounted = device(person.device_id)
+	if desk != null:
+		worst = desk.block()
+	for source in area_faults:
+		var area: Dictionary = area_faults[source]
+		if area.floors.has(person.desk_floor):
+			worst = maxf(worst, float(area.block))
+	return worst
+
+
+## How much more or less likely `issue` is on `target` than its base rate.
+## PATCH's prevention automations lower it (M4); 1 means untouched.
+func issue_factor(_issue: String, _target: RefCounted) -> float:
+	return 1.0
+
+
+## Whether the player may fix `issue` from the IT desk instead of walking.
+func remote_fix_allowed(_issue: String) -> bool:
+	return false
+
+
+## A new hire takes over a desk: new name, fresh mood, no history.
+func replace_with_new_starter(person: RefCounted) -> void:
+	var old_name: String = person.name
+	person.name = StaffFactory.unique_name(_starter_rng, _used_names)
+	person.mood = 0.65
+	person.history.clear()
+	emit("new_starter", {"employee": person.id, "replaces": old_name})
+
+
+## The lift controller's faults show in how the car behaves.
+func _sync_elevator() -> void:
+	var lift: RefCounted = device("lift")
+	var confused: bool = lift != null and lift.has_fault("confused")
+	elevator.stop_everywhere = confused
+	elevator.speed_scale = 0.6 if confused else 1.0

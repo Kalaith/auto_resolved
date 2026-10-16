@@ -44,6 +44,12 @@ func _day(main: Node) -> void:
 	await _until(main, 505.0)
 	await shot("day_morning_arrival")
 	main.camera.overview = false
+	await _until(main, 530.0)
+	var open: Array = main.office.helpdesk.queue.by_urgency()
+	if not open.is_empty():
+		main.work.request(open[0].id)
+	await _until(main, 560.0)
+	await shot("day_ticket_fix")
 	await _until(main, 620.0)
 	await shot("day_working_close")
 	main.camera.overview = true

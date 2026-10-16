@@ -45,7 +45,7 @@ static func _person(rng: RandomNumberGenerator, index: int, room: Dictionary, de
 	var people: Dictionary = Catalog.people
 	var person := Employee.new()
 	person.id = "e%d" % index
-	person.name = _unique_name(rng, used)
+	person.name = unique_name(rng, used)
 	person.department = str(department.id)
 	person.department_label = str(department.label)
 	person.colour = Color(str(department.colour))
@@ -68,7 +68,7 @@ static func _landing_spot(rng: RandomNumberGenerator) -> float:
 	return side * rng.randf_range(58.0, 110.0)
 
 
-static func _unique_name(rng: RandomNumberGenerator, used: Dictionary) -> String:
+static func unique_name(rng: RandomNumberGenerator, used: Dictionary) -> String:
 	var people: Dictionary = Catalog.people
 	var candidate: String = ""
 	for attempt in range(12):

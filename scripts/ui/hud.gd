@@ -9,6 +9,9 @@ const BuildingView = preload("res://scripts/world/building_view.gd")
 const ClockBar = preload("res://scripts/ui/clock_bar.gd")
 const PersonCard = preload("res://scripts/ui/person_card.gd")
 const NoticePanel = preload("res://scripts/ui/notice_panel.gd")
+const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
+
+const TOAST_SECONDS: float = 3.5
 
 const HINT: String = "A/D walk   E use / call / go   W/S pick floor   Click to send   Tab overview   P pause   1-3 speed"
 
@@ -17,6 +20,9 @@ var root: Control
 var clock_bar: ClockBar
 var person_card: PersonCard
 var notice: NoticePanel
+var tickets: TicketPanel
+var _toast: Label
+var _toast_left: float = 0.0
 var _company: Label
 var _details: Label
 var _where: Label
@@ -55,6 +61,20 @@ func _ready() -> void:
 	clock_bar.offset_right = -16.0
 	clock_bar.offset_top = 16.0
 	root.add_child(clock_bar)
+	tickets = TicketPanel.new()
+	tickets.build(ui)
+	tickets.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	tickets.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	tickets.offset_right = -16.0
+	tickets.offset_top = 124.0
+	root.add_child(tickets)
+	_toast = ui.label("", 17)
+	_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.offset_top = 20.0
+	_toast.visible = false
+	root.add_child(_toast)
 	person_card = PersonCard.new()
 	person_card.build(ui)
 	person_card.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -84,6 +104,21 @@ func show_position(player: Node2D, elevator: RefCounted) -> void:
 		_where.text = "Floor %s%s" % [floor_text, " - at the elevator" if player.at_shaft() else ""]
 
 
+## A one-line message at the top of the screen that fades on its own.
+func toast(text: String) -> void:
+	_toast.text = text
+	_toast.visible = true
+	_toast.modulate.a = 1.0
+	_toast_left = TOAST_SECONDS
+
+
+func _process(delta: float) -> void:
+	if _toast_left > 0.0:
+		_toast_left -= delta
+		_toast.modulate.a = clampf(_toast_left / 0.6, 0.0, 1.0)
+		_toast.visible = _toast_left > 0.0
+
+
 func show_problems(problems: Array[String]) -> void:
 	_company.text = "Data problems"
 	_details.text = "\n".join(problems.slice(0, 12))
@@ -100,7 +135,7 @@ func covers(screen_point: Vector2) -> bool:
 
 
 func _blocking_controls() -> Array[Control]:
-	return [clock_bar, person_card, notice]
+	return [clock_bar, person_card, notice, tickets]
 
 
 func _accent_box(accent: Color) -> StyleBoxFlat:
