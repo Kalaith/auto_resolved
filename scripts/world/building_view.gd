@@ -6,6 +6,7 @@ extends Node2D
 const RoomProps = preload("res://scripts/world/room_props.gd")
 const Det = preload("res://addons/hatchery/core/det.gd")
 const Balance = preload("res://addons/hatchery/core/balance.gd")
+const BuildingPlan = preload("res://scripts/sim/building_plan.gd")
 
 const SHELL: float = 18.0
 const ROOF: float = 26.0
@@ -28,9 +29,7 @@ func setup(building: RefCounted, seed_value: int) -> void:
 
 
 static func floor_name(index: int) -> String:
-	if index < 0:
-		return "B%d" % -index
-	return "G" if index == 0 else str(index)
+	return BuildingPlan.floor_name(index)
 
 
 ## The outer rectangle of the building, roof and basement included.

@@ -57,5 +57,37 @@
 		"mood_drop_per_hour": 0.35,
 		"mood_recover_per_hour": 0.1,
 		"mood_rest": 0.7
+	},
+	"risk": {
+		"base": {
+			"diagnosis": 0.01,
+			"simple": 0.06,
+			"multi": 0.12,
+			"destructive": 0.2
+		},
+		"scope": {
+			"ticket": 1.0,
+			"floor": 1.25,
+			"building": 1.6
+		},
+		"staged": 0.65,
+		"dry_run": 0.65,
+		"confirm_delete": 0.5,
+		"guardrail": 0.5,
+		"tier_step": 0.08,
+		"minimum": 0.005,
+		"maximum": 0.6,
+		"band_low": 0.6,
+		"band_high": 1.5,
+		"band_precise_low": 0.85,
+		"band_precise_high": 1.15
+	},
+	"patch": {
+		"dry_run_minutes": 15,
+		"repeat_delay_minutes": 6,
+		"daily_run_minute": 500,
+		"cascade_cap_per_day": 3,
+		"change_cap": 2,
+		"discover_grace_minutes": 5
 	}
 }

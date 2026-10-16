@@ -9,6 +9,7 @@ const Balance = preload("res://addons/hatchery/core/balance.gd")
 const DataRules = preload("res://addons/hatchery/core/data_rules.gd")
 const CatalogPeople = preload("res://scripts/core/catalog_people.gd")
 const CatalogIssues = preload("res://scripts/core/catalog_issues.gd")
+const CatalogPatch = preload("res://scripts/core/catalog_patch.gd")
 
 const SCHEMA_VERSION: int = 1
 const ROOMS_PATH: String = "res://data/rooms.json"
@@ -34,6 +35,12 @@ const BALANCE_NUMBERS: Array[String] = [
 	"issues.roll_every_minutes", "issues.tier_scale", "issues.day_scale", "issues.max_open",
 	"metrics.confidence_start", "metrics.overdue_drain_per_hour", "metrics.fix_gain", "metrics.fast_fix_gain",
 	"metrics.mood_drop_per_hour", "metrics.mood_recover_per_hour", "metrics.mood_rest",
+	"risk.base.diagnosis", "risk.base.simple", "risk.base.multi", "risk.base.destructive",
+	"risk.scope.ticket", "risk.scope.floor", "risk.scope.building", "risk.staged", "risk.dry_run",
+	"risk.confirm_delete", "risk.guardrail", "risk.tier_step", "risk.minimum", "risk.maximum",
+	"risk.band_low", "risk.band_high", "risk.band_precise_low", "risk.band_precise_high",
+	"patch.dry_run_minutes", "patch.repeat_delay_minutes", "patch.daily_run_minute", "patch.cascade_cap_per_day",
+	"patch.change_cap", "patch.discover_grace_minutes",
 ]
 const THEME_COLOURS: Array = ["sky", "exterior", "slab", "trim", "floor", "furniture", "accent"]
 
@@ -46,6 +53,14 @@ static var people: Dictionary = {}
 ## data/issues.json by id, and the ids in file order.
 static var issues: Dictionary = {}
 static var issue_ids: Array[String] = []
+## PATCH: actions, backfire pools, failure archetypes, recoveries, upgrades.
+static var actions: Dictionary = {}
+static var action_ids: Array = []
+static var pools: Dictionary = {}
+static var failure_archetypes: Dictionary = {}
+static var recoveries: Dictionary = {}
+static var upgrades: Dictionary = {}
+static var upgrade_ids: Array = []
 static var _errors: Array[String] = []
 static var _loaded: bool = false
 
@@ -64,6 +79,14 @@ static func ensure_loaded() -> void:
 	people = CatalogPeople.load_into(_errors, SCHEMA_VERSION)
 	issue_ids.clear()
 	issues = CatalogIssues.load_into(_errors, SCHEMA_VERSION, issue_ids)
+	var patch: Dictionary = CatalogPatch.load_into(_errors, SCHEMA_VERSION, issues)
+	actions = patch.actions
+	action_ids = patch.action_ids
+	pools = patch.pools
+	failure_archetypes = patch.archetypes
+	recoveries = patch.recoveries
+	upgrades = patch.upgrades
+	upgrade_ids = patch.upgrade_ids
 
 
 ## Every data problem found while loading; empty means the catalogs are usable.
@@ -85,6 +108,31 @@ static func archetype(id: String) -> Dictionary:
 static func issue(id: String) -> Dictionary:
 	ensure_loaded()
 	return issues[id]
+
+
+static func action(id: String) -> Dictionary:
+	ensure_loaded()
+	return actions[id]
+
+
+static func upgrade(id: String) -> Dictionary:
+	ensure_loaded()
+	return upgrades[id]
+
+
+## A backfire entry by id, searching every pool.
+static func backfire(id: String) -> Dictionary:
+	ensure_loaded()
+	for pool_id in pools:
+		for entry in pools[pool_id]:
+			if entry.id == id:
+				return entry
+	return {}
+
+
+## PATCH's line for `key`, with {placeholders} filled from `args`.
+static func say(key: String, args: Dictionary = {}) -> String:
+	return CatalogPatch.text.format(key, args)
 
 
 static func _check_balance() -> void:

@@ -30,6 +30,13 @@ static func generate(job: RefCounted) -> RefCounted:
 	return plan
 
 
+## "B1" for the basement, "G" for the ground floor, then "1", "2"...
+static func floor_name(index: int) -> String:
+	if index < 0:
+		return "B%d" % -index
+	return "G" if index == 0 else str(index)
+
+
 func floor_count() -> int:
 	return highest - lowest + 1
 

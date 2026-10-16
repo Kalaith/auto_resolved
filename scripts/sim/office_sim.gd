@@ -14,6 +14,11 @@ const RoomLayout = preload("res://scripts/sim/room_layout.gd")
 const DeviceFactory = preload("res://scripts/sim/device_factory.gd")
 const Helpdesk = preload("res://scripts/sim/helpdesk.gd")
 const CompanyMetrics = preload("res://scripts/sim/company_metrics.gd")
+const PatchState = preload("res://scripts/sim/patch_state.gd")
+const PatchDesk = preload("res://scripts/sim/patch_desk.gd")
+
+## Issues the Remote session upgrade lets the player fix from the IT desk.
+const REMOTE_ISSUES: Array[String] = ["password", "software_install", "slow_pc", "new_employee"]
 
 const TICK: float = 1.0 / 30.0
 
@@ -25,6 +30,9 @@ var staff: Array = []
 var devices: Array = []
 var helpdesk: Helpdesk
 var metrics: CompanyMetrics
+## PATCH as a character (carried between jobs) and its work at this job.
+var patch: PatchState
+var patch_desk: PatchDesk
 ## Outages covering whole floors: source -> {"fault", "block", "floors"}.
 var area_faults: Dictionary = {}
 var events: Array[Dictionary] = []
@@ -37,14 +45,16 @@ var _devices_by_id: Dictionary = {}
 var _used_names: Dictionary = {}
 
 
-static func create(for_job: RefCounted) -> RefCounted:
+## `patch_state` is the career's PATCH; null gives a fresh v1.0.
+static func create(for_job: RefCounted, patch_state: RefCounted = null) -> RefCounted:
 	var office: RefCounted = load("res://scripts/sim/office_sim.gd").new()
-	office._setup(for_job)
+	office._setup(for_job, patch_state if patch_state != null else PatchState.new())
 	return office
 
 
-func _setup(for_job: RefCounted) -> void:
+func _setup(for_job: RefCounted, patch_state: RefCounted) -> void:
 	job = for_job
+	patch = patch_state
 	plan = BuildingPlan.generate(job)
 	elevator = Elevator.new(plan.lowest, plan.highest, 0)
 	clock = WorkClock.new()
@@ -57,6 +67,8 @@ func _setup(for_job: RefCounted) -> void:
 		_devices_by_id[device.id] = device
 	helpdesk = Helpdesk.new(job.seed_value)
 	metrics = CompanyMetrics.new()
+	patch_desk = PatchDesk.new(job.seed_value)
+	patch_desk.greet(self)
 	_staff_rng = Det.fork(job.seed_value, "staff_days")
 	_starter_rng = Det.fork(job.seed_value, "new_starters")
 
@@ -70,6 +82,7 @@ func begin_day(index: int) -> void:
 		Schedule.plan_day(person, _staff_rng)
 	helpdesk.roller.begin_day(index, clock.start_minute)
 	metrics.begin_day()
+	patch_desk.begin_day()
 	day_running = true
 	emit("day_started", {"day": index})
 
@@ -85,6 +98,7 @@ func step(delta: float) -> void:
 		if person.present:
 			person.walker.step(delta, elevator, plan)
 	helpdesk.roller.step(self, clock.minute)
+	patch_desk.step(self)
 	metrics.step(self, clock.minute - before)
 	_sync_elevator()
 	if ended:
@@ -216,15 +230,15 @@ func block_for(person: RefCounted) -> float:
 	return worst
 
 
-## How much more or less likely `issue` is on `target` than its base rate.
-## PATCH's prevention automations lower it (M4); 1 means untouched.
-func issue_factor(_issue: String, _target: RefCounted) -> float:
-	return 1.0
+## How much more or less likely `issue` is on `target` than its base rate:
+## PATCH's prevention automations lower it; 1 means untouched.
+func issue_factor(issue: String, target: RefCounted) -> float:
+	return patch_desk.prevention(issue, target)
 
 
 ## Whether the player may fix `issue` from the IT desk instead of walking.
-func remote_fix_allowed(_issue: String) -> bool:
-	return false
+func remote_fix_allowed(issue: String) -> bool:
+	return patch.remote_session() and REMOTE_ISSUES.has(issue)
 
 
 ## A new hire takes over a desk: new name, fresh mood, no history.
@@ -241,4 +255,4 @@ func _sync_elevator() -> void:
 	var lift: RefCounted = device("lift")
 	var confused: bool = lift != null and lift.has_fault("confused")
 	elevator.stop_everywhere = confused
-	elevator.speed_scale = 0.6 if confused else 1.0
+	elevator.speed_scale = (0.6 if confused else 1.0) * patch_desk.lift_boost()

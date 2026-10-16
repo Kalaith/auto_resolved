@@ -1,0 +1,140 @@
+{
+	"schema_version": 1,
+	"archetypes": {
+		"wrong_target": {"label": "Wrong target", "guardrail": "Double-check who or what a change is for"},
+		"overreach": {"label": "Overreach", "guardrail": "Never change more than was asked for"},
+		"runaway_job": {"label": "Runaway job", "guardrail": "Put a limit on anything that repeats"},
+		"wrong_command": {"label": "Wrong command", "guardrail": "Dry-run commands on hardware first"},
+		"dependency": {"label": "Broken dependency", "guardrail": "Check what else a package touches"},
+		"permissions": {"label": "Permission creep", "guardrail": "Grant the least access that works"},
+		"bulk_misread": {"label": "Bulk misread", "guardrail": "Never delete tickets without approval"},
+		"false_success": {"label": "False success", "guardrail": "Only call a ticket done when the user is working"}
+	},
+	"recoveries": {
+		"reissue_credentials": {"label": "Reissue credentials and tell people", "at": "desk", "seconds": 4.0, "does": ["close_tickets", "clear_faults"], "requires": "", "confidence": 0},
+		"cancel_queue": {"label": "Cancel the print queue", "at": "desk", "seconds": 3.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"clear_jam": {"label": "Clear the paper by hand", "at": "site", "seconds": 2.5, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"rollback": {"label": "Roll back PATCH's change", "at": "desk", "seconds": 4.0, "does": ["clear_faults", "close_tickets"], "requires": "rollback", "confidence": 0},
+		"repair_on_site": {"label": "Repair it on site", "at": "site", "seconds": 8.0, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
+		"revoke_rights": {"label": "Revoke the extra rights and audit", "at": "desk", "seconds": 5.0, "does": ["clear_faults", "close_tickets"], "requires": "", "confidence": 0},
+		"restore_rule": {"label": "Restore the network rule", "at": "desk", "seconds": 4.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"reset_controller": {"label": "Reset the lift controller", "at": "site", "seconds": 4.0, "does": ["clear_faults"], "requires": "", "confidence": 0},
+		"restore_snapshot": {"label": "Restore the queue from the snapshot", "at": "desk", "seconds": 3.0, "does": ["restore_tickets", "reopen_tickets"], "requires": "backup", "confidence": 0},
+		"audit_losses": {"label": "Rebuild the queue from email, one by one", "at": "desk", "seconds": 12.0, "does": ["restore_tickets", "reopen_tickets"], "requires": "", "confidence": -3},
+		"reopen_history": {"label": "Reopen them from history", "at": "desk", "seconds": 5.0, "does": ["reopen_tickets"], "requires": "", "confidence": 0}
+	},
+	"pools": {
+		"reset_password": [
+			{"id": "wrong_user_reset", "weight": 3, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 1, "on": "target_floor"}],
+				"recoveries": ["reissue_credentials"]},
+			{"id": "floor_lockout", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 3, "on": "target_floor"}],
+				"recoveries": ["reissue_credentials"]}
+		],
+		"self_service_reset": [
+			{"id": "mass_reset", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 4, "on": "scope"}],
+				"recoveries": ["reissue_credentials", "rollback"]},
+			{"id": "portal_marks_done", "weight": 1, "severity": 2, "delay": "false_success", "delay_minutes": 45, "archetype": "false_success",
+				"effects": [{"do": "false_close", "which": "intent"}],
+				"recoveries": ["reopen_history"]}
+		],
+		"restart_printer": [
+			{"id": "endless_test_page", "weight": 3, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "runaway_job",
+				"effects": [{"do": "device_fault", "fault": "paper_flood", "block": 0.0, "on": "target"}, {"do": "area_fault", "fault": "paper_flood", "block": 0.2, "on": "target_floor"}],
+				"recoveries": ["cancel_queue", "clear_jam"]},
+			{"id": "firmware_flash", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "bricked", "block": 0.0, "on": "target"}, {"do": "area_fault", "fault": "bricked", "block": 0.2, "on": "target_floor"}],
+				"recoveries": ["rollback", "repair_on_site"]}
+		],
+		"printer_watchdog": [
+			{"id": "watchdog_test_pages", "weight": 3, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "runaway_job",
+				"effects": [{"do": "device_fault", "fault": "paper_flood", "block": 0.0, "on": "scope"}, {"do": "area_fault", "fault": "paper_flood", "block": 0.2, "on": "scope_floors"}],
+				"recoveries": ["cancel_queue"]},
+			{"id": "watchdog_firmware", "weight": 1, "severity": 2, "delay": "delayed", "delay_minutes": 60, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "bricked", "block": 0.0, "on": "random", "count": 2}, {"do": "area_fault", "fault": "bricked", "block": 0.2, "on": "scope_floors"}],
+				"recoveries": ["rollback"]}
+		],
+		"install_software": [
+			{"id": "removed_dependency", "weight": 3, "severity": 1, "delay": "delayed", "delay_minutes": 30, "archetype": "dependency",
+				"effects": [{"do": "device_fault", "fault": "slow", "block": 0.5, "on": "target"}],
+				"recoveries": ["rollback", "repair_on_site"]},
+			{"id": "wiped_profile", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "wiped", "block": 1.0, "on": "target"}, {"do": "mood", "amount": -0.2, "on": "target"}],
+				"recoveries": ["rollback", "repair_on_site"]}
+		],
+		"software_deployment": [
+			{"id": "eighth_install_breaks", "weight": 3, "severity": 2, "delay": "partial", "delay_minutes": 0, "archetype": "dependency",
+				"effects": [{"do": "device_fault", "fault": "slow", "block": 0.5, "on": "random", "count": 3}],
+				"recoveries": ["rollback"]},
+			{"id": "uninstalls_accounts", "weight": 1, "severity": 3, "delay": "delayed", "delay_minutes": 40, "archetype": "overreach",
+				"effects": [{"do": "device_fault", "fault": "crashed", "block": 0.6, "on": "scope"}],
+				"recoveries": ["rollback"]}
+		],
+		"speed_up": [
+			{"id": "disabled_service", "weight": 3, "severity": 2, "delay": "delayed", "delay_minutes": 45, "archetype": "overreach",
+				"effects": [{"do": "device_fault", "fault": "dark", "block": 0.8, "on": "scope"}],
+				"recoveries": ["rollback", "repair_on_site"]},
+			{"id": "uninstalled_their_work", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "wiped", "block": 1.0, "on": "random", "count": 1}],
+				"recoveries": ["rollback", "repair_on_site"]}
+		],
+		"create_account": [
+			{"id": "starter_is_admin", "weight": 2, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "permissions",
+				"effects": [{"do": "device_fault", "fault": "admin", "block": 0.0, "on": "target"}, {"do": "open_tickets", "issue": "software_install", "count": 1, "on": "target_floor"}],
+				"recoveries": ["revoke_rights"]},
+			{"id": "copied_wrong_profile", "weight": 1, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 1, "on": "target_floor"}],
+				"recoveries": ["reissue_credentials"]}
+		],
+		"onboarding": [
+			{"id": "everyone_admin", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "permissions",
+				"effects": [{"do": "device_fault", "fault": "admin", "block": 0.0, "on": "scope"}, {"do": "open_tickets", "issue": "software_install", "count": 3, "on": "scope"}, {"do": "confidence", "amount": -4}],
+				"recoveries": ["revoke_rights"]},
+			{"id": "onboarded_the_fridge", "weight": 1, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "open_tickets", "issue": "password", "count": 2, "on": "scope"}],
+				"recoveries": ["reissue_credentials"]}
+		],
+		"network": [
+			{"id": "disconnected_department", "weight": 3, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "area_fault", "fault": "no_network", "block": 0.8, "on": "other_floor"}],
+				"recoveries": ["restore_rule"]},
+			{"id": "throttled_everyone", "weight": 1, "severity": 3, "delay": "delayed", "delay_minutes": 30, "archetype": "overreach",
+				"effects": [{"do": "area_fault", "fault": "no_network", "block": 0.5, "on": "scope_floors"}],
+				"recoveries": ["restore_rule", "rollback"]}
+		],
+		"elevator": [
+			{"id": "stops_everywhere", "weight": 3, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_command",
+				"effects": [{"do": "lift_fault"}],
+				"recoveries": ["reset_controller", "rollback"]},
+			{"id": "lift_sulks", "weight": 1, "severity": 2, "delay": "delayed", "delay_minutes": 60, "archetype": "overreach",
+				"effects": [{"do": "lift_fault"}, {"do": "mood", "amount": -0.1, "on": "scope"}],
+				"recoveries": ["reset_controller"]}
+		],
+		"legacy": [
+			{"id": "rebooted_the_router", "weight": 2, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "area_fault", "fault": "no_network", "block": 0.8, "on": "other_floor"}],
+				"recoveries": ["restore_rule"]},
+			{"id": "restored_from_1997", "weight": 1, "severity": 2, "delay": "false_success", "delay_minutes": 30, "archetype": "false_success",
+				"effects": [{"do": "area_fault", "fault": "crashed", "block": 0.3, "on": "scope_floors"}],
+				"recoveries": ["rollback"]}
+		],
+		"organize_queue": [
+			{"id": "deleted_all_tickets", "weight": 3, "severity": 3, "delay": "immediate", "delay_minutes": 0, "archetype": "bulk_misread",
+				"effects": [{"do": "delete_tickets"}],
+				"recoveries": ["restore_snapshot", "audit_losses"]},
+			{"id": "sorted_into_done", "weight": 1, "severity": 2, "delay": "false_success", "delay_minutes": 30, "archetype": "false_success",
+				"effects": [{"do": "false_close", "which": "all"}],
+				"recoveries": ["reopen_history"]}
+		],
+		"archive_resolved": [
+			{"id": "archived_unresolved", "weight": 3, "severity": 2, "delay": "false_success", "delay_minutes": 40, "archetype": "false_success",
+				"effects": [{"do": "false_close", "which": "all"}],
+				"recoveries": ["reopen_history", "restore_snapshot"]},
+			{"id": "archived_into_void", "weight": 1, "severity": 3, "delay": "immediate", "delay_minutes": 0, "archetype": "bulk_misread",
+				"effects": [{"do": "delete_tickets"}],
+				"recoveries": ["restore_snapshot", "audit_losses"]}
+		]
+	}
+}
