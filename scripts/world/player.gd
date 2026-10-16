@@ -1,70 +1,97 @@
 extends Node2D
 ## The IT worker. Walks left and right along a floor, calls and rides the
 ## elevator, and can be sent anywhere in the building with a click: the route
-## walks to the shaft, calls the car, rides, gets out and walks on. Feet are at
-## the node's origin. Movement never depends on tickets, PATCH or the clock.
+## is the same Walker the staff use, stepped here in real time so the player
+## moves while the office is paused or panels are open. Movement never depends
+## on tickets, PATCH or the clock. Feet are at the node's origin.
 signal floor_changed(index: int)
+signal arrived
 
 const Balance = preload("res://addons/hatchery/core/balance.gd")
+const Walker = preload("res://scripts/sim/walker.gd")
+const FigureArt = preload("res://scripts/world/figure_art.gd")
 
-const Z_WALKING: int = 4
+const Z_WALKING: int = 5
 const Z_RIDING: int = 2
+const ID: String = "player"
 
 var plan: RefCounted
 var elevator: RefCounted
-var floor_index: int = 0
-var riding: bool = false
+var walker: Walker
 ## The floor a rider will send the car to when they press interact.
 var selected_floor: int = 0
-var facing: float = 1.0
-var _x: float = 0.0
-var _speed: float = 0.0
+var floor_index: int:
+	get:
+		return walker.floor_index
+var riding: bool:
+	get:
+		return walker.riding
 var _reach: float = 0.0
 var _walk_time: float = 0.0
-var _moving: bool = false
-var _has_goal: bool = false
-var _goal_floor: int = 0
-var _goal_x: float = 0.0
+var _look: Dictionary = {}
+var _was_routing: bool = false
 
 
 func setup(building: RefCounted, car: RefCounted, start_floor: int, start_x: float) -> void:
 	plan = building
 	elevator = car
-	floor_index = start_floor
+	walker = Walker.new(ID, start_floor, start_x, Balance.number("player.walk_speed"))
+	walker.squeeze = true
+	walker.wait_offset = 0.0
 	selected_floor = start_floor
-	_x = start_x
-	_speed = Balance.number("player.walk_speed")
 	_reach = Balance.number("player.interact_reach")
+	_look = FigureArt.look_for(ID, Color("#3a7bd5"))
+	_look.skin = Color("#e9b996")
+	_look.hair = Color("#3b2a20")
+	_look.trousers = Color("#2f3442")
+	_look.glasses = true
+	_look.long_hair = false
 	_place()
 
 
 ## Click-to-move: walk (and ride) to `x` on floor `index`.
 func go_to(index: int, x: float) -> void:
-	_has_goal = true
-	_goal_floor = clampi(index, plan.lowest, plan.highest)
-	_goal_x = clampf(x, 12.0, plan.width - 12.0)
+	walker.go_to(clampi(index, plan.lowest, plan.highest), clampf(x, 12.0, plan.width - 12.0))
+	_was_routing = true
 
 
 func at_shaft() -> bool:
-	return absf(_x - plan.shaft_center()) <= _reach
+	return absf(walker.x - plan.shaft_center()) <= _reach
 
 
 func world_x() -> float:
-	return _x
+	return walker.x
+
+
+func is_routing() -> bool:
+	return walker.has_goal or walker.riding
 
 
 func _physics_process(delta: float) -> void:
 	if plan == null:
 		return
 	var axis: float = Input.get_axis("move_left", "move_right")
+	var before: int = walker.floor_index
 	if not is_zero_approx(axis):
-		_has_goal = false
-	_moving = false
-	if riding:
-		_ride(axis)
+		walker.stop()
+		_was_routing = false
+	if walker.riding:
+		_ride_by_hand(axis)
+		if walker.riding:
+			walker.step(delta, elevator, plan)
+	elif walker.has_goal:
+		walker.step(delta, elevator, plan)
+	elif not is_zero_approx(axis):
+		walker.walk_toward(clampf(walker.x + axis * walker.speed * delta, 12.0, plan.width - 12.0), delta)
+		walker.facing = signf(axis)
 	else:
-		_walk(axis, delta)
-	if _moving:
+		walker.moving = false
+	if walker.floor_index != before:
+		floor_changed.emit(walker.floor_index)
+	if _was_routing and walker.arrived():
+		_was_routing = false
+		arrived.emit()
+	if walker.moving:
 		_walk_time += delta
 	_place()
 
@@ -72,92 +99,50 @@ func _physics_process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if plan == null:
 		return
-	if event.is_action_pressed("interact"):
+	if event.is_action_pressed("interact") and (walker.riding or at_shaft()):
 		_interact()
-	elif riding and event.is_action_pressed("floor_up"):
+		get_viewport().set_input_as_handled()
+	elif walker.riding and event.is_action_pressed("floor_up"):
 		selected_floor = mini(selected_floor + 1, plan.highest)
-	elif riding and event.is_action_pressed("floor_down"):
+	elif walker.riding and event.is_action_pressed("floor_down"):
 		selected_floor = maxi(selected_floor - 1, plan.lowest)
 
 
 func _interact() -> void:
-	_has_goal = false
-	if riding:
-		elevator.call_to(selected_floor)
+	if walker.riding:
+		walker.go_to(selected_floor, plan.shaft_center())
+		elevator.press(selected_floor)
 		elevator.hurry()
-	elif at_shaft():
-		if elevator.is_open_at(floor_index):
-			_board()
-		else:
-			elevator.call_to(floor_index)
-
-
-func _walk(axis: float, delta: float) -> void:
-	var direction: float = axis
-	if _has_goal:
-		var target: float = _goal_x if _goal_floor == floor_index else plan.shaft_center()
-		var remaining: float = target - _x
-		if absf(remaining) <= 2.0:
-			_x = target
-			direction = 0.0
-			if _goal_floor == floor_index:
-				_has_goal = false
-			elif elevator.is_open_at(floor_index):
-				_board()
-				return
-			else:
-				elevator.call_to(floor_index)
-		else:
-			direction = signf(remaining) * minf(1.0, absf(remaining) / (_speed * delta))
-	if not is_zero_approx(direction):
-		_x = clampf(_x + direction * _speed * delta, 12.0, plan.width - 12.0)
-		facing = signf(direction)
-		_moving = true
-
-
-func _board() -> void:
-	riding = true
-	_x = plan.shaft_center()
-	selected_floor = _goal_floor if _has_goal else floor_index
-	if _has_goal:
-		elevator.call_to(_goal_floor)
-		elevator.hurry()
-
-
-func _ride(axis: float) -> void:
-	_x = plan.shaft_center()
-	if elevator.is_moving():
 		return
-	var here: int = elevator.current_floor()
-	if here != floor_index:
-		floor_index = here
-		floor_changed.emit(here)
-	if not elevator.is_open_at(here):
+	walker.stop()
+	if elevator.is_open_at(walker.floor_index):
+		if elevator.board(ID, walker.floor_index, true):
+			walker.riding = true
+			selected_floor = walker.floor_index
+	else:
+		elevator.call_to(walker.floor_index)
+
+
+## Steering by hand inside the car: walking left or right steps out when the
+## doors are open.
+func _ride_by_hand(axis: float) -> void:
+	if is_zero_approx(axis) or not elevator.is_open_at(elevator.current_floor()):
 		return
-	var leaving: bool = not is_zero_approx(axis) or (_has_goal and _goal_floor == here)
-	if leaving:
-		riding = false
+	elevator.leave(ID)
+	walker.riding = false
+	walker.floor_index = elevator.current_floor()
+	walker.stop()
 
 
 func _place() -> void:
-	z_index = Z_RIDING if riding else Z_WALKING
-	var line: float = -elevator.position * plan.floor_height if riding else plan.floor_y(floor_index)
-	position = Vector2(_x, line - 10.0)
+	z_index = Z_RIDING if walker.riding else Z_WALKING
+	position = walker.feet(plan, elevator) + Vector2(0.0, -10.0)
 	queue_redraw()
 
 
 func _draw() -> void:
-	# A placeholder figure about a third of a floor tall: trousers, polo,
-	# lanyard, head and glasses. Legs swing while walking.
-	var swing: float = sin(_walk_time * 12.0) * 6.0 if _moving else 0.0
-	var bob: float = absf(sin(_walk_time * 12.0)) * 2.0 if _moving else 0.0
-	var trousers := Color("#2f3442")
-	draw_line(Vector2(-5, -30 - bob), Vector2(-5 + swing, 0), trousers, 7.0)
-	draw_line(Vector2(5, -30 - bob), Vector2(5 - swing, 0), trousers, 7.0)
-	draw_rect(Rect2(-13, -62 - bob, 26, 34), Color("#3a7bd5"))
-	draw_line(Vector2(-6, -62 - bob), Vector2(0, -46 - bob), Color("#e8c547"), 2.0)
-	draw_line(Vector2(6, -62 - bob), Vector2(0, -46 - bob), Color("#e8c547"), 2.0)
-	draw_rect(Rect2(-3, -46 - bob, 6, 8), Color.WHITE)
-	draw_circle(Vector2(0, -74 - bob), 11.0, Color("#e9b996"))
-	draw_rect(Rect2(-11, -87 - bob, 22, 7), Color("#3b2a20"))
-	draw_line(Vector2(-1 * facing, -75 - bob), Vector2(9 * facing, -75 - bob), Color("#1c1c1c"), 2.0)
+	FigureArt.draw_standing(self, Vector2.ZERO, _look, walker.facing, _walk_time if walker.moving else -1.0)
+	# The lanyard and badge that mark the IT worker out from the staff.
+	draw_line(Vector2(-6, -62), Vector2(0, -46), Color("#e8c547"), 2.0)
+	draw_line(Vector2(6, -62), Vector2(0, -46), Color("#e8c547"), 2.0)
+	draw_rect(Rect2(-3, -46, 6, 8), Color.WHITE)

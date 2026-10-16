@@ -80,7 +80,7 @@ func _draw_floor(index: int) -> void:
 		# Skirting and floor covering.
 		draw_rect(Rect2(room.x, line - 10.0, room.width, 10.0), plan.colours.floor)
 		draw_rect(Rect2(room.x, line - 12.0, room.width, 2.0), Color(plan.colours.trim).darkened(0.2))
-		RoomProps.draw_room(self, room, line - 10.0, plan.colours, index < 0)
+		RoomProps.draw_room(self, room, line - 10.0, plan.colours)
 		_draw_label(room, top)
 	for room in plan.rooms_on(index):
 		_draw_dividers(room, top, line)

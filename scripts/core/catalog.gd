@@ -1,11 +1,13 @@
 extends RefCounted
-## Loads and validates the content catalogs (rooms, company archetypes) once.
+## Loads and validates the content catalogs (rooms, company archetypes, and
+## through catalog_<topic>.gd the rest) once.
 ## Balance numbers are read through the toolkit's Balance facade instead.
 ## Anything missing or mistyped is reported by `problems()` at startup; code
 ## never invents a default for it.
 const JsonIO = preload("res://addons/hatchery/core/json_io.gd")
 const Balance = preload("res://addons/hatchery/core/balance.gd")
 const DataRules = preload("res://addons/hatchery/core/data_rules.gd")
+const CatalogPeople = preload("res://scripts/core/catalog_people.gd")
 
 const SCHEMA_VERSION: int = 1
 const ROOMS_PATH: String = "res://data/rooms.json"
@@ -22,7 +24,12 @@ const BALANCE_NUMBERS: Array[String] = [
 	"building.floor_height", "building.slab", "building.shaft_width",
 	"building.ground_depth", "elevator.speed_floors_per_second", "elevator.door_seconds",
 	"elevator.dwell_seconds", "player.walk_speed", "player.interact_reach",
-	"camera.follow_rate", "camera.overview_margin",
+	"camera.follow_rate", "camera.overview_margin", "elevator.capacity",
+	"day.real_seconds", "day.start_minute", "day.end_minute", "day.arrival_end_minute",
+	"day.lunch_start_minute", "day.lunch_end_minute", "day.leaving_start_minute",
+	"staff.walk_speed_min", "staff.walk_speed_max", "staff.arrive_first_minute", "staff.arrive_last_minute",
+	"staff.leave_last_minute", "staff.lunch_out_chance", "staff.lunch_minutes_min", "staff.lunch_minutes_max",
+	"staff.trip_chance_per_hour", "staff.trip_minutes_min", "staff.trip_minutes_max", "staff.decide_every_minutes",
 ]
 const THEME_COLOURS: Array = ["sky", "exterior", "slab", "trim", "floor", "furniture", "accent"]
 
@@ -30,6 +37,8 @@ static var rooms: Dictionary = {}
 static var archetypes: Dictionary = {}
 ## Archetype ids in file order, which is also the order of tiers.
 static var archetype_ids: Array[String] = []
+## data/people.json: name parts, departments, trait ranges.
+static var people: Dictionary = {}
 static var _errors: Array[String] = []
 static var _loaded: bool = false
 
@@ -45,6 +54,7 @@ static func ensure_loaded() -> void:
 	_check_balance()
 	_load_rooms()
 	_load_archetypes()
+	people = CatalogPeople.load_into(_errors, SCHEMA_VERSION)
 
 
 ## Every data problem found while loading; empty means the catalogs are usable.

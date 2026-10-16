@@ -1,0 +1,26 @@
+{
+	"schema_version": 1,
+	"first_names": [
+		"Alex", "Bea", "Carl", "Dana", "Eli", "Fay", "Gus", "Hana", "Ivan", "Jo", "Kim", "Lena", "Max", "Nia",
+		"Omar", "Pip", "Quinn", "Rosa", "Sam", "Tess", "Uma", "Vic", "Wren", "Yuki", "Zoe", "Bryn", "Cass",
+		"Dev", "Edie", "Finn", "Greta", "Hal", "Ines", "Jules", "Kofi", "Lou", "Mira", "Ned", "Ola", "Priya"
+	],
+	"last_names": [
+		"Archer", "Bloom", "Castle", "Dunn", "Ember", "Frost", "Grove", "Hale", "Ingram", "Jett", "Keane",
+		"Lark", "Moss", "Nash", "Oakes", "Price", "Quill", "Reed", "Stone", "Thorne", "Underwood", "Vale",
+		"Webb", "Yates", "Zeller", "Birch", "Cole", "Drake", "Ellis", "Fenn"
+	],
+	"departments": [
+		{"id": "sales", "label": "Sales", "colour": "e0784a"},
+		{"id": "finance", "label": "Finance", "colour": "3f8f6b"},
+		{"id": "operations", "label": "Operations", "colour": "5a6fd1"},
+		{"id": "marketing", "label": "Marketing", "colour": "c6559a"},
+		{"id": "support", "label": "Support", "colour": "d1a33a"},
+		{"id": "legal", "label": "Legal", "colour": "7a5a46"}
+	],
+	"management": {"id": "management", "label": "Management", "colour": "2d2d38"},
+	"traits": {
+		"tech_confidence": [0.1, 0.9],
+		"patience": [0.2, 0.9]
+	}
+}

@@ -65,4 +65,4 @@ func _draw_doors() -> void:
 			draw_line(Vector2(opening.get_center().x, opening.position.y), Vector2(opening.get_center().x, opening.end.y), metal.darkened(0.3), 2.0)
 		# Hall lamp: lit while the car is called to this floor.
 		var lamp := Vector2(plan.shaft_x + plan.shaft_width - 14.0, line - 50.0)
-		draw_circle(lamp, 4.0, Color("#f2b84b") if elevator.calls.has(index) else Color(0.2, 0.2, 0.22))
+		draw_circle(lamp, 4.0, Color("#f2b84b") if elevator.is_called(index) else Color(0.2, 0.2, 0.22))

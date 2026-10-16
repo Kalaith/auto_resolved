@@ -3,39 +3,18 @@ extends RefCounted
 ## new company reads differently before any sprite art exists. Each prop is
 ## drawn with its feet at `at` (a point on the floor line). Swap a function's
 ## body for a sprite later; the prop ids and layout stay.
-const Catalog = preload("res://scripts/core/catalog.gd")
+const RoomLayout = preload("res://scripts/sim/room_layout.gd")
 
 const WINDOW_SIZE := Vector2(64.0, 74.0)
-const EDGE: float = 26.0
 
 
-## Lays out one room's props: windows high on the back wall, everything else
-## standing on the floor, spread evenly. Basements have no windows.
-static func draw_room(canvas: CanvasItem, room: Dictionary, floor_line: float, colours: Dictionary, underground: bool) -> void:
-	var data: Dictionary = Catalog.room(room.type)
-	var windows: int = data.props.count("window")
-	var standing: Array = data.props.filter(func(prop: String) -> bool: return prop != "window")
-	if data.has("fill"):
-		var room_space: float = float(room.width) - EDGE * 2.0
-		var count: int = maxi(1, int(room_space / float(data.fill_spacing)) - standing.size())
-		var half: int = int(standing.size() / 2.0)
-		for i in range(count):
-			standing.insert(half, data.fill)
-	if not underground:
-		_spread(canvas, room, floor_line - 112.0, windows, colours, "window")
-	for i in range(standing.size()):
-		var at := Vector2(_slot(room, i, standing.size()), floor_line)
-		draw_prop(canvas, str(standing[i]), at, colours, room.wall)
-
-
-static func _spread(canvas: CanvasItem, room: Dictionary, y: float, count: int, colours: Dictionary, prop: String) -> void:
-	for i in range(count):
-		draw_prop(canvas, prop, Vector2(_slot(room, i, count), y), colours, room.wall)
-
-
-static func _slot(room: Dictionary, index: int, count: int) -> float:
-	var inner: float = float(room.width) - EDGE * 2.0
-	return float(room.x) + EDGE + inner * (float(index) + 0.5) / float(count)
+## Draws one room's props where RoomLayout puts them: windows high on the back
+## wall, everything else standing on the floor. Basements have no windows.
+static func draw_room(canvas: CanvasItem, room: Dictionary, floor_line: float, colours: Dictionary) -> void:
+	for x in RoomLayout.windows(room):
+		draw_prop(canvas, "window", Vector2(x, floor_line - 112.0), colours, room.wall)
+	for item in RoomLayout.standing(room):
+		draw_prop(canvas, str(item.prop), Vector2(float(item.x), floor_line), colours, room.wall)
 
 
 static func draw_prop(canvas: CanvasItem, prop: String, at: Vector2, colours: Dictionary, wall: Color) -> void:

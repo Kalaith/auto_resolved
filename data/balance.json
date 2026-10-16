@@ -9,7 +9,8 @@
 	"elevator": {
 		"speed_floors_per_second": 1.6,
 		"door_seconds": 0.4,
-		"dwell_seconds": 1.4
+		"dwell_seconds": 1.4,
+		"capacity": 8
 	},
 	"player": {
 		"walk_speed": 240.0,
@@ -18,5 +19,28 @@
 	"camera": {
 		"follow_rate": 6.0,
 		"overview_margin": 80.0
+	},
+	"day": {
+		"real_seconds": 420.0,
+		"start_minute": 465,
+		"end_minute": 1095,
+		"arrival_end_minute": 540,
+		"lunch_start_minute": 720,
+		"lunch_end_minute": 790,
+		"leaving_start_minute": 1020
+	},
+	"staff": {
+		"walk_speed_min": 105.0,
+		"walk_speed_max": 150.0,
+		"arrive_first_minute": 470,
+		"arrive_last_minute": 560,
+		"leave_last_minute": 1080,
+		"lunch_out_chance": 0.55,
+		"lunch_minutes_min": 25,
+		"lunch_minutes_max": 45,
+		"trip_chance_per_hour": 0.45,
+		"trip_minutes_min": 5,
+		"trip_minutes_max": 18,
+		"decide_every_minutes": 12
 	}
 }
