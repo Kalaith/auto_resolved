@@ -108,6 +108,18 @@
 			"devices": ["server"], "per_device_per_day": 0.12, "min_tier": 3, "severity": 3,
 			"patience_minutes": 50, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 70},
 			"fault": "locked", "blocks": 0.8, "spread": "building", "archetypes": ["law_firm"]
+		},
+		{
+			"id": "donor_records_offline", "label": "Donor records offline", "title": "The donor records are not available",
+			"devices": ["workstation"], "per_device_per_day": 0.08, "min_tier": 1, "severity": 2,
+			"patience_minutes": 120, "manual": {"at": "device", "seconds": 7.0, "effort_minutes": 45},
+			"fault": "offline", "blocks": 0.4, "spread": "device", "archetypes": ["charity_office"]
+		},
+		{
+			"id": "museum_catalog_slow", "label": "Museum catalog slow", "title": "The collection catalog is taking a while",
+			"devices": ["server"], "per_device_per_day": 0.08, "min_tier": 3, "severity": 2,
+			"patience_minutes": 100, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 55},
+			"fault": "slow", "blocks": 0.3, "spread": "building", "archetypes": ["museum"]
 		}
 	]
 }

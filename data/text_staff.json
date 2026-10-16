@@ -19,6 +19,8 @@
 		"staff.ticket.month_end_export": "The month-end export is still running.|The figures are ready. The file is not.|Can we send the report before next month?|It has been calculating since the last meeting.",
 		"staff.ticket.render_queue": "The render queue has stopped again.|My preview is still a grey box.|The artwork is ready. The computer is considering it.|Can I get this render before the review?",
 		"staff.ticket.case_index_locked": "The case index is locked again.|I cannot search the case files.|The system says try again later. How much later?|I have a hearing before this index does.",
+		"staff.ticket.donor_records_offline": "The donor records are unavailable.|I cannot check the latest pledge.|The records were here yesterday.|The campaign meeting is soon and the list is not.",
+		"staff.ticket.museum_catalog_slow": "The collection search is taking ages.|I could walk to the archive faster than this search.|The catalog is loading one record at a time.|The exhibit label is ready. The lookup is not.",
 		"staff.thanks.player": "Thanks!|You're a lifesaver.|Back in business.|Oh, that was quick.|Cheers, IT.|I can get back to work. A novel feeling.|Thank you. I will try not to break it immediately.",
 		"staff.thanks.patch": "Huh, it just fixed itself.|Thanks, PATCH. I think?|Did the robot do that?|Fixed before I finished complaining.|That was almost suspiciously helpful.|Tell PATCH I said thanks. No, actually, I will.",
 		"staff.late": "Still waiting on IT...|Did my ticket get lost?|Is anyone looking at this?|I'll just stare at the wall, then.|I have started a second task. This one is also waiting.|The ticket says urgent. I have aged a little since raising it.",
