@@ -9,7 +9,7 @@ const Catalog = preload("res://scripts/core/catalog.gd")
 const Job = preload("res://scripts/sim/job.gd")
 const OfficeSim = preload("res://scripts/sim/office_sim.gd")
 
-const SEEDS: Array[int] = [11, 22, 33]
+const SEEDS: Array[int] = [11, 22, 33, 44, 55, 66, 77, 88]
 const WALK_MINUTES: float = 10.0
 
 

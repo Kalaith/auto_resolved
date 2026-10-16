@@ -55,7 +55,7 @@
 			"afternoon": 1.35,
 			"leaving": 0.5
 		},
-		"first_day_scale": 1.0
+		"first_day_scale": 0.75
 	},
 	"metrics": {
 		"confidence_start": 60.0,

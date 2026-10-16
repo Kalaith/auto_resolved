@@ -325,7 +325,9 @@ Notes on how the plan was built:
   career's first job.
 - Second pass: rates up 1.6x again and no gentler first day, so even a
   tier-1 office opens about 20 tickets a day against about 14 a perfect
-  hand-fixer could clear (`tools/day_report.gd`); playing games at the IT
+  hand-fixer could clear (`tools/day_report.gd`). Day 1 then runs at
+  `issues.first_day_scale` 0.75, tuned so a tier-1 first day ends with about
+  four tickets open for the stand-in; playing games at the IT
   desk trades 30 office minutes for a big drop in stress.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
