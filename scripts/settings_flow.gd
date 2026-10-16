@@ -71,6 +71,10 @@ func open(kit: RefCounted, with_title: bool) -> void:
 		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
 	]
 	page.commit_on_release = ["ui_scale"]
+	page.slider_text = func(key: String, fraction: float) -> String:
+		if key == "ui_scale":
+			return "%d%%" % roundi(Display.scale_from_fraction(fraction) * 100.0)
+		return "%d%%" % roundi(fraction * 100.0)
 	page.text = func(key: String, english: String) -> String: return str(WORDS.get(key, KEY_ACTIONS.get(key.trim_prefix("action_"), english)))
 	page.applied.connect(apply)
 	page.close_requested.connect(close)

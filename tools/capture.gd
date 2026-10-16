@@ -20,6 +20,8 @@ func tour() -> void:
 		await _day(main)
 	if only.is_empty() or only == "patch":
 		await _patch(main)
+	if only.is_empty() or only == "menus":
+		await _menus(main)
 
 
 func _buildings(main: Node) -> void:
@@ -157,6 +159,41 @@ func _restored_day(main: Node, flow: Node) -> void:
 	await seconds(1.5)
 	await shot("career_restored_day")
 	main.camera.overview = false
+
+
+## The job menu, settings, a paper flood, and the end of a bad day with a
+## warning from management. Uses a throwaway career that is never saved.
+func _menus(main: Node) -> void:
+	var flow: Node = main.flow
+	flow.store.file.enabled = false
+	flow.career = preload("res://scripts/sim/career.gd").fresh(777)
+	flow._resume()
+	Engine.time_scale = 4.0
+	await _until(main, 520.0)
+	Engine.time_scale = 1.0
+	var office: RefCounted = main.office
+	var printers: Array = office.devices_of("printer")
+	var ticket: RefCounted = office.helpdesk.open_ticket(office, "printer_offline", printers[0])
+	office.patch_desk.forced = "backfire"
+	office.patch_desk.forced_backfire = "endless_test_page"
+	office.patch_desk.approve(office, office.patch_desk.propose_ticket(office, ticket), false)
+	main.player.go_to(printers[0].floor_index, printers[0].x + 60.0)
+	await seconds(6.0)
+	await shot("menus_paper_flood")
+	main.open_menu()
+	await seconds(0.4)
+	await shot("menus_job_menu")
+	main.hud.notice.visible = false
+	main.open_settings()
+	await seconds(0.4)
+	await shot("menus_settings")
+	main.settings.close()
+	office.metrics.confidence = 20.0
+	office.clock.minute = office.clock.end_minute - 0.5
+	await seconds(1.0)
+	await shot("menus_day_over_warning")
+	main.hud.notice.visible = false
+	flow.career = null
 
 
 func _until(main: Node, minute: float) -> void:
