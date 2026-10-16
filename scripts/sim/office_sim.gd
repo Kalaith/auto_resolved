@@ -38,6 +38,14 @@ var area_faults: Dictionary = {}
 var events: Array[Dictionary] = []
 ## False between the end of one workday and the start of the next.
 var day_running: bool = false
+## Management's warnings so far (career_rules.gd), and whether the player has
+## handed in notice (the job ends when the current day does).
+var warnings: int = 0
+var notice_given: bool = false
+## The manager summoned to the IT office tomorrow morning ("" for nobody).
+var summoned: String = ""
+## Each finished day's tallies, oldest first.
+var day_summaries: Array[Dictionary] = []
 var _staff_rng: RandomNumberGenerator
 var _starter_rng: RandomNumberGenerator
 var _by_id: Dictionary = {}
@@ -118,6 +126,7 @@ func _end_day() -> void:
 		person.present = false
 		person.activity = "home"
 	metrics.end_day()
+	day_summaries.append(metrics.day.duplicate(true))
 	emit("day_ended", {"day": clock.day})
 
 
@@ -133,6 +142,16 @@ func drain_events() -> Array[Dictionary]:
 	var drained: Array[Dictionary] = events.duplicate()
 	events.clear()
 	return drained
+
+
+## Picks someone senior to walk down to the IT office tomorrow morning.
+func summon_manager() -> void:
+	for person in staff:
+		if person.role == "manager":
+			summoned = person.id
+			return
+	if not staff.is_empty():
+		summoned = staff[0].id
 
 
 func employee(id: String) -> RefCounted:

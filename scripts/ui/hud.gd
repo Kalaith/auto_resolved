@@ -21,6 +21,7 @@ const HINT: String = "A/D walk   E use / call / go   W/S pick floor   Click to s
 var ui: UiKit
 var root: Control
 var clock_bar: ClockBar
+var menu_button: Button
 var person_card: PersonCard
 var notice: NoticePanel
 var tickets: TicketPanel
@@ -69,12 +70,13 @@ func _ready() -> void:
 	clock_bar.offset_right = -16.0
 	clock_bar.offset_top = 16.0
 	root.add_child(clock_bar)
+	menu_button = clock_bar.menu_button
 	tickets = TicketPanel.new()
 	tickets.build(ui)
 	tickets.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	tickets.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	tickets.offset_right = -16.0
-	tickets.offset_top = 124.0
+	tickets.offset_top = 128.0
 	root.add_child(tickets)
 	_toast = ui.label("", 17)
 	_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)

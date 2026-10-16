@@ -89,5 +89,40 @@
 		"cascade_cap_per_day": 3,
 		"change_cap": 2,
 		"discover_grace_minutes": 5
+	},
+	"career": {
+		"warning_confidence": 35.0,
+		"recover_confidence": 50.0,
+		"points_ticket": 0.25,
+		"points_ticket_extra": 0.05,
+		"points_ticket_full_per_issue_day": 4,
+		"points_automation_day": 1.0,
+		"points_recovery": 0.75,
+		"points_first_archetype": 1.5,
+		"points_clean_day": 2.0,
+		"points_coverage_day": 2.0,
+		"coverage_share": 0.5,
+		"coverage_min_resolved": 5,
+		"clean_day_min_resolved": 3,
+		"fired_keep": 0.6,
+		"quit_minimum_points": 2,
+		"fired_minimum_points": 1,
+		"grade_a": 72.0,
+		"grade_b": 58.0,
+		"grade_c": 42.0,
+		"reputation": {
+			"A": 7,
+			"B": 5,
+			"C": 3,
+			"D": 1
+		},
+		"reputation_fired_loss": 3,
+		"tier_reputation": {
+			"2": 8,
+			"3": 20,
+			"4": 36
+		},
+		"summon_minute": 570,
+		"summon_minutes": 25
 	}
 }

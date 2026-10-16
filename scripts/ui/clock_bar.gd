@@ -1,7 +1,11 @@
 extends PanelContainer
-## Top-right: the day, the time, the phase, and pause / 1x / 2x / 4x buttons.
+## Top-right: the day, the time, the phase, pause / 1x / 2x / 4x buttons and
+## the job menu.
 ## Big enough to tap. The keyboard shortcuts (P, 1, 2, 3) live in main.gd.
 signal speed_chosen(scale: float)
+
+## Opens the job menu (notice, settings, title); main.gd connects it.
+var menu_button: Button
 
 const WorkClock = preload("res://scripts/sim/work_clock.gd")
 
@@ -35,6 +39,10 @@ func build(kit: RefCounted) -> void:
 		button.focus_mode = Control.FOCUS_NONE
 		row.add_child(button)
 		_buttons.append(button)
+	menu_button = ui.button("Menu", Callable(), false, 15)
+	menu_button.custom_minimum_size = Vector2(64, 40)
+	menu_button.focus_mode = Control.FOCUS_NONE
+	row.add_child(menu_button)
 
 
 func show_clock(clock: RefCounted, running: bool) -> void:

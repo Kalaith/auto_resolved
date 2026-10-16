@@ -41,6 +41,14 @@ const BALANCE_NUMBERS: Array[String] = [
 	"risk.band_low", "risk.band_high", "risk.band_precise_low", "risk.band_precise_high",
 	"patch.dry_run_minutes", "patch.repeat_delay_minutes", "patch.daily_run_minute", "patch.cascade_cap_per_day",
 	"patch.change_cap", "patch.discover_grace_minutes",
+	"career.warning_confidence", "career.recover_confidence", "career.points_ticket", "career.points_ticket_extra",
+	"career.points_ticket_full_per_issue_day", "career.points_automation_day", "career.points_recovery",
+	"career.points_first_archetype", "career.points_clean_day", "career.points_coverage_day", "career.coverage_share",
+	"career.coverage_min_resolved", "career.clean_day_min_resolved", "career.fired_keep", "career.quit_minimum_points",
+	"career.fired_minimum_points", "career.grade_a", "career.grade_b", "career.grade_c", "career.reputation.A",
+	"career.reputation.B", "career.reputation.C", "career.reputation.D", "career.reputation_fired_loss",
+	"career.tier_reputation.2", "career.tier_reputation.3", "career.tier_reputation.4",
+	"career.summon_minute", "career.summon_minutes",
 ]
 const THEME_COLOURS: Array = ["sky", "exterior", "slab", "trim", "floor", "furniture", "accent"]
 

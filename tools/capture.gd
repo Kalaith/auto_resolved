@@ -12,6 +12,8 @@ func tour() -> void:
 		if argument.begins_with("--only="):
 			only = argument.trim_prefix("--only=")
 	var main: Node = await open_scene("res://scenes/main.tscn")
+	if only.is_empty() or only == "career":
+		await _career(main)
 	if only.is_empty() or only == "buildings":
 		await _buildings(main)
 	if only.is_empty() or only == "day":
@@ -97,6 +99,31 @@ func _incident(main: Node) -> void:
 	main.hud.incidents.open_for(main.office)
 	await seconds(0.5)
 	await shot("incident_view")
+
+
+## The career screens: title, an exit interview after a short job, PATCH's
+## update and the job board. Uses a throwaway career that is never saved.
+func _career(main: Node) -> void:
+	await seconds(0.5)
+	await shot("career_title")
+	var flow: Node = main.flow
+	flow.store.file.enabled = false
+	flow.career = preload("res://scripts/sim/career.gd").fresh(4242)
+	flow._resume()
+	await seconds(0.5)
+	main.office.metrics.end_day()
+	main.office.day_summaries.append(main.office.metrics.day.duplicate(true))
+	main.office.patch_desk.add_guardrail("bulk_misread")
+	flow._exit(main.office, "quit")
+	await seconds(0.5)
+	await shot("career_exit_interview")
+	flow.screens.current.done.emit("bulk_misread")
+	await seconds(0.5)
+	await shot("career_upgrades")
+	flow.screens.current.finished.emit()
+	await seconds(0.5)
+	await shot("career_job_board")
+	flow.career = null
 
 
 func _until(main: Node, minute: float) -> void:

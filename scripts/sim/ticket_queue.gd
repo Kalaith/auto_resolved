@@ -17,6 +17,14 @@ func add(ticket: Ticket) -> Ticket:
 	return ticket
 
 
+## Puts a saved ticket back under its own id.
+func restore(ticket: Ticket, id: int) -> void:
+	ticket.id = id
+	tickets.append(ticket)
+	_by_id[id] = ticket
+	_next_id = maxi(_next_id, id + 1)
+
+
 func get_ticket(id: int) -> Ticket:
 	return _by_id.get(id)
 

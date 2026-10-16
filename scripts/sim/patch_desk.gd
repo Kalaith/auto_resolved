@@ -350,6 +350,21 @@ func _next_run(office: RefCounted, automation: RefCounted) -> float:
 	return automation.next_run + 60.0 * office.patch.cadence_scale()
 
 
+## Puts back an automation from a saved day; it runs early next morning.
+func restore_automation(automation: RefCounted) -> void:
+	automation.id = _next_automation
+	_next_automation += 1
+	automation.next_run = 0.0
+	automations.append(automation)
+
+
+## Moves the id counters past everything restored from a save.
+func sync_ids() -> void:
+	for item in incidents:
+		_next_incident = maxi(_next_incident, item.id + 1)
+		_next_execution = maxi(_next_execution, item.execution_id + 1)
+
+
 func set_automation_enabled(automation: RefCounted, on: bool) -> void:
 	automation.enabled = on
 	automation.paused_by = "" if on else "player"

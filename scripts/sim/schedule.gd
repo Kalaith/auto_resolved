@@ -12,6 +12,7 @@ const ERRANDS: Dictionary = {
 	"meeting": ["meeting_room"],
 	"kitchen": ["kitchen", "break_room"],
 	"break": ["break_room", "kitchen"],
+	"visit_it": ["it_office"],
 }
 
 
@@ -87,6 +88,11 @@ static func _decide_at_desk(person: RefCounted, office: RefCounted, minute: floa
 			return
 		person.busy_until = minute + lunch
 		return
+	if office.summoned == person.id and minute >= Balance.number("career.summon_minute"):
+		office.summoned = ""
+		if _go_on_errand(person, office, "visit_it", minute + Balance.number("career.summon_minutes"), rng):
+			office.emit("manager_visit", {"employee": person.id})
+			return
 	if minute < person.next_decision or minute < person.busy_until:
 		return
 	var every: float = Balance.number("staff.decide_every_minutes")

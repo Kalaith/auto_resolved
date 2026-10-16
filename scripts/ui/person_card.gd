@@ -68,7 +68,7 @@ func _doing() -> String:
 		"working":
 			return "working at their desk"
 		"walking", "visiting":
-			return {"printer": "at the printer", "meeting": "in a meeting", "kitchen": "in the kitchen", "break": "on a break"}.get(person.errand, "on an errand")
+			return {"printer": "at the printer", "meeting": "in a meeting", "kitchen": "in the kitchen", "break": "on a break", "visit_it": "having a word with IT about confidence"}.get(person.errand, "on an errand")
 		"returning":
 			return "heading back to their desk"
 		"leaving":
