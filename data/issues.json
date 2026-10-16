@@ -84,6 +84,30 @@
 			"devices": ["server"], "per_device_per_day": 0.288, "min_tier": 4, "severity": 3,
 			"patience_minutes": 30, "manual": {"at": "device", "seconds": 6.0, "effort_minutes": 50},
 			"fault": "crashed", "blocks": 0.3, "spread": "building", "archetypes": ["data_centre"]
+		},
+		{
+			"id": "shared_drive_offline", "label": "Shared drive offline", "title": "The shared drive is not answering",
+			"devices": ["server"], "per_device_per_day": 0.06, "min_tier": 2, "severity": 2,
+			"patience_minutes": 100, "manual": {"at": "device", "seconds": 7.0, "effort_minutes": 50},
+			"fault": "offline", "blocks": 0.25, "spread": "building"
+		},
+		{
+			"id": "month_end_export", "label": "Month-end export", "title": "The month-end export is taking its time",
+			"devices": ["workstation"], "per_device_per_day": 0.06, "min_tier": 2, "severity": 2,
+			"patience_minutes": 90, "manual": {"at": "device", "seconds": 7.0, "effort_minutes": 45},
+			"fault": "slow", "blocks": 0.3, "spread": "device", "archetypes": ["accounting_firm"]
+		},
+		{
+			"id": "render_queue", "label": "Render queue stalled", "title": "The design render queue has stopped moving",
+			"devices": ["workstation"], "per_device_per_day": 0.06, "min_tier": 2, "severity": 2,
+			"patience_minutes": 75, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 55},
+			"fault": "slow", "blocks": 0.35, "spread": "device", "archetypes": ["design_agency"]
+		},
+		{
+			"id": "case_index_locked", "label": "Case index locked", "title": "The case index is locked again",
+			"devices": ["server"], "per_device_per_day": 0.12, "min_tier": 3, "severity": 3,
+			"patience_minutes": 50, "manual": {"at": "device", "seconds": 8.0, "effort_minutes": 70},
+			"fault": "locked", "blocks": 0.8, "spread": "building", "archetypes": ["law_firm"]
 		}
 	]
 }
