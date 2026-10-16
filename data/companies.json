@@ -280,6 +280,9 @@
 				{"room": "gallery", "floor": "any"},
 				{"room": "archive_room", "floor": "any"},
 				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
+				{"room": "open_office", "floor": "any"},
 				{"room": "open_office", "floor": "any"}
 			],
 			"room_weights": {"open_office": 4, "gallery": 2, "archive_room": 2, "meeting_room": 1, "break_room": 1},
