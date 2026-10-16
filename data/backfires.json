@@ -203,6 +203,16 @@
 			{"id": "locked_every_case", "weight": 1, "severity": 2, "delay": "immediate", "delay_minutes": 0, "archetype": "overreach",
 				"effects": [{"do": "area_fault", "fault": "locked", "block": 0.6, "on": "target_floor"}],
 				"recoveries": ["repair_on_site", "rollback"]}
+		],
+		"donor_register": [
+			{"id": "locked_the_donor_login", "weight": 1, "severity": 1, "delay": "immediate", "delay_minutes": 0, "archetype": "wrong_target",
+				"effects": [{"do": "device_fault", "fault": "no_account", "block": 1.0, "on": "target"}],
+				"recoveries": ["repair_on_site", "rollback"]}
+		],
+		"museum_catalog": [
+			{"id": "restarted_during_indexing", "weight": 1, "severity": 2, "delay": "delayed", "delay_minutes": 20, "archetype": "wrong_command",
+				"effects": [{"do": "device_fault", "fault": "crashed", "block": 0.3, "on": "target"}],
+				"recoveries": ["repair_on_site", "rollback"]}
 		]
 	}
 }

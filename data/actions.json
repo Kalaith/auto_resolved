@@ -88,6 +88,12 @@
 			"backfires": "render_queue", "rollback": true, "requires": ""},
 		{"id": "unlock_case_index", "label": "Unlock the case index", "kind": "one_off", "intents": ["case_index_locked"],
 			"risk_class": "multi", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
-			"backfires": "case_index", "rollback": true, "requires": ""}
+			"backfires": "case_index", "rollback": true, "requires": ""},
+		{"id": "repair_donor_records", "label": "Reconnect the donor records", "kind": "one_off", "intents": ["donor_records_offline"],
+			"risk_class": "simple", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "donor_register", "rollback": true, "requires": ""},
+		{"id": "repair_museum_catalog", "label": "Refresh the collection catalog", "kind": "one_off", "intents": ["museum_catalog_slow"],
+			"risk_class": "multi", "scopes": ["ticket"], "success": [{"do": "resolve_ticket"}],
+			"backfires": "museum_catalog", "rollback": true, "requires": ""}
 	]
 }
