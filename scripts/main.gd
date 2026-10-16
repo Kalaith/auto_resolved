@@ -234,9 +234,10 @@ func _physics_process(delta: float) -> void:
 			return
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if office == null or player == null:
 		return
+	hud.show_points(office, delta, flow.career != null)
 	hud.show_position(player, elevator)
 	hud.clock_bar.show_clock(office.clock, office.day_running)
 	hud.person_card.refresh(office)
@@ -268,7 +269,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if plan == null or office == null:
 		return
 	if event.is_action_pressed("interact"):
-		work.interact_here()
+		if not work.interact_here() and work.at_it_desk():
+			hud.open_patch(office)
 	elif event.is_action_pressed("toggle_overview"):
 		camera.overview = not camera.overview
 	elif event.is_action_pressed("pause"):

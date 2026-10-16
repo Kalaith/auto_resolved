@@ -13,6 +13,7 @@ const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
 const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
 const IncidentPanel = preload("res://scripts/ui/incident_panel.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
+const CareerRules = preload("res://scripts/sim/career_rules.gd")
 
 const TOAST_SECONDS: float = 3.5
 
@@ -36,6 +37,8 @@ var _toast_left: float = 0.0
 var _company: Label
 var _details: Label
 var _where: Label
+var _points: Label
+var _points_left: float = 0.0
 var _hint: Label
 var _top: PanelContainer
 
@@ -56,7 +59,8 @@ func _ready() -> void:
 	_company = ui.heading("", 22)
 	_details = ui.label("", 15, ui.palette.muted)
 	_where = ui.label("", 15)
-	for label in [_company, _details, _where]:
+	_points = ui.label("", 14, ui.palette.accent)
+	for label in [_company, _details, _where, _points]:
 		column.add_child(label)
 	_hint = ui.label(HINT, 13, ui.palette.muted)
 	_hint.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -187,6 +191,20 @@ func show_alert(office: RefCounted) -> void:
 		var newest: RefCounted = active[active.size() - 1]
 		var more: String = "  (+%d more)" % (active.size() - 1) if active.size() > 1 else ""
 		alert.text = "INCIDENT: PATCH managed to %s%s" % [Catalog.say("backfire.%s.label" % newest.backfire_id), more]
+
+
+## The PATCH Points this job would pay if you handed in notice now, refreshed
+## about once a second (it walks the whole ticket history).
+func show_points(office: RefCounted, delta: float, career_running: bool) -> void:
+	_points.visible = career_running
+	_points_left -= delta
+	if not career_running or _points_left > 0.0:
+		return
+	_points_left = 1.0
+	var days: int = CareerRules.days_worked(office)
+	var points: int = int(CareerRules.points(office, "quit").total)
+	var warning: String = "   Warnings: %d" % office.warnings if office.warnings > 0 else ""
+	_points.text = "PATCH Points if you quit today: %d%s" % [points, warning] if days > 0 else "PATCH Points start counting after your first full day"
 
 
 func show_problems(problems: Array[String]) -> void:
