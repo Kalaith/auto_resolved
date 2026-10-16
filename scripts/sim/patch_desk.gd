@@ -101,6 +101,20 @@ func active_incidents() -> Array:
 	return incidents.filter(func(item: RefCounted) -> bool: return item.revealed and item.is_active())
 
 
+## Recoveries this incident would offer with a backup or a reversible action.
+func locked_recoveries(item: RefCounted) -> Array[String]:
+	var offered: Array[String] = recoveries_for(item)
+	var result: Array[String] = []
+	for id in Catalog.backfire(item.backfire_id).recoveries:
+		if not offered.has(str(id)):
+			result.append(str(id))
+	return result
+
+
+func recovery_ids(item: RefCounted) -> Array[String]:
+	return recoveries_for(item)
+
+
 ## The recoveries this incident offers, given its safeguards and action.
 func recoveries_for(item: RefCounted) -> Array[String]:
 	var result: Array[String] = []
@@ -124,6 +138,10 @@ func recovery_places(office: RefCounted, item: RefCounted, recovery_id: String) 
 		for desk in office.devices_of("it_desk"):
 			places.append(desk.id)
 	return places
+
+
+func recovery_label(recovery_id: String) -> String:
+	return str(Catalog.recoveries[recovery_id].label)
 
 
 func recovery_seconds(office: RefCounted, recovery_id: String) -> float:

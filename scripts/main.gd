@@ -16,6 +16,7 @@ const Player = preload("res://scripts/world/player.gd")
 const OfficeCamera = preload("res://scripts/world/office_camera.gd")
 const Hud = preload("res://scripts/ui/hud.gd")
 const DayReport = preload("res://scripts/ui/day_report.gd")
+const DebugKeys = preload("res://scripts/debug_keys.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -56,8 +57,13 @@ func _ready() -> void:
 	hud.tickets.ticket_chosen.connect(func(id: int) -> void: work.request(id))
 	hud.tickets.patch_asked.connect(func(id: int) -> void: hud.open_patch(office, id))
 	hud.patch_button.pressed.connect(func() -> void: hud.open_patch(office))
+	hud.alert.pressed.connect(func() -> void: hud.incidents.open_for(office))
+	hud.incidents.recovery_chosen.connect(func(incident: RefCounted, recovery: String) -> void: work.request_recovery(incident, recovery))
 	camera = OfficeCamera.new()
 	add_child(camera)
+	var debug: Node = DebugKeys.new()
+	debug.main = self
+	add_child(debug)
 	var problems: Array[String] = Catalog.problems()
 	if not problems.is_empty():
 		for problem in problems:
@@ -96,6 +102,7 @@ func start_job(archetype: String, job_seed: int) -> void:
 	work.setup(office, player, device_view)
 	hud.show_job(job, plan)
 	hud.patch_panel.close_panel()
+	hud.incidents.visible = false
 	RenderingServer.set_default_clear_color(plan.colours.sky)
 	_accumulator = 0.0
 	office.begin_day(1)
@@ -146,12 +153,18 @@ func _process(_delta: float) -> void:
 	hud.clock_bar.show_clock(office.clock, office.day_running)
 	hud.person_card.refresh(office)
 	hud.tickets.show_office(office)
+	hud.show_alert(office)
 
 
 func _on_event(event: Dictionary) -> void:
 	match str(event.type):
 		"day_ended":
 			_show_day_summary(int(event.day))
+		"incident_opened":
+			hud.toast("Something went wrong. PATCH would like a word.")
+		"ticket_opened":
+			if int(event.ticket) <= 3:
+				hud.toast("New ticket: %s" % office.helpdesk.queue.get_ticket(int(event.ticket)).title)
 
 
 func _show_day_summary(day: int) -> void:

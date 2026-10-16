@@ -78,6 +78,25 @@ func _patch(main: Node) -> void:
 	await seconds(0.5)
 	await shot("patch_automation_card")
 	main.hud.patch_panel.close_panel()
+	await _incident(main)
+
+
+## A forced backfire: queue organising deletes every ticket; the incident view.
+func _incident(main: Node) -> void:
+	var desk: RefCounted = main.office.patch_desk
+	desk.forced = "backfire"
+	desk.forced_backfire = "deleted_all_tickets"
+	main.hud.open_patch(main.office)
+	main.hud.patch_panel._show_proposal(desk.propose_queue(main.office, "organize_queue"))
+	await seconds(0.3)
+	main.hud.patch_panel._card._approve(false)
+	await seconds(0.5)
+	main.hud.patch_panel.close_panel()
+	await seconds(0.3)
+	await shot("incident_alert")
+	main.hud.incidents.open_for(main.office)
+	await seconds(0.5)
+	await shot("incident_view")
 
 
 func _until(main: Node, minute: float) -> void:

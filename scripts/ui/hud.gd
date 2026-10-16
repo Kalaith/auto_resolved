@@ -11,6 +11,8 @@ const PersonCard = preload("res://scripts/ui/person_card.gd")
 const NoticePanel = preload("res://scripts/ui/notice_panel.gd")
 const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
 const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
+const IncidentPanel = preload("res://scripts/ui/incident_panel.gd")
+const Catalog = preload("res://scripts/core/catalog.gd")
 
 const TOAST_SECONDS: float = 3.5
 
@@ -24,6 +26,9 @@ var notice: NoticePanel
 var tickets: TicketPanel
 var patch_panel: PatchPanel
 var patch_button: Button
+var incidents: IncidentPanel
+## The single high-priority alert: an active incident. Tap to open it.
+var alert: Button
 var _toast: Label
 var _toast_left: float = 0.0
 var _company: Label
@@ -105,6 +110,18 @@ func _ready() -> void:
 	patch_button.offset_right = -16.0
 	patch_button.offset_bottom = -16.0
 	root.add_child(patch_button)
+	incidents = IncidentPanel.new()
+	incidents.build(ui)
+	incidents.position = Vector2(16, 130)
+	root.add_child(incidents)
+	alert = ui.button("", Callable(), true, 15)
+	alert.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	alert.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	alert.offset_top = 56.0
+	alert.focus_mode = Control.FOCUS_NONE
+	alert.add_theme_color_override("font_color", ui.palette.bad)
+	alert.visible = false
+	root.add_child(alert)
 	notice = NoticePanel.new()
 	notice.build(ui)
 	root.add_child(notice)
@@ -153,6 +170,16 @@ func open_patch(office: RefCounted, ticket_id: int = -1) -> void:
 		patch_panel.open_for(office)
 
 
+## Shows the newest active incident as the one alert, if there is any.
+func show_alert(office: RefCounted) -> void:
+	var active: Array = office.patch_desk.active_incidents()
+	alert.visible = not active.is_empty() and not incidents.visible
+	if alert.visible:
+		var newest: RefCounted = active[active.size() - 1]
+		var more: String = "  (+%d more)" % (active.size() - 1) if active.size() > 1 else ""
+		alert.text = "INCIDENT: PATCH managed to %s%s" % [Catalog.say("backfire.%s.label" % newest.backfire_id), more]
+
+
 func show_problems(problems: Array[String]) -> void:
 	_company.text = "Data problems"
 	_details.text = "\n".join(problems.slice(0, 12))
@@ -169,7 +196,7 @@ func covers(screen_point: Vector2) -> bool:
 
 
 func _blocking_controls() -> Array[Control]:
-	return [clock_bar, person_card, notice, tickets, patch_panel, patch_button]
+	return [clock_bar, person_card, notice, tickets, patch_panel, patch_button, incidents, alert]
 
 
 func _accent_box(accent: Color) -> StyleBoxFlat:
