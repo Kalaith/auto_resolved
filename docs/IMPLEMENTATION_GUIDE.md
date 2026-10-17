@@ -89,7 +89,7 @@ the levers.
 ## 2. Project layout
 
 ```
-it_guy/
+auto_resolved/
   AGENTS.md, README.md, Auto_Resolved_Game_Design_Document.md
   project.godot, export_presets.cfg, publish.json
   publish.ps1, publish-itch.ps1, Run.ps1        (toolkit templates)
