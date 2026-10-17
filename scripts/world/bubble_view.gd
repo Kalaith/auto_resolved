@@ -6,6 +6,7 @@ extends Node2D
 ## only, so it uses its own generator. A bubble follows its speaker.
 const CatalogPeople = preload("res://scripts/core/catalog_people.gd")
 const Det = preload("res://addons/hatchery/core/det.gd")
+const TextCatalog = preload("res://addons/hatchery/core/text_catalog.gd")
 
 const SECONDS: float = 3.6
 const MAX_BUBBLES: int = 7
@@ -61,7 +62,8 @@ func _ticket_opened(ticket: RefCounted) -> void:
 	say(person.id, "staff.ticket." + ticket.issue)
 
 
-## Shows a line from `key` (variants split by "|") over `who`.
+## Shows a line from `key` (variants split by "|") over `who`; `{name}` in a
+## line becomes the speaker's first name.
 func say(who: String, key: String) -> void:
 	var text: RefCounted = CatalogPeople.staff_text
 	if not text.has(key):
@@ -70,7 +72,7 @@ func say(who: String, key: String) -> void:
 	if person == null or not person.present:
 		return
 	var variants: PackedStringArray = text.label(key).split("|")
-	var line: String = variants[_rng.randi_range(0, variants.size() - 1)]
+	var line: String = TextCatalog.fill(variants[_rng.randi_range(0, variants.size() - 1)], {"name": person.name.get_slice(" ", 0)})
 	bubbles = bubbles.filter(func(item: Dictionary) -> bool: return item.who != who)
 	bubbles.append({"who": who, "line": line, "left": SECONDS})
 	while bubbles.size() > MAX_BUBBLES:

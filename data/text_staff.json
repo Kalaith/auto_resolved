@@ -32,7 +32,7 @@
 		"staff.incident.permissions": "I can install anything now. Is that... fine?|Why am I an administrator?|I have been given powers I did not request.|Please take away the button that lets me install games.",
 		"staff.incident.bulk_misread": "My ticket disappeared!|Where did all the tickets go?|The queue is tidy. My problem is still here.|I did not ask for my ticket to be tidied away.",
 		"staff.incident.false_success": "It says resolved. It is not resolved.|My ticket closed itself but I'm still stuck.|The system says fixed. The screen says otherwise.|Can the ticket wait until the computer agrees?",
-		"staff.remember.wrong_target": "Make sure it's MY account this time.|I am the other Alex. The other one.|Please read the whole name before clicking.",
+		"staff.remember.wrong_target": "Make sure it's MY account this time.|I am {name}. Not the one with the similar name.|Please read the whole name before clicking.",
 		"staff.remember.overreach": "Just my machine, please. Not the whole floor.|One means one, even if the floor is busy.|Please leave the other desks out of it.",
 		"staff.remember.runaway_job": "Is PATCH printing again?|I can hear the printer warming up. Should I worry?|One test page is still one too many before lunch.",
 		"staff.remember.wrong_command": "Please don't let the robot touch it.|Can we check the model number first?|That machine is older than the new starter. Be gentle.",
