@@ -76,3 +76,17 @@ under `docs/` so Godot does not import them.
 .\publish.ps1 -BuildOnly    # export web + Windows to builds/, no deploy
 .\publish.ps1 -DryRun       # show what a publish would do
 ```
+
+## Promoter capture
+
+Promoter uses the shared [Godot capture driver](../godot_toolkit/tools/promo/README.md); this project does not need its own capture script. It starts from the title screen. Use the documented mouse, keyboard and ticket controls above to stage public features. See the [Promoter plan and update rules](../../local_apps/promoter/adapters/godot/README.md).
+
+From this project root, check whether source changes need an update video:
+
+```powershell
+$promoter = (Resolve-Path '..\..\local_apps\promoter').Path
+$project = (Resolve-Path '.').Path
+& "$promoter\scripts\godot-promo.ps1" -Mode status -ProjectRoot $project -ProjectKey auto-resolved
+```
+
+Keep `auto-resolved` as the project key when generating later videos. Put plans and generated media under Promoter's ignored `data/media/` directory.
