@@ -57,7 +57,7 @@
 			"label": "Charity office",
 			"tier": 1,
 			"pay_per_day": 135,
-			"floors": [2, 3],
+			"floors": [3, 3],
 			"basement": false,
 			"width": [1500, 1700],
 			"elevator_position": [0.25, 0.75],

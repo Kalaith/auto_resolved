@@ -111,7 +111,7 @@
 		},
 		{
 			"id": "donor_records_offline", "label": "Donor records offline", "title": "The donor records are not available",
-			"devices": ["workstation"], "per_device_per_day": 1.2, "min_tier": 1, "severity": 2,
+			"devices": ["workstation"], "per_device_per_day": 0.25, "min_tier": 1, "severity": 2,
 			"patience_minutes": 120, "manual": {"at": "device", "seconds": 7.0, "effort_minutes": 45},
 			"fault": "offline", "blocks": 0.4, "spread": "device", "archetypes": ["charity_office"]
 		},
