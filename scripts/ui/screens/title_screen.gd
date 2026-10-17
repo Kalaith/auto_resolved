@@ -11,7 +11,7 @@ var problem: String = ""
 
 
 func build_page() -> void:
-	column.add_child(ui.heading("IT GUY", 64))
+	column.add_child(ui.heading("AUTO-RESOLVED", 64))
 	column.add_child(text("It is your first week in IT, and the same week PATCH v1.0 ships: \"your new IT colleague\". " +
 		"Keep the building running, decide how much to trust PATCH, and carry it from job to job.", 18, ui.palette.muted, 700.0))
 	var buttons: VBoxContainer = ui.vbox(10)

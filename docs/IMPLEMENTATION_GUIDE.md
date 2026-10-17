@@ -1,6 +1,6 @@
-# IT Guy implementation guide
+# Auto-Resolved implementation guide
 
-This guide turns `IT_Guy_Game_Design_Document.md` (the GDD) into a build plan
+This guide turns `Auto_Resolved_Game_Design_Document.md` (the GDD) into a build plan
 for Godot 4.2.2. It records the decisions that change or settle the GDD, the
 architecture the code follows, what is already built, and the milestones that
 come next. When the code and this guide disagree, fix whichever is wrong in
@@ -90,7 +90,7 @@ the levers.
 
 ```
 it_guy/
-  AGENTS.md, README.md, IT_Guy_Game_Design_Document.md
+  AGENTS.md, README.md, Auto_Resolved_Game_Design_Document.md
   project.godot, export_presets.cfg, publish.json
   publish.ps1, publish-itch.ps1, Run.ps1        (toolkit templates)
   addons/hatchery/        junction to ../godot_toolkit/addons/hatchery (ignored)

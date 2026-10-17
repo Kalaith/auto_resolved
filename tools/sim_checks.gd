@@ -1,5 +1,5 @@
 extends "res://addons/hatchery/testing/check_runner.gd"
-## IT Guy's headless checks:
+## Auto-Resolved's headless checks:
 ##   godot --headless --path . --script res://tools/sim_checks.gd [-- --only=<text>]
 
 

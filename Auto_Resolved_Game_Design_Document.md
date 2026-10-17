@@ -1,4 +1,4 @@
-# IT Guy
+# Auto-Resolved
 ## Game Design Document
 
 **Version:** 0.1 — Concept / prototype specification  

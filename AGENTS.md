@@ -1,10 +1,10 @@
-# IT Guy project guidance
+# Auto-Resolved project guidance
 
-IT Guy is a 2D, browser-playable Godot game: a side-on cutaway of a multi-floor office where the player is a junior IT worker keeping the building running with PATCH, a newly released and overconfident AI assistant. Each job is a run; PATCH's upgrades carry from job to job. The shared standards at the end of this file apply as well as everything here.
+Auto-Resolved is a 2D, browser-playable Godot game: a side-on cutaway of a multi-floor office where the player is a junior IT worker keeping the building running with PATCH, a newly released and overconfident AI assistant. Each job is a run; PATCH's upgrades carry from job to job. The shared standards at the end of this file apply as well as everything here.
 
 Read before working:
 
-- `IT_Guy_Game_Design_Document.md`: the game design document. Respect its pillars.
+- `Auto_Resolved_Game_Design_Document.md`: the game design document. Respect its pillars.
 - `docs/IMPLEMENTATION_GUIDE.md`: the decisions that adjust the GDD (multi-floor building, elevator, career of jobs), the architecture, and the milestone plan. With the code, it is the reference for what is built and what comes next.
 
 `docs/` carries a `.gdignore`: Godot does not import it and the export excludes it. Keep design notes, reference images (`docs/reference/`) and captures there.
@@ -29,7 +29,7 @@ Read before working:
 - Per-job randomness forks from the job seed with `Det.fork(seed, "<stream>")`, one stream per system, so adding draws to one system never reshuffles another.
 - Data lives in `data/` with `schema_version`, validated at startup by `scripts/core/catalog.gd` (catalogs and every balance number the code reads). Add a new catalog's validation there before using it.
 - World coordinates: floor `f` stands on y = `-f * floor_height`; x runs 0..width across the building interior. Feet are at a node's origin.
-- The shared WebHatchery Godot toolkit (`../godot_toolkit`) is linked in as `res://addons/hatchery/` by `..\godot_toolkit\tools\Link-Toolkit.ps1 -ProjectDir .` (a junction, ignored by Git). IT Guy uses `Balance`, `JsonIO`, `DataRules`, `Det`, `Palette`/`UiKit`, and the check and capture runners. Reach for `JsonSave`, `SettingsStore`, `SettingsPanel`, `KeyBindings`, `ScreenSwitcher`, `Synth` and `VoicePool` before writing that plumbing. Change toolkit code in `../godot_toolkit` under its own AGENTS.md.
+- The shared WebHatchery Godot toolkit (`../godot_toolkit`) is linked in as `res://addons/hatchery/` by `..\godot_toolkit\tools\Link-Toolkit.ps1 -ProjectDir .` (a junction, ignored by Git). Auto-Resolved uses `Balance`, `JsonIO`, `DataRules`, `Det`, `Palette`/`UiKit`, and the check and capture runners. Reach for `JsonSave`, `SettingsStore`, `SettingsPanel`, `KeyBindings`, `ScreenSwitcher`, `Synth` and `VoicePool` before writing that plumbing. Change toolkit code in `../godot_toolkit` under its own AGENTS.md.
 - Removing or copying this project must not follow the `addons/hatchery` junction: delete the junction itself first (`cmd /c rmdir addons\hatchery`), never recursively through it.
 
 ## Project checks

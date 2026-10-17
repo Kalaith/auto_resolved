@@ -1,4 +1,4 @@
-# IT Guy
+# Auto-Resolved
 
 You are starting your IT career the same week PATCH, a new AI assistant, is
 released. Keep a multi-floor office running: walk the floors, ride the
@@ -6,7 +6,7 @@ elevator, fix what breaks, and decide how much to trust PATCH. Stay until you
 quit or are fired, spend what you earned upgrading PATCH, and take the next
 job: a bigger company, better pay, a building that looks nothing like the last.
 
-- Design: [IT_Guy_Game_Design_Document.md](IT_Guy_Game_Design_Document.md)
+- Design: [Auto_Resolved_Game_Design_Document.md](Auto_Resolved_Game_Design_Document.md)
 - Plan and architecture: [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md)
 - Agent rules: [AGENTS.md](AGENTS.md)
 
