@@ -10,7 +10,7 @@ job: a bigger company, better pay, a building that looks nothing like the last.
 - Plan and architecture: [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md)
 - Agent rules: [AGENTS.md](AGENTS.md)
 
-Godot 4.2.2, Compatibility renderer, web and Windows exports.
+Godot 4.7.2, Compatibility renderer, web and Windows exports.
 
 ## Setup
 
@@ -59,7 +59,7 @@ every step between jobs.
 ## Checks
 
 ```powershell
-$godot = '..\small_following\exports\tooling\Godot_v4.2.2-stable_win64_console.exe'
+$godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --editor --quit                          # import and parse
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
 & $godot --path . --script res://tools/capture.gd -- captures --size=1280x720   # screenshots (--only=career|buildings|day|patch|menus)

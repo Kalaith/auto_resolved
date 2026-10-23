@@ -1,7 +1,7 @@
 # Auto-Resolved implementation guide
 
 This guide turns `Auto_Resolved_Game_Design_Document.md` (the GDD) into a build plan
-for Godot 4.2.2. It records the decisions that change or settle the GDD, the
+for Godot 4.7.2. It records the decisions that change or settle the GDD, the
 architecture the code follows, what is already built, and the milestones that
 come next. When the code and this guide disagree, fix whichever is wrong in
 the same change.
