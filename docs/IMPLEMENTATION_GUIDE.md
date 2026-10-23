@@ -1,6 +1,6 @@
 # Auto-Resolved implementation guide
 
-This guide turns `Auto_Resolved_Game_Design_Document.md` (the GDD) into a build plan
+This guide turns `GAME_DESIGN.md` (the GDD) into a build plan
 for Godot 4.7.2. It records the decisions that change or settle the GDD, the
 architecture the code follows, what is already built, and the milestones that
 come next. When the code and this guide disagree, fix whichever is wrong in
@@ -90,13 +90,13 @@ the levers.
 
 ```
 auto_resolved/
-  AGENTS.md, README.md, Auto_Resolved_Game_Design_Document.md
+  AGENTS.md, README.md
   project.godot, export_presets.cfg, publish.json
   publish.ps1, publish-itch.ps1, Run.ps1        (toolkit templates)
   addons/hatchery/        junction to ../godot_toolkit/addons/hatchery (ignored)
   assets/                 icon now; sprites, fonts, audio later
   data/                   JSON catalogs with schema_version
-  docs/                   .gdignore'd: this guide, reference/, captures
+  docs/                   .gdignore'd: GAME_DESIGN.md, this guide, reference/, verification/ (captures)
   scenes/main.tscn        a Node2D running scripts/main.gd
   scripts/
     main.gd               owns the office while a job runs, steps the sim, routes input

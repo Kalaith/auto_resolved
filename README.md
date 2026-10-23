@@ -6,7 +6,7 @@ elevator, fix what breaks, and decide how much to trust PATCH. Stay until you
 quit or are fired, spend what you earned upgrading PATCH, and take the next
 job: a bigger company, better pay, a building that looks nothing like the last.
 
-- Design: [Auto_Resolved_Game_Design_Document.md](Auto_Resolved_Game_Design_Document.md)
+- Design: [GAME_DESIGN.md](docs/GAME_DESIGN.md)
 - Plan and architecture: [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md)
 - Agent rules: [AGENTS.md](AGENTS.md)
 
@@ -62,13 +62,13 @@ every step between jobs.
 $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --editor --quit                          # import and parse
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
-& $godot --path . --script res://tools/capture.gd -- captures --size=1280x720   # screenshots (--only=career|buildings|day|patch|menus)
+& $godot --path . --script res://tools/capture.gd # screenshots into docs/verification (--only=career|buildings|day|patch|menus)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
 & $godot --headless --path . --script res://tools/day_report.gd        # tickets vs hand-fixing capacity per day
 ```
 
-Captures need a window (not `--headless`); write them outside the project or
-under `docs/` so Godot does not import them.
+Captures need a window (not `--headless`). They are written flat to
+`docs/verification/` (the one folder for verification images; Godot ignores it).
 
 ## Publish
 

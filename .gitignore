@@ -22,3 +22,6 @@ Desktop.ini
 
 # The shared godot_toolkit, linked in by ../godot_toolkit/tools/Link-Toolkit.ps1.
 addons/hatchery/
+
+# Added by godot_toolkit/tools/Sync-Project.ps1.
+tools/scratch/

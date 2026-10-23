@@ -1,7 +1,8 @@
 extends "res://addons/hatchery/testing/capture_runner.gd"
 ## Screenshots of one building per archetype, close up and in overview, a
 ## ride, and the office through a day:
-##   godot --path . --script res://tools/capture.gd -- [output dir] [--size=1280x720] [--only=<part>]
+##   godot --path . --script res://tools/capture.gd -- [--only=<part>]
+## Shots go to docs/verification/ (the toolkit's capture runner).
 const Catalog = preload("res://scripts/core/catalog.gd")
 
 var only: String = ""

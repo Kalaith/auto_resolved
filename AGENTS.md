@@ -4,7 +4,7 @@ Auto-Resolved is a 2D, browser-playable Godot game: a side-on cutaway of a multi
 
 Read before working:
 
-- `Auto_Resolved_Game_Design_Document.md`: the game design document. Respect its pillars.
+- `docs/GAME_DESIGN.md`: the game design document. Respect its pillars.
 - `docs/IMPLEMENTATION_GUIDE.md`: the decisions that adjust the GDD (multi-floor building, elevator, career of jobs), the architecture, and the milestone plan. With the code, it is the reference for what is built and what comes next.
 
 `docs/` carries a `.gdignore`: Godot does not import it and the export excludes it. Keep design notes, reference images (`docs/reference/`) and captures there.
@@ -35,7 +35,7 @@ Read before working:
 ## Project checks
 
 - Headless checks: `tools/sim_checks.gd` running `tools/checks/checks_*.gd` (data, building generation, elevator). The project owner has asked for no new tests; do not add check modules unless asked.
-- Screenshot tour: `tools/capture.gd` in parts (`--only=career|buildings|day|patch|menus`): every archetype close and overview, a ride, a day from arrival to evening, PATCH proposals and a forced incident, the menus, and the career screens with a save round trip. Look at the images after any visual change. The career parts use a throwaway career with saving switched off.
+- Screenshot tour: `tools/capture.gd` in parts (`--only=career|buildings|day|patch|menus`): every archetype close and overview, a ride, a day from arrival to evening, PATCH proposals and a forced incident, the menus, and the career screens with a save round trip. Shots are written flat to `docs/verification/`. Look at the images after any visual change. The career parts use a throwaway career with saving switched off.
 - Balancing: `tools/headcount_report.gd` prints staff per archetype over many seeds; keep each tier inside the guide's table. `tools/day_report.gd` runs a day per archetype with a stand-in player fixing by hand and prints tickets opened, fixed and left over: the left-over number is how much a day needs PATCH (tier 1 should leave several).
 - Commands are in README.md. Exports and headless tooling use the standard (non-mono) editor at `C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe`, or `GODOT_EXE`.
 
@@ -54,7 +54,7 @@ Publishing (`publish.ps1`, `publish-itch.ps1`) requires separate authorisation. 
 
 ## Shared WebHatchery Godot standards
 
-This section is identical in the AGENTS.md of every WebHatchery Godot project (`bound_god`, `small_following`, `spiritwright`, `godot_toolkit`). Change it in all four together; project-specific rules go in the sections above.
+This section is identical in the AGENTS.md of every WebHatchery Godot project (`auto_resolved`, `azure_dreams`, `bound_god`, `personal_best`, `small_following`, `spiritwright`, `godot_toolkit`). Change it in all seven together; project-specific rules go in the sections above.
 
 ### Working
 
@@ -80,6 +80,13 @@ This section is identical in the AGENTS.md of every WebHatchery Godot project (`
 - Checks do not gate commits. Run the full set (the project's checks, if any, and a parse/import check with `--headless --editor --quit`) when a major feature or milestone is finished, and fix what they find before calling it done.
 - Headless checks do not verify visuals, audio, input or feel. Verify anything visual by running the game (`Run.ps1`) and looking at it.
 - Say plainly what was and was not checked.
+
+### Verification images
+
+- There is one folder for verification images: `docs/verification/`, flat. It holds a `.gdignore` (so does `docs/`); keep both. Reference art goes in `docs/reference/` or `docs/art/`, never here.
+- Take screenshots through the toolkit's capture runner (`testing/capture_runner.gd`) or `testing/capture_paths.gd` (`CapturePaths.file(label)`). Do not pass an output directory or write captures anywhere else (`builds/`, `exports/`, OS temp, `user://`).
+- Names are stable `<label>.png`: no subfolders, timestamps, run or revision suffixes, size suffixes, `-final`/`-fix` variants or backup copies. A new capture of the same screen or state overwrites its file; add a label only for a genuinely new screen or state.
+- Capture at one window size and one UI scale per game, and look at the image before saying a visual change works.
 
 ### Size limits (hard rule)
 
