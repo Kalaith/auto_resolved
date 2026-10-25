@@ -8,8 +8,7 @@ signal title_requested
 const SettingsStore = preload("res://addons/hatchery/settings/settings_store.gd")
 const SettingsPanel = preload("res://addons/hatchery/ui/settings_panel.gd")
 const KeyBindings = preload("res://addons/hatchery/input/key_bindings.gd")
-const Display = preload("res://addons/hatchery/settings/display.gd")
-const Levels = preload("res://addons/hatchery/audio/levels.gd")
+const EngineSettings = preload("res://addons/hatchery/settings/engine_settings.gd")
 
 const DEFAULTS: Dictionary = {
 	"master": 0.8, "effects": 0.8, "ambience": 0.5, "muted": false,
@@ -28,6 +27,7 @@ const WORDS: Dictionary = {
 }
 
 var store: SettingsStore
+var engine: EngineSettings
 var palette: RefCounted
 var _layer: CanvasLayer
 var _page: Control = null
@@ -38,13 +38,12 @@ func _ready() -> void:
 	store.keys = KeyBindings.new(KEY_ACTIONS)
 	store.load_settings()
 	store.apply_bindings()
+	engine = EngineSettings.new(store, get_tree(), {"Master": "master", "Effects": "effects", "Ambience": "ambience"})
+	engine.extra = _apply_own
 	_layer = CanvasLayer.new()
 	_layer.layer = 20
 	add_child(_layer)
-	Levels.ensure_bus("Effects")
-	Levels.ensure_bus("Ambience")
-	for key in DEFAULTS:
-		apply(key)
+	engine.apply_all()
 
 
 ## The toolkit store and its file point at each other through callables;
@@ -71,10 +70,7 @@ func open(kit: RefCounted, with_title: bool) -> void:
 		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
 	]
 	page.commit_on_release = ["ui_scale"]
-	page.slider_text = func(key: String, fraction: float) -> String:
-		if key == "ui_scale":
-			return "%d%%" % roundi(Display.scale_from_fraction(fraction) * 100.0)
-		return "%d%%" % roundi(fraction * 100.0)
+	page.slider_text = engine.slider_text
 	page.text = func(key: String, english: String) -> String: return str(WORDS.get(key, KEY_ACTIONS.get(key.trim_prefix("action_"), english)))
 	page.applied.connect(apply)
 	page.close_requested.connect(close)
@@ -97,18 +93,9 @@ func is_open() -> bool:
 
 ## Pushes one stored value into the engine.
 func apply(key: String) -> void:
-	var values: Dictionary = store.values
-	match key:
-		"master", "muted":
-			Levels.set_bus("Master", float(values.master), bool(values.muted))
-		"effects":
-			Levels.set_bus("Effects", float(values.effects))
-		"ambience":
-			Levels.set_bus("Ambience", float(values.ambience))
-		"fullscreen":
-			Display.set_fullscreen(bool(values.fullscreen))
-		"ui_scale":
-			Display.set_ui_scale(get_tree(), Display.scale_from_fraction(float(values.ui_scale)))
-		"colour_safe":
-			if palette != null:
-				palette.set_accessibility(bool(values.colour_safe), false)
+	engine.apply(key)
+
+
+func _apply_own(key: String) -> void:
+	if key == "colour_safe" and palette != null:
+		palette.set_accessibility(bool(store.values.colour_safe), false)
