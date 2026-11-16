@@ -1,7 +1,8 @@
 extends "res://scripts/ui/screens/screen_base.gd"
 ## The title: the premise in two lines, Continue career (with where it
 ## stands), New career, and Settings.
-const TitleBackdrop = preload("res://scripts/ui/screens/title_backdrop.gd")
+const TitleBackdrop = preload("res://addons/hatchery/ui/title_backdrop.gd")
+const TITLE_ART: Texture2D = preload("res://assets/art/ui/title_screen.png")
 
 signal continue_chosen
 signal new_chosen
@@ -31,7 +32,7 @@ func build_page() -> void:
 
 func setup(kit: RefCounted) -> void:
 	super.setup(kit)
-	var art: Control = TitleBackdrop.mount(self)
+	var art: Control = TitleBackdrop.mount(self, TITLE_ART)
 	move_child(art, _scroll.get_index())
 	_scroll.anchor_right = 0.46
 	column.custom_minimum_size.x = 470
