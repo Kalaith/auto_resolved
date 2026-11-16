@@ -3,6 +3,7 @@ extends "res://scripts/ui/screens/screen_base.gd"
 ## stands), New career, and Settings.
 const TitleBackdrop = preload("res://addons/hatchery/ui/title_backdrop.gd")
 const TITLE_ART: Texture2D = preload("res://assets/art/ui/title_screen.png")
+const CreditsPage = preload("res://addons/hatchery/ui/credits_page.gd")
 
 signal continue_chosen
 signal new_chosen
@@ -25,6 +26,7 @@ func build_page() -> void:
 		column.add_child(text(saved, 15, ui.palette.muted, 470.0))
 	buttons.add_child(ui.button("New career", func() -> void: new_chosen.emit(), saved.is_empty()))
 	buttons.add_child(ui.button("Settings", func() -> void: settings_chosen.emit()))
+	buttons.add_child(ui.button("Credits", func() -> void: CreditsPage.open(self, ui)))
 	if not problem.is_empty():
 		column.add_child(text(problem, 14, ui.palette.warn, 470.0))
 	column.add_child(text("Mouse or touch: tap to walk and to use things. Keyboard: A/D walk, E use, W/S pick a floor in the lift, P pause, Tab overview.", 13, ui.palette.muted, 470.0))
