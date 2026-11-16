@@ -24,6 +24,7 @@ const CareerFlow = preload("res://scripts/career_flow.gd")
 const SettingsFlow = preload("res://scripts/settings_flow.gd")
 const AudioDirector = preload("res://scripts/audio_director.gd")
 const Tutorial = preload("res://scripts/tutorial.gd")
+const TickPump = preload("res://addons/hatchery/core/tick_pump.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -59,7 +60,7 @@ var tutorial: Node
 var time_scale: float = 1.0
 var _world: Node2D
 var _seeds := RandomNumberGenerator.new()
-var _accumulator: float = 0.0
+var _pump := _make_pump()
 
 
 func _ready() -> void:
@@ -133,7 +134,7 @@ func start_job(archetype: String, job_seed: int, patch: RefCounted = null, state
 	hud.patch_panel.close_panel()
 	hud.incidents.visible = false
 	RenderingServer.set_default_clear_color(plan.colours.sky)
-	_accumulator = 0.0
+	_pump.reset()
 	office.begin_day(day)
 	set_speed(1.0)
 
@@ -232,15 +233,11 @@ func _physics_process(delta: float) -> void:
 	var worked: float = work.take_spent_minutes() / office.clock.minutes_per_second
 	if (time_scale <= 0.0 and worked <= 0.0) or not office.day_running:
 		office.step_paused(delta)
-		_accumulator = 0.0
+		_pump.reset()
 	else:
-		_accumulator += delta * time_scale + worked
-		var ticks: int = 0
-		while _accumulator >= OfficeSim.TICK and ticks < MAX_TICKS_PER_FRAME and office.day_running:
+		_pump.run(delta * time_scale + worked, func() -> bool:
 			office.step(OfficeSim.TICK)
-			_accumulator -= OfficeSim.TICK
-			ticks += 1
-		_accumulator = minf(_accumulator, OfficeSim.TICK * float(MAX_TICKS_PER_FRAME))
+			return office.day_running)
 	for event in office.drain_events():
 		_on_event(event)
 		if office == null:
@@ -341,3 +338,13 @@ func _click(at: Vector2) -> void:
 
 func _fresh_seed() -> int:
 	return _seeds.randi_range(1, 2147483646)
+
+
+## Office time in whole ticks: at most MAX_TICKS_PER_FRAME a frame, and no more
+## than that left waiting for the next.
+static func _make_pump() -> TickPump:
+	var pump := TickPump.new()
+	pump.tick_seconds = OfficeSim.TICK
+	pump.max_steps = MAX_TICKS_PER_FRAME
+	pump.max_backlog = MAX_TICKS_PER_FRAME
+	return pump
