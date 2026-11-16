@@ -6,7 +6,7 @@ extends Node
 signal title_requested
 
 const SettingsStore = preload("res://addons/hatchery/settings/settings_store.gd")
-const SettingsPanel = preload("res://addons/hatchery/ui/settings_panel.gd")
+const SettingsBundle = preload("res://addons/hatchery/settings/settings_bundle.gd")
 const KeyBindings = preload("res://addons/hatchery/input/key_bindings.gd")
 const EngineSettings = preload("res://addons/hatchery/settings/engine_settings.gd")
 
@@ -26,6 +26,7 @@ const WORDS: Dictionary = {
 	"setting_colour_safe": "Colour-safe good and bad colours",
 }
 
+var settings: SettingsBundle
 var store: SettingsStore
 var engine: EngineSettings
 var palette: RefCounted
@@ -34,45 +35,39 @@ var _page: Control = null
 
 
 func _ready() -> void:
-	store = SettingsStore.new(DEFAULTS)
+	settings = SettingsBundle.new(DEFAULTS, get_tree(), {"Master": "master", "Effects": "effects", "Ambience": "ambience"})
+	store = settings.store
+	engine = settings.engine
 	store.keys = KeyBindings.new(KEY_ACTIONS)
-	store.load_settings()
-	store.apply_bindings()
-	engine = EngineSettings.new(store, get_tree(), {"Master": "master", "Effects": "effects", "Ambience": "ambience"})
 	engine.extra = _apply_own
+	settings.sections = [
+		{"title": "settings_sound", "sliders": ["master", "effects", "ambience"], "toggles": ["muted"]},
+		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
+	]
+	settings.text = func(key: String, english: String) -> String: return str(WORDS.get(key, KEY_ACTIONS.get(key.trim_prefix("action_"), english)))
 	_layer = CanvasLayer.new()
 	_layer.layer = 20
 	add_child(_layer)
-	engine.apply_all()
+	settings.load_and_apply()
 
 
 ## The toolkit store and its file point at each other through callables;
 ## break that on exit so neither outlives the game.
 func _exit_tree() -> void:
-	if store != null:
-		store.file.validate = Callable()
-		store.file.migrate = Callable()
+	if settings != null:
+		settings.release()
 
 
 func value(key: String) -> Variant:
-	return store.values[key]
+	return settings.value(key)
 
 
 func open(kit: RefCounted, with_title: bool) -> void:
 	if is_instance_valid(_page):
 		return
-	var page: Control = SettingsPanel.new()
-	page.store = store
-	page.ui = kit
+	var page: Control = settings.make_page(kit)
 	page.show_title_button = with_title
-	page.sections = [
-		{"title": "settings_sound", "sliders": ["master", "effects", "ambience"], "toggles": ["muted"]},
-		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
-	]
-	page.commit_on_release = ["ui_scale"]
-	page.slider_text = engine.slider_text
-	page.text = func(key: String, english: String) -> String: return str(WORDS.get(key, KEY_ACTIONS.get(key.trim_prefix("action_"), english)))
-	page.applied.connect(apply)
+	page.panel_size = Vector2(820, 860)
 	page.close_requested.connect(close)
 	page.title_requested.connect(func() -> void:
 		close()
@@ -93,7 +88,7 @@ func is_open() -> bool:
 
 ## Pushes one stored value into the engine.
 func apply(key: String) -> void:
-	engine.apply(key)
+	settings.apply(key)
 
 
 func _apply_own(key: String) -> void:
