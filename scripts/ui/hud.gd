@@ -13,6 +13,7 @@ const TicketPanel = preload("res://scripts/ui/ticket_panel.gd")
 const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
 const IncidentPanel = preload("res://scripts/ui/incident_panel.gd")
 const TutorialPanel = preload("res://scripts/ui/tutorial_panel.gd")
+const Toasts = preload("res://addons/hatchery/ui/toasts.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
 const CareerRules = preload("res://scripts/sim/career_rules.gd")
 
@@ -33,9 +34,7 @@ var incidents: IncidentPanel
 var tutorial: TutorialPanel
 ## The single high-priority alert: an active incident. Tap to open it.
 var alert: Button
-var _toast: Label
-var _toast_box: PanelContainer
-var _toast_left: float = 0.0
+var _toasts: Toasts
 var _company: Label
 var _details: Label
 var _where: Label
@@ -93,16 +92,12 @@ func _ready() -> void:
 	tickets.offset_right = -16.0
 	tickets.offset_top = 128.0
 	root.add_child(tickets)
-	_toast_box = ui.panel(0.9, 10)
-	_toast_box.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_toast_box.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_toast_box.offset_top = 112.0
-	_toast_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_toast_box.visible = false
-	root.add_child(_toast_box)
-	_toast = ui.label("", 17)
-	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_toast_box.add_child(_toast)
+	_toasts = Toasts.new()
+	_toasts.seconds = TOAST_SECONDS
+	_toasts.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_toasts.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_toasts.offset_top = 112.0
+	root.add_child(_toasts)
 	person_card = PersonCard.new()
 	person_card.build(ui)
 	person_card.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -170,20 +165,15 @@ func show_position(player: Node2D, elevator: RefCounted) -> void:
 
 ## A one-line message at the top of the screen that fades on its own.
 func toast(text: String) -> void:
-	_toast.text = text
-	_toast_box.visible = true
-	_toast_box.modulate.a = 1.0
-	_toast_box.reset_size()
-	_toast_box.offset_left = -_toast_box.size.x * 0.5
-	_toast_box.offset_right = _toast_box.size.x * 0.5
-	_toast_left = TOAST_SECONDS
-
-
-func _process(delta: float) -> void:
-	if _toast_left > 0.0:
-		_toast_left -= delta
-		_toast_box.modulate.a = clampf(_toast_left / 0.6, 0.0, 1.0)
-		_toast_box.visible = _toast_left > 0.0
+	var box: PanelContainer = ui.panel(0.9, 10)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var line: Label = ui.label(text, 17)
+	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(line)
+	_toasts.push(box)
+	_toasts.reset_size()
+	_toasts.offset_left = -_toasts.size.x * 0.5
+	_toasts.offset_right = _toasts.size.x * 0.5
 
 
 ## Opens PATCH (on a ticket's proposal when `ticket_id` is set); the ticket
