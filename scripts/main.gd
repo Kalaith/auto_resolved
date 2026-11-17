@@ -97,7 +97,7 @@ func _ready() -> void:
 			push_error(problem)
 		hud.show_problems(problems)
 		return
-	settings.title_requested.connect(func() -> void: flow.show_title())
+	settings.title_requested.connect(quit_to_title)
 	if skip_title:
 		start_job(start_archetype, fixed_seed if fixed_seed != 0 else _fresh_seed())
 	else:
@@ -224,6 +224,21 @@ func open_menu() -> void:
 	if office.notice_given:
 		body = "You have handed in your notice: today is your last day.\n" + body
 	hud.notice.open("%s - day %d" % [job.company_name, office.clock.day], body, choices)
+
+
+## Leaving a job mid-day asks first: the career saved last night, so Continue
+## starts this same day again from the morning and today's work is gone.
+func quit_to_title() -> void:
+	if office == null or flow.career == null:
+		flow.show_title()
+		return
+	var day: int = office.clock.day
+	var body: String = "The career saves at the end of each workday, and today is not over. " + 		"Continue will start day %d again from this morning: today's fixes, PATCH's work and anything that broke are not kept." % day
+	if office.notice_given:
+		body += " Your notice is not kept either."
+	hud.notice.open("Leave day %d unfinished?" % day, body, [
+		["Quit to title", func() -> void: flow.show_title()],
+		["Keep working", func() -> void: pass, true]])
 
 
 func _physics_process(delta: float) -> void:

@@ -17,11 +17,6 @@ tools unless that changes.
 
 ## 1. Bugs and reliability
 
-- [ ] **A day left half-way.** The career saves only at the end of a workday
-  and between jobs. Check what Menu > Quit to title does in the middle of a
-  day and what Continue then restores. If the day is silently lost, either
-  say so before quitting or keep a day checkpoint in `career_store.gd`
-  (schema bump, old saves still load).
 - [ ] **Show that the big offices are winnable with PATCH.** `day_report`
   plays hand-fixing only: about 13 fixes a day everywhere, against 28 to 48
   tickets opened in tiers 3 and 4 (law firm 23.6 left open at day end,

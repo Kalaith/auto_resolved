@@ -188,6 +188,9 @@ func _menus(main: Node) -> void:
 	main.open_menu()
 	await seconds(0.4)
 	await shot("menus_job_menu")
+	main.quit_to_title()
+	await seconds(0.4)
+	await shot("menus_quit_unfinished_day")
 	main.hud.notice.visible = false
 	main.open_settings()
 	await seconds(0.4)
