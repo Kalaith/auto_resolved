@@ -4,7 +4,7 @@ Updated 16 November 2026. Only outstanding work an agent can do alone belongs
 here: bug fixes, required improvements and next steps. Playtests, listening,
 publishing and decisions that need the owner are left out on purpose. Remove a
 task when it is done; what is built is described in
-[IMPLEMENTATION_GUIDE](IMPLEMENTATION_GUIDE.md).
+[IMPLEMENTATION_GUIDE](docs/IMPLEMENTATION_GUIDE.md).
 
 Review basis (16 November): the headless editor import is clean, `sim_checks`
 passes 10 of 10 (they cover M0 only: data, buildings, the lift), and
@@ -40,9 +40,6 @@ tools unless that changes.
 
 - [ ] **Version.** `project.godot` has no `config/version`. Add `0.1.0`,
   show it on the title, and keep `publish.json` in step.
-- [ ] **Credits and licences.** No credits page exists. Add one from the
-  title with the Godot licence and third-party notices read from the engine
-  (`Engine.get_license_text`, `get_copyright_info`), as The Bound God does.
 - [ ] **Quit on desktop.** No script calls `get_tree().quit()`. Add Quit to
   the title and the job menu on desktop builds only.
 - [ ] **Windows executable details.** The Windows preset has
