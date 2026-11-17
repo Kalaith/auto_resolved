@@ -329,6 +329,17 @@ Notes on how the plan was built:
   `issues.first_day_scale` 0.75, tuned so a tier-1 first day ends with about
   four tickets open for the stand-in; playing games at the IT
   desk trades 30 office minutes for a big drop in stress.
+- PATCH policy (`day_report --policy=patch`, 16 to 18 November 2026): a
+  careful player with the PATCH a career brings to each tier (8, 22 and 40
+  points spent cheapest first), automating recurring issues at building
+  scope with every safeguard and sending PATCH one-offs at a shown risk of
+  12% or less, plays three judged days per archetype over eight seeds. No
+  run was fired; the worst evening was one final warning (charity office).
+  Tiers 3 and 4 end their third day with 0.1 to 2.6 tickets open and 2.3 to
+  3 backfires a day, so the big offices are winnable with PATCH and no
+  balance numbers changed. More tickets open under this policy than under
+  hand fixing (up to about 110 a day at tier 4) because the roller stops at
+  `issues.max_open` and a short queue never reaches it.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
   tour, and the M0 checks still run.

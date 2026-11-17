@@ -17,14 +17,6 @@ tools unless that changes.
 
 ## 1. Bugs and reliability
 
-- [ ] **Show that the big offices are winnable with PATCH.** `day_report`
-  plays hand-fixing only: about 13 fixes a day everywhere, against 28 to 48
-  tickets opened in tiers 3 and 4 (law firm 23.6 left open at day end,
-  megacorp 34.4, bank 34.3, data centre 35.1). Add a second policy to
-  `tools/day_report.gd` that approves PATCH's proposals and automations the
-  way a careful player would, and print open tickets, backfires and the
-  day's warning for each archetype. Retune `data/balance.json` and
-  `data/companies.json` only where that policy still ends in a firing.
 - [ ] **Staff ranges are wide inside a tier** (startup 4 to 21, bank 31 to
   65 in `headcount_report`). Check the smallest and largest rolls of each
   archetype in the capture tour (`--only=buildings`) for empty floors and
@@ -70,6 +62,37 @@ tools unless that changes.
 - [ ] **Named recurring staff** (GDD question 5): let one or two people
   follow the player between jobs through `data/people.json` and
   `text_staff.json`, remembering an incident from the last job.
+
+## Screen fit: a real 1920x1080 layout (from spiritwright, 18 Nov 2026)
+
+Spiritwright (commit `4a335a1`) now lays out at 1920x1080 on a 1080p screen
+instead of stretching a 1280x720 layout by 1.5x, so bigger screens show more
+room, not bigger text. How it works: `project.godot` has a 1920x1080 viewport
+with `stretch/mode="canvas_items"` and `stretch/aspect="expand"`, and
+`scripts/ui/screen_fit.gd` (started from `main.gd`'s `_ready` with
+`ScreenFit.watch(get_tree().root)`) sets `root.content_scale_size` on every
+resize. Windows between 1280x720 and 1920x1080 get one layout unit per
+pixel. Larger screens are scaled up so the layout stays at least 1920x1080
+(4K doubles), and smaller ones are shrunk to a 1280x720 layout. The Interface
+size setting (`content_scale_factor`) still multiplies on top. Use the
+toolkit's copy once it is lifted (see `godot_toolkit/TODO.md`); until then,
+copy spiritwright's file.
+
+- [ ] `project.godot`: viewport 1280x720 -> 1920x1080 (already `expand`, no
+  window override). Mount screen fit in the main scene's `_ready`.
+- [ ] No hardcoded 1280/720 in scripts, so layouts should follow; check that
+  side panels and the HUD use their extra room at 1920 (spiritwright widens
+  its map side panel to 500 at 1700+ wide instead of 410).
+- [ ] The Interface size slider (`settings_flow.gd`, 85-150%) stays on
+  `content_scale_factor`; check 150% still fits a 1280x720 layout.
+- [ ] Capture every screen (title, settings, the main play screen and each
+  panel/overlay) at 1920x1080, 1600x900, 1280x720 and 1280x800, and look at
+  them: nothing pinned to the old 1280 edge, no panel left skinny in the
+  middle of a wide layout, no text overlapping. Then play the web build in
+  Chrome at a full-screen 1080p window and a small one.
+- [ ] Toggle full screen and drag-resize the window mid-screen: anything
+  sized once at build time (e.g. `get_viewport_rect()` read in `_ready`)
+  must follow `resized`, or it keeps the old width.
 
 ## Rules that still hold
 

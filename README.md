@@ -64,7 +64,7 @@ $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
 & $godot --path . --script res://tools/capture.gd # screenshots into docs/verification (--only=career|buildings|day|patch|menus)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
-& $godot --headless --path . --script res://tools/day_report.gd        # tickets vs hand-fixing capacity per day
+& $godot --headless --path . --script res://tools/day_report.gd        # hand fixing, then a careful PATCH player (-- --policy=hand|patch)
 ```
 
 Captures need a window (not `--headless`). They are written flat to
