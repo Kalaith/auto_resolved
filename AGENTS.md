@@ -23,7 +23,7 @@ Read before working:
 
 ## Project engineering
 
-- **Compatibility** renderer (required for the Web export). Base resolution 1280x720, `canvas_items` stretch, `expand` aspect. Mouse and touch must both work; nothing essential on hover alone.
+- **Compatibility** renderer (required for the Web export). Base resolution 1280x720, `canvas_items` stretch, `expand` aspect. Mouse and touch must both work; nothing essential on hover alone. A gamepad reaches every screen: `scripts/ui/pad_focus.gd` switches focus on for the top layer only while the pad is in use, so Space and E stay "use" for keyboard players.
 - UI text is ASCII only: the web build's default font lacks arrows, bullets and similar glyphs.
 - Layers: `scripts/core/` (catalog loading and validation), `scripts/sim/` (RefCounted rules and state: jobs, building plans, the elevator, and later the office simulation), `scripts/world/` (Node2D views and the player), `scripts/ui/` (CanvasLayer HUD and panels). Sim code never touches nodes; views read sim state and send commands.
 - Per-job randomness forks from the job seed with `Det.fork(seed, "<stream>")`, one stream per system, so adding draws to one system never reshuffles another.
@@ -35,7 +35,7 @@ Read before working:
 ## Project checks
 
 - Headless checks: `tools/sim_checks.gd` running `tools/checks/checks_*.gd` (data, building generation, elevator). The project owner has asked for no new tests; do not add check modules unless asked.
-- Screenshot tour: `tools/capture.gd` in parts (`--only=career|buildings|day|patch|menus`): every archetype close and overview, a ride, a day from arrival to evening, PATCH proposals and a forced incident, the menus, and the career screens with a save round trip. Shots are written flat to `docs/verification/`. Look at the images after any visual change. The career parts use a throwaway career with saving switched off.
+- Screenshot tour: `tools/capture.gd` in parts (`--only=career|buildings|day|patch|menus|pad`): every archetype close and overview plus its smallest and largest staff roll, a ride, a day from arrival to evening, PATCH proposals and a forced incident, the menus, the career screens with a save round trip, and every screen driven by gamepad buttons alone. Run it silent (`--audio-driver Dummy`). Shots are written flat to `docs/verification/`. Look at the images after any visual change. The career parts use a throwaway career with saving switched off.
 - Balancing: `tools/headcount_report.gd` prints staff per archetype over many seeds (keep each tier inside the guide's table) and plays the smallest and largest roll through the morning: lift queue, longest wait, people late, desk-less floors (`-- --staff-only` skips that). `tools/day_report.gd` runs a day per archetype with a stand-in player fixing by hand and prints tickets opened, fixed and left over: the left-over number is how much a day needs PATCH (tier 1 should leave several). Its second policy (`-- --policy=patch`) plays three judged days with a careful player approving PATCH and prints open tickets, backfires and management's verdicts: no archetype should end in a firing.
 - Commands are in README.md. Exports and headless tooling use the standard (non-mono) editor at `C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe`, or `GODOT_EXE`.
 

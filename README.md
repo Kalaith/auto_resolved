@@ -37,11 +37,12 @@ job ends with an exit interview, PATCH's update and the job board.
 | E, Space | Fix what is beside you; at the lift: call it, board, or go to the picked floor; at the IT desk: open PATCH |
 | W / S | Inside the lift: pick a floor |
 | Ticket list | Tap a ticket to walk to the nearest place to fix it; AI asks PATCH about it |
-| PATCH button | Talk to PATCH: a ticket, a recurring category, the queue, running automations |
+| PATCH button, Q | Talk to PATCH: a ticket, a recurring category, the queue, running automations |
 | Incident alert | Open the incident view: timeline, recoveries, guardrails |
 | Eat button, kitchen fridge / vending | Eat (resets hunger, calms you down; costs office time) |
 | Games button (in the IT office) | Play games at the IT desk: a big stress drop for 30 office minutes |
 | P, 1 / 2 / 3 | Pause, normal, double, fast |
+| Gamepad | Left stick walk; A use / call / go (or press the focused button); d-pad floor in the lift, or move focus; X browse the HUD (tickets, alert, speed, menu); Y PATCH; B back, closes the top panel, else the menu; Back overview; Start pause; LB / RB / R3 speed. Buttons rebind in Settings > Controls |
 | Tab | Whole-building overview |
 | Esc, Menu | Hand in notice, settings, quit to title or (desktop) quit the game; mid-day both ask first |
 | F1 / F2 / F6 (debug builds) | Force PATCH's next execution to succeed / backfire / pick the backfire |
@@ -62,7 +63,7 @@ every step between jobs.
 $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --editor --quit                          # import and parse
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
-& $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus)
+& $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus|pad)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
 & $godot --headless --path . --script res://tools/day_report.gd        # hand fixing, then a careful PATCH player (-- --policy=hand|patch)
 ```

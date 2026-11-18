@@ -14,12 +14,13 @@ const PatchPanel = preload("res://scripts/ui/patch_panel.gd")
 const IncidentPanel = preload("res://scripts/ui/incident_panel.gd")
 const TutorialPanel = preload("res://scripts/ui/tutorial_panel.gd")
 const Toasts = preload("res://addons/hatchery/ui/toasts.gd")
+const PadFocus = preload("res://scripts/ui/pad_focus.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
 const CareerRules = preload("res://scripts/sim/career_rules.gd")
 
 const TOAST_SECONDS: float = 3.5
 
-const HINT: String = "A/D walk   E use / call / go   W/S pick floor   Click to send   Tab overview   P pause   1-3 speed"
+const HINT: String = "A/D walk   E use / call / go   W/S pick floor   Q PATCH   Click to send   Tab overview   P pause   1-3 speed"
 
 var ui: UiKit
 var root: Control
@@ -32,6 +33,8 @@ var patch_panel: PatchPanel
 var patch_button: Button
 var incidents: IncidentPanel
 var tutorial: TutorialPanel
+## Gamepad focus over whichever layer is on top.
+var pad: PadFocus
 ## The single high-priority alert: an active incident. Tap to open it.
 var alert: Button
 var _toasts: Toasts
@@ -144,6 +147,31 @@ func _ready() -> void:
 	notice = NoticePanel.new()
 	notice.build(ui)
 	root.add_child(notice)
+	pad = PadFocus.new()
+	pad.hud = self
+	add_child(pad)
+
+
+## The control line at the bottom: the keyboard's, or `text` (the pad's).
+func set_hint(text: String) -> void:
+	_hint.text = text if not text.is_empty() else HINT
+
+
+## Esc / B: closes whatever is on top of the office. False when nothing was.
+func close_top() -> bool:
+	if notice.visible:
+		notice.cancel()
+	elif incidents.visible:
+		incidents.visible = false
+	elif patch_panel.visible:
+		patch_panel.close_panel()
+	elif person_card.visible:
+		person_card.close_card()
+	elif pad.browsing:
+		pad.toggle_browsing()
+	else:
+		return false
+	return true
 
 
 func show_job(job: RefCounted, plan: RefCounted) -> void:

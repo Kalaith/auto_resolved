@@ -99,6 +99,7 @@ func _ready() -> void:
 		hud.show_problems(problems)
 		return
 	settings.title_requested.connect(quit_to_title)
+	hud.pad.screen = func() -> Variant: return flow.screens.current
 	if skip_title:
 		start_job(start_archetype, fixed_seed if fixed_seed != 0 else _fresh_seed())
 	else:
@@ -221,7 +222,7 @@ func open_menu() -> void:
 	choices.append(["Quit to title", quit_to_title])
 	if Display.can_quit():
 		choices.append(["Quit game", quit_game])
-	choices.append(["Back", func() -> void: pass, true])
+	choices.append(["Back", func() -> void: pass, true, true])
 	var body: String = "Handing in notice finishes today, then comes the exit interview: quitting keeps all your PATCH Points.\n" + \
 		"The career saves at the end of each workday; quitting now loses today."
 	if office.notice_given:
@@ -250,7 +251,7 @@ func _leave_day(label: String, leave: Callable) -> void:
 		body += " Your notice is not kept either."
 	hud.notice.open("Leave day %d unfinished?" % day, body, [
 		[label, leave],
-		["Keep working", func() -> void: pass, true]])
+		["Keep working", func() -> void: pass, true, true]])
 
 
 func _physics_process(delta: float) -> void:
@@ -335,8 +336,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		set_speed(2.0)
 	elif event.is_action_pressed("speed_3"):
 		set_speed(4.0)
+	elif event.is_action_pressed("open_patch"):
+		if hud.patch_panel.visible:
+			hud.patch_panel.close_panel()
+		else:
+			hud.open_patch(office)
+	elif event.is_action_pressed("hud_focus"):
+		hud.pad.toggle_browsing()
 	elif event.is_action_pressed("ui_cancel") and not settings.is_open():
-		open_menu()
+		if not hud.close_top():
+			open_menu()
 	elif event.is_action_pressed("debug_next_job") and OS.is_debug_build() and flow.career == null:
 		var ids: Array[String] = Catalog.archetype_ids
 		start_job(ids[(ids.find(job.archetype_id) + 1) % ids.size()], _fresh_seed())

@@ -21,11 +21,7 @@ Nothing open.
 
 ## 2. Required before a store build
 
-- [ ] **Gamepad and focus.** No pad bindings or focus handling were found.
-  Add focus navigation to the title, job board, PATCH panel, incident view
-  and menus with the toolkit's `ui/focus.gd`, and pad bindings with
-  `input/pad_bindings.gd`. Drive every screen once by scripted pad input in
-  the capture tour.
+Nothing open.
 
 ## 3. Verification an agent can do
 

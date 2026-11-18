@@ -8,6 +8,7 @@ signal title_requested
 const SettingsStore = preload("res://addons/hatchery/settings/settings_store.gd")
 const SettingsBundle = preload("res://addons/hatchery/settings/settings_bundle.gd")
 const KeyBindings = preload("res://addons/hatchery/input/key_bindings.gd")
+const PadBindings = preload("res://addons/hatchery/input/pad_bindings.gd")
 const EngineSettings = preload("res://addons/hatchery/settings/engine_settings.gd")
 
 const DEFAULTS: Dictionary = {
@@ -17,6 +18,14 @@ const DEFAULTS: Dictionary = {
 const KEY_ACTIONS: Dictionary = {
 	"move_left": "Walk left", "move_right": "Walk right", "interact": "Use / call the lift / go",
 	"floor_up": "Lift: floor up", "floor_down": "Lift: floor down", "toggle_overview": "Whole-building view",
+	"pause": "Pause", "speed_1": "Normal speed", "speed_2": "Double speed", "speed_3": "Fast speed",
+	"open_patch": "Talk to PATCH",
+}
+## Rebindable pad buttons; B stays Back. The stick walks and the d-pad also
+## moves focus, so neither is listed.
+const PAD_ACTIONS: Dictionary = {
+	"interact": "Use / call the lift / go", "floor_up": "Lift: floor up", "floor_down": "Lift: floor down",
+	"open_patch": "Talk to PATCH", "hud_focus": "Browse the HUD", "toggle_overview": "Whole-building view",
 	"pause": "Pause", "speed_1": "Normal speed", "speed_2": "Double speed", "speed_3": "Fast speed",
 }
 const WORDS: Dictionary = {
@@ -39,12 +48,15 @@ func _ready() -> void:
 	store = settings.store
 	engine = settings.engine
 	store.keys = KeyBindings.new(KEY_ACTIONS)
+	store.pad = PadBindings.new(PAD_ACTIONS, [JOY_BUTTON_B] as Array[int])
 	engine.extra = _apply_own
 	settings.sections = [
 		{"title": "settings_sound", "sliders": ["master", "effects", "ambience"], "toggles": ["muted"]},
 		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
 	]
-	settings.text = func(key: String, english: String) -> String: return str(WORDS.get(key, KEY_ACTIONS.get(key.trim_prefix("action_"), english)))
+	settings.text = func(key: String, english: String) -> String:
+		var action: String = key.trim_prefix("action_")
+		return str(WORDS.get(key, KEY_ACTIONS.get(action, PAD_ACTIONS.get(action, english))))
 	_layer = CanvasLayer.new()
 	_layer.layer = 20
 	add_child(_layer)

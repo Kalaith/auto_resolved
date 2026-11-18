@@ -35,6 +35,8 @@ func build(kit: RefCounted) -> void:
 	var close: Button = ui.button("X", func() -> void: close_panel(), false, 14)
 	close.custom_minimum_size = Vector2(40, 36)
 	close.focus_mode = Control.FOCUS_NONE
+	# B closes it on a pad; focus starts on what the panel offers.
+	close.set_meta(&"pad_skip", true)
 	top.add_child(close)
 	_chat = ui.vbox(4)
 	column.add_child(_chat)

@@ -25,6 +25,8 @@ func tour() -> void:
 		await _patch(main)
 	if only.is_empty() or only == "menus":
 		await _menus(main)
+	if only.is_empty() or only == "pad":
+		await _pad(main)
 
 
 func _buildings(main: Node) -> void:
@@ -247,3 +249,84 @@ func _press(notice: Control, text: String) -> void:
 			button.pressed.emit()
 			return
 	push_error("No '%s' button on the notice" % text)
+
+
+## Every screen driven by gamepad buttons alone: the title, browsing the HUD,
+## PATCH from its menu to a proposal, an incident, the job menu, then the
+## exit interview, PATCH's update and the job board. A throwaway career that
+## is never saved.
+func _pad(main: Node) -> void:
+	var flow: Node = main.flow
+	flow.store.file.enabled = false
+	flow.show_title()
+	await seconds(0.3)
+	await _button(JOY_BUTTON_DPAD_DOWN)
+	await _button(JOY_BUTTON_DPAD_DOWN)
+	await shot("pad_title")
+	flow.career = preload("res://scripts/sim/career.gd").fresh(555)
+	flow.career.history.append({"archetype": "startup", "name": "Bloop.io", "tier": 1, "days": 1, "ended": "quit", "grade": "C", "points": 2, "pay": 150})
+	flow._resume()
+	Engine.time_scale = 4.0
+	await _until(main, 560.0)
+	Engine.time_scale = 1.0
+	main.set_speed(0.0)
+	await _button(JOY_BUTTON_X)
+	await _button(JOY_BUTTON_DPAD_DOWN)
+	await shot("pad_hud_browse")
+	await _button(JOY_BUTTON_B)
+	await _button(JOY_BUTTON_Y)
+	await shot("pad_patch_menu")
+	await _button(JOY_BUTTON_A)
+	await shot("pad_patch_tickets")
+	await _button(JOY_BUTTON_A)
+	await shot("pad_patch_card")
+	await _button(JOY_BUTTON_B)
+	var desk: RefCounted = main.office.patch_desk
+	desk.forced = "backfire"
+	desk.forced_backfire = "deleted_all_tickets"
+	desk.approve(main.office, desk.propose_queue(main.office, "organize_queue"), false)
+	await seconds(0.3)
+	await _button(JOY_BUTTON_X)
+	await shot("pad_alert_focus")
+	await _button(JOY_BUTTON_A)
+	await shot("pad_incident_view")
+	await _button(JOY_BUTTON_B)
+	await _button(JOY_BUTTON_B)
+	await _button(JOY_BUTTON_B)
+	await shot("pad_job_menu")
+	await _button(JOY_BUTTON_B)
+	main.office.metrics.end_day()
+	main.office.day_summaries.append(main.office.metrics.day.duplicate(true))
+	flow._exit(main.office, "quit")
+	await seconds(0.4)
+	await _button(JOY_BUTTON_DPAD_DOWN)
+	await shot("pad_exit_interview")
+	await _press_until_screen_changes(flow)
+	await shot("pad_upgrades")
+	await _press_until_screen_changes(flow)
+	await shot("pad_job_board")
+	flow.career = null
+
+
+## Presses and releases one pad button, as a player would.
+func _button(button: JoyButton) -> void:
+	for down in [true, false]:
+		var event := InputEventJoypadButton.new()
+		event.button_index = button
+		event.pressed = down
+		event.pressure = 1.0 if down else 0.0
+		Input.parse_input_event(event)
+		await frames(3)
+	await seconds(0.25)
+
+
+## Walks focus down and presses A until the between-jobs screen changes.
+func _press_until_screen_changes(flow: Node) -> void:
+	var before: Control = flow.screens.current
+	for attempt in range(16):
+		await _button(JOY_BUTTON_A)
+		if flow.screens.current != before:
+			await seconds(0.3)
+			return
+		await _button(JOY_BUTTON_DPAD_DOWN)
+	push_error("Pad presses never left the screen")
