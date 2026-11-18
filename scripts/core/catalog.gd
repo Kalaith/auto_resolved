@@ -28,7 +28,7 @@ const BALANCE_NUMBERS: Array[String] = [
 	"building.floor_height", "building.slab", "building.shaft_width",
 	"building.ground_depth", "elevator.speed_floors_per_second", "elevator.door_seconds",
 	"elevator.dwell_seconds", "player.walk_speed", "player.interact_reach",
-	"camera.follow_rate", "camera.overview_margin", "elevator.capacity",
+	"camera.follow_rate", "camera.overview_margin", "elevator.capacity", "elevator.tier_capacity", "elevator.tier_speed",
 	"day.real_seconds", "day.start_minute", "day.end_minute", "day.arrival_end_minute",
 	"day.lunch_start_minute", "day.lunch_end_minute", "day.leaving_start_minute",
 	"staff.walk_speed_min", "staff.walk_speed_max", "staff.arrive_first_minute", "staff.arrive_last_minute",

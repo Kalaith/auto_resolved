@@ -67,7 +67,7 @@ func _setup(for_job: RefCounted, patch_state: RefCounted) -> void:
 	job = for_job
 	patch = patch_state
 	plan = BuildingPlan.generate(job)
-	elevator = Elevator.new(plan.lowest, plan.highest, 0)
+	elevator = Elevator.new(plan.lowest, plan.highest, 0, for_job.tier)
 	clock = WorkClock.new()
 	staff = StaffFactory.create(job, plan)
 	for person in staff:

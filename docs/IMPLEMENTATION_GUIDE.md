@@ -349,8 +349,11 @@ Notes on how the plan was built:
   each landing). Floors above ground without a desk came up in small charity,
   design agency, university and government rolls; each gained required open
   offices, which spread to the emptiest floors. The bank's trading floors were
-  thinned (largest roll 65 to 61). Tier-4 rolls over about 50 staff still
-  queue 20 to 30 deep in the lobby at 9:00 with one 8-person car.
+  thinned (largest roll 65 to 61). Bigger companies then got a bigger,
+  faster car (`elevator.tier_capacity` 2 riders and `elevator.tier_speed`
+  20% per tier above the first: 8 riders at tier 1, 14 at tier 4), which
+  brought the largest tier-4 rolls from a 77 to 97 second worst wait down to
+  19 to 32 seconds and their 9:00 lobby queue from 30 to under 20.
 - Browser pass (18 November 2026): the web export served locally and driven
   in Chrome by mouse: title (version shown, no Quit on the web), new career,
   tutorial skipped, a hand fix by tapping a ticket (lift ride included), a

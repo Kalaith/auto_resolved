@@ -44,15 +44,18 @@ var _ticks: int = 0
 const LANDING_GRACE_STEPS: int = 10
 
 
-func _init(low: int, high: int, start: int = 0) -> void:
+## Bigger companies fit a bigger, faster car: each tier above the first adds
+## `elevator.tier_capacity` riders and `elevator.tier_speed` of the speed.
+func _init(low: int, high: int, start: int = 0, tier: int = 1) -> void:
 	lowest = low
 	highest = high
 	position = float(clampi(start, low, high))
 	_last_stop = clampi(start, low, high)
-	_speed = Balance.number("elevator.speed_floors_per_second")
+	var above: int = maxi(tier - 1, 0)
+	_speed = Balance.number("elevator.speed_floors_per_second") * (1.0 + Balance.number("elevator.tier_speed") * float(above))
 	_door_seconds = Balance.number("elevator.door_seconds")
 	_dwell_seconds = Balance.number("elevator.dwell_seconds")
-	capacity = Balance.integer("elevator.capacity")
+	capacity = Balance.integer("elevator.capacity") + Balance.integer("elevator.tier_capacity") * above
 
 
 ## The floor the car is at or passing.

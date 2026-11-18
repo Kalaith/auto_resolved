@@ -72,13 +72,6 @@ copying spiritwright's file.
   sized once at build time (e.g. `get_viewport_rect()` read in `_ready`)
   must follow `resized`, or it keeps the old width.
 
-- [ ] **Lift throughput in tier 4.** With one 8-person car, rolls over about
-  50 staff (megacorp, bank, data centre) queue 20 to 30 deep in the lobby at
-  9:00 and about 25 people are still not at their desk at 9:35
-  (`headcount_report`). Add stairs between neighbouring floors (the
-  invariants allow them) or a second car for tier 4, then rerun the report
-  and the `roll_*_largest` captures.
-
 ## Rules that still hold
 
 - Nothing in `scripts/sim/` touches the scene tree, `Time` or global

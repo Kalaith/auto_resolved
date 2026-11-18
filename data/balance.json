@@ -10,7 +10,9 @@
 		"speed_floors_per_second": 1.6,
 		"door_seconds": 0.4,
 		"dwell_seconds": 1.4,
-		"capacity": 8
+		"capacity": 8,
+		"tier_capacity": 2,
+		"tier_speed": 0.2
 	},
 	"player": {
 		"walk_speed": 240.0,
