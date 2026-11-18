@@ -8,6 +8,7 @@ extends Node
 ## key press hands control back and clears the focus it made.
 const Focus = preload("res://addons/hatchery/ui/focus.gd")
 
+const TOUCH_HINT: String = "Tap to walk   Tap a ticket or broken device to fix it   Tap a person for their card   AI asks PATCH   Menu: notice, settings"
 const PAD_HINT: String = "Stick walk   A use / call / go   D-pad floor   X browse HUD   Y PATCH   B back / menu   Back overview   Start pause   LB/RB/R3 speed"
 
 var hud: CanvasLayer
@@ -31,6 +32,11 @@ func _input(event: InputEvent) -> void:
 		active = false
 		browsing = false
 		_release()
+		hud.set_hint("")
+	# The hint line names the controls of whatever was touched last.
+	if event is InputEventScreenTouch:
+		hud.set_hint(TOUCH_HINT)
+	elif not active and (event is InputEventKey or (event is InputEventMouseButton and not event.device == InputEvent.DEVICE_ID_EMULATION)):
 		hud.set_hint("")
 
 

@@ -350,10 +350,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		var ids: Array[String] = Catalog.archetype_ids
 		start_job(ids[(ids.find(job.archetype_id) + 1) % ids.size()], _fresh_seed())
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_click(get_global_mouse_position())
+		# Where the press landed, not where the OS cursor is: a tap from touch
+		# emulation carries its own position.
+		_click((make_input_local(event) as InputEventMouseButton).position)
 
 
+## A broken device under the tap is fixed first (its owner often sits in
+## front of it); then a person opens their card; then food; then walking.
 func _click(at: Vector2) -> void:
+	var device: RefCounted = device_view.device_at(at)
+	if device != null:
+		var waiting: Array = office.helpdesk.queue.open_for_device(device.id)
+		if not waiting.is_empty():
+			work.request(waiting[0].id)
+			return
 	var person: RefCounted = staff_view.employee_at(at)
 	if person != null:
 		hud.person_card.open_for(person)
@@ -361,12 +371,7 @@ func _click(at: Vector2) -> void:
 	if not work.eat_spot_at(at).is_empty():
 		work.request_eat()
 		return
-	var device: RefCounted = device_view.device_at(at)
 	if device != null:
-		var waiting: Array = office.helpdesk.queue.open_for_device(device.id)
-		if not waiting.is_empty():
-			work.request(waiting[0].id)
-			return
 		player.go_to(device.floor_index, work.stand_x(device))
 		return
 	player.go_to(plan.floor_at_y(at.y), at.x)

@@ -32,7 +32,7 @@ job ends with an exit interview, PATCH's update and the job board.
 
 | Input | Action |
 | --- | --- |
-| Click / tap | Walk there, riding the lift if needed; tap a broken device to fix it, a person to see their card |
+| Click / tap | Walk there, riding the lift if needed; tap a broken device to fix it (it wins over the person sitting at it), a person to see their card |
 | A / D, arrows | Walk |
 | E, Space | Fix what is beside you; at the lift: call it, board, or go to the picked floor; at the IT desk: open PATCH |
 | W / S | Inside the lift: pick a floor |
@@ -63,7 +63,7 @@ every step between jobs.
 $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --editor --quit                          # import and parse
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
-& $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus|pad)
+& $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus|pad|touch)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
 & $godot --headless --path . --script res://tools/day_report.gd        # hand fixing, then a careful PATCH player (-- --policy=hand|patch)
 ```

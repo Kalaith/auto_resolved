@@ -25,9 +25,6 @@ Nothing open.
 
 ## 3. Verification an agent can do
 
-- [ ] **Touch pass.** Repeat the capture tour's `day` and `patch` parts with
-  emulated touch input only (tap to walk, tap a device, tap a ticket) and fix
-  anything that needs hover or a key.
 - [ ] **Recapture** `docs/verification/` after any of the above changes a
   screen, and look at the images.
 

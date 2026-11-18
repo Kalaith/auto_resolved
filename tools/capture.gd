@@ -27,6 +27,8 @@ func tour() -> void:
 		await _menus(main)
 	if only.is_empty() or only == "pad":
 		await _pad(main)
+	if only.is_empty() or only == "touch":
+		await _touch(main)
 
 
 func _buildings(main: Node) -> void:
@@ -330,3 +332,88 @@ func _press_until_screen_changes(flow: Node) -> void:
 			return
 		await _button(JOY_BUTTON_DPAD_DOWN)
 	push_error("Pad presses never left the screen")
+
+
+## The day and PATCH by touch alone: a tapped ticket walks you there, a tap
+## on the floor walks, a tapped broken device starts its fix, a tapped
+## person opens their card, PATCH from its button to an approval, the
+## incident alert and its view, and the job menu. No mouse, keys or hover.
+func _touch(main: Node) -> void:
+	main.start_job("accounting_firm", 4321)
+	Engine.time_scale = 4.0
+	main.set_speed(4.0)
+	await _until(main, 540.0)
+	Engine.time_scale = 1.0
+	main.set_speed(1.0)
+	await _tap_control(main.hud.tickets._buttons[0])
+	await seconds(1.5)
+	await shot("touch_ticket_walk")
+	await _tap_world(main, Vector2(main.plan.width - 120.0, main.plan.floor_y(main.player.floor_index) - 30.0))
+	await seconds(1.0)
+	await shot("touch_floor_walk")
+	var open: Array = main.office.helpdesk.queue.by_urgency()
+	var target: RefCounted = null
+	for ticket in open:
+		var device: RefCounted = main.office.device(ticket.device_id)
+		if device != null and device.floor_index == main.player.floor_index:
+			target = device
+			break
+	if target != null:
+		await _tap_world(main, Vector2(target.x, main.device_view.floor_line(target) - 20.0))
+		await seconds(1.5)
+		await shot("touch_device_fix")
+	for person in main.office.staff:
+		var spot: Vector2 = person.walker.feet(main.plan, main.elevator) + Vector2(0.0, -40.0)
+		var on_screen: Vector2 = main.get_viewport().get_canvas_transform() * spot
+		if person.present and not person.walker.riding and main.office.tickets_for_person(person.id).is_empty() 				and main.get_viewport().get_visible_rect().has_point(on_screen) and not main.hud.covers(on_screen):
+			await _tap_world(main, spot)
+			break
+	await seconds(0.4)
+	await shot("touch_person_card")
+	await _tap_control(main.hud.patch_button)
+	await seconds(0.4)
+	await _tap_control(main.hud.patch_panel._body.get_child(1))
+	await seconds(0.4)
+	await _tap_control(main.hud.patch_panel._body.get_child(1))
+	await seconds(0.4)
+	await shot("touch_patch_card")
+	await _tap_control(main.hud.patch_panel._card.buttons.get_child(0))
+	await seconds(0.5)
+	await shot("touch_patch_approved")
+	var desk: RefCounted = main.office.patch_desk
+	desk.forced = "backfire"
+	desk.forced_backfire = "deleted_all_tickets"
+	desk.approve(main.office, desk.propose_queue(main.office, "organize_queue"), false)
+	main.hud.patch_panel.close_panel()
+	await seconds(0.4)
+	await _tap_control(main.hud.alert)
+	await seconds(0.4)
+	await shot("touch_incident_view")
+	main.hud.incidents.visible = false
+	await _tap_control(main.hud.menu_button)
+	await seconds(0.4)
+	await shot("touch_job_menu")
+	main.hud.notice.cancel()
+
+
+## One finger down and up on the middle of `control`.
+func _tap_control(control: Control) -> void:
+	if not is_instance_valid(control) or not control.is_visible_in_tree():
+		push_error("Touch: nothing to tap at %s" % [control])
+		return
+	await _tap(control.get_global_rect().get_center())
+
+
+## One finger down and up over a point in the world.
+func _tap_world(main: Node, at: Vector2) -> void:
+	await _tap(main.get_viewport().get_canvas_transform() * at)
+
+
+func _tap(at: Vector2) -> void:
+	for down in [true, false]:
+		var event := InputEventScreenTouch.new()
+		event.index = 0
+		event.position = at
+		event.pressed = down
+		Input.parse_input_event(event)
+		await frames(3)
