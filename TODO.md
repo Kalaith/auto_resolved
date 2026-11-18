@@ -32,10 +32,6 @@ Nothing open.
 - [ ] **Sprites for props** (guide M7, last bullet): `room_props.gd` still
   draws every prop as shapes and `assets/` holds only the icon and title
   art. Replace props one kind at a time, keeping prop ids and layout.
-- [ ] **A finale for the career.** A career is an open run of jobs. Add a
-  closing beat once PATCH has every upgrade or the top tier is cleared
-  (the GDD's north star: PATCH becomes an effective successor), with a
-  summary of the jobs worked.
 - [ ] **Named recurring staff** (GDD question 5): let one or two people
   follow the player between jobs through `data/people.json` and
   `text_staff.json`, remembering an incident from the last job.

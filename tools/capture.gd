@@ -166,6 +166,11 @@ func _career(main: Node) -> void:
 	flow.screens.current.finished.emit()
 	await seconds(0.5)
 	await shot("career_job_board")
+	flow.career.history.append({"archetype": "bank", "name": "Sterling Trust", "tier": 4, "days": 6, "ended": "quit", "grade": "B", "points": 14, "pay": 3120})
+	flow._show_finale()
+	await seconds(0.5)
+	await shot("career_finale")
+	flow.career.finale_seen = true
 	await _restored_day(main, flow)
 	flow.career = null
 

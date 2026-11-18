@@ -25,6 +25,8 @@ var history: Array[Dictionary] = []
 var current_job: Dictionary = {}
 var offers: Array[Dictionary] = []
 var stage: String = "board"
+## The finale has been shown; it comes once per career.
+var finale_seen: bool = false
 
 
 static func fresh(seed_value: int) -> RefCounted:
@@ -42,6 +44,19 @@ func max_tier() -> int:
 		if reputation >= Balance.integer("career.tier_reputation.%d" % step):
 			tier = step
 	return tier
+
+
+## The closing beat is due: PATCH owns every upgrade, or a top-tier job
+## ended without a firing, and the finale has not been shown yet.
+func finale_due() -> bool:
+	if finale_seen:
+		return false
+	if patch.upgrades.size() >= Catalog.upgrade_ids.size():
+		return true
+	for record in history:
+		if int(record.get("tier", 0)) >= 4 and str(record.get("ended", "")) == "quit":
+			return true
+	return false
 
 
 func make_offers() -> void:
@@ -100,7 +115,7 @@ func take_offer(index: int) -> void:
 func to_dict() -> Dictionary:
 	return {
 		"schema": SCHEMA, "career_seed": career_seed, "patch": patch.to_dict(),
-		"career": {"reputation": reputation, "earnings": earnings, "points": points, "history": history.duplicate(true)},
+		"career": {"reputation": reputation, "earnings": earnings, "points": points, "history": history.duplicate(true), "finale_seen": finale_seen},
 		"current_job": current_job.duplicate(true), "offers": offers.duplicate(true), "stage": stage,
 	}
 
@@ -112,6 +127,8 @@ static func from_dict(data: Dictionary) -> RefCounted:
 	career.reputation = int(data.career.reputation)
 	career.earnings = int(data.career.earnings)
 	career.points = int(data.career.points)
+	# Saves from before the finale have no flag: not seen yet.
+	career.finale_seen = bool(data.career.get("finale_seen", false))
 	for entry in data.career.history:
 		career.history.append(entry)
 	career.current_job = data.current_job

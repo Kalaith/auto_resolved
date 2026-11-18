@@ -354,6 +354,12 @@ Notes on how the plan was built:
   20% per tier above the first: 8 riders at tier 1, 14 at tier 4), which
   brought the largest tier-4 rolls from a 77 to 97 second worst wait down to
   19 to 32 seconds and their 9:00 lobby queue from 30 to under 20.
+- Career finale (18 November 2026): `ui/screens/finale.gd` shows once, after
+  PATCH's update, when PATCH owns every upgrade or a tier-4 job ended in
+  notice rather than a firing. It names what PATCH has become and lists every
+  job worked; Keep working goes on to the job board. The save gains an
+  optional `career.finale_seen` (older saves load as not seen), so the career
+  schema stays at 1.
 - Browser pass (18 November 2026): the web export served locally and driven
   in Chrome by mouse: title (version shown, no Quit on the web), new career,
   tutorial skipped, a hand fix by tapping a ticket (lift ride included), a

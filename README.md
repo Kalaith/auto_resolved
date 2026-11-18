@@ -28,7 +28,9 @@ The shared toolkit must be linked once (a junction, ignored by Git):
 
 The game opens on the title: start a new career or continue one. Each job
 is a run of workdays; at the end of a day you can hand in notice, and every
-job ends with an exit interview, PATCH's update and the job board.
+job ends with an exit interview, PATCH's update and the job board. Once
+PATCH owns every upgrade, or you leave a top-tier job on your own terms, a
+finale sums up the career; you can keep working after it.
 
 | Input | Action |
 | --- | --- |

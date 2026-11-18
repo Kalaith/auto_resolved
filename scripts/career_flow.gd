@@ -13,6 +13,7 @@ const TitleScreen = preload("res://scripts/ui/screens/title_screen.gd")
 const ExitInterview = preload("res://scripts/ui/screens/exit_interview.gd")
 const UpgradeScreen = preload("res://scripts/ui/screens/upgrade_screen.gd")
 const JobBoardScreen = preload("res://scripts/ui/screens/job_board.gd")
+const FinaleScreen = preload("res://scripts/ui/screens/finale.gd")
 const DayReport = preload("res://scripts/ui/day_report.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
 
@@ -191,9 +192,31 @@ func _show_upgrades() -> void:
 			screen.message = "The save failed, so nothing was spent. " + store.last_error()
 		screen.rebuild())
 	screen.finished.connect(func() -> void:
+		if career.finale_due():
+			_show_finale()
+			return
 		career.make_offers()
 		_save()
 		_show_board())
+	screens.show(screen)
+
+
+## The career's closing beat; afterwards it carries on to the job board.
+func _show_finale() -> void:
+	main.end_job()
+	var screen: Control = FinaleScreen.new()
+	screen.career = career
+	screen.setup(_ui())
+	screen.keep_working.connect(func() -> void:
+		career.finale_seen = true
+		career.make_offers()
+		_save()
+		_show_board())
+	screen.title_chosen.connect(func() -> void:
+		career.finale_seen = true
+		career.make_offers()
+		_save()
+		show_title())
 	screens.show(screen)
 
 
