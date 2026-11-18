@@ -25,8 +25,7 @@ Nothing open.
 
 ## 3. Verification an agent can do
 
-- [ ] **Recapture** `docs/verification/` after any of the above changes a
-  screen, and look at the images.
+Nothing open.
 
 ## 4. Next steps
 
