@@ -9,6 +9,8 @@ var only: String = ""
 
 
 func tour() -> void:
+	# The tour runs in a window but never makes a sound.
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--only="):
 			only = argument.trim_prefix("--only=")
@@ -34,12 +36,40 @@ func _buildings(main: Node) -> void:
 		await seconds(1.2)
 		await shot("%s_overview" % id)
 		main.camera.overview = false
+	await _extremes(main)
 	main.start_job("startup", 99)
 	main.player.go_to(main.plan.highest, main.plan.width - 60.0)
 	await seconds(4.0)
 	await shot("route_riding")
 	await seconds(5.0)
 	await shot("route_arrived")
+
+
+## The smallest and largest staff roll of each archetype over seeds 1..40,
+## in overview at the height of the morning arrival (empty floors, lift
+## queues). headcount_report prints the same rolls with their numbers.
+func _extremes(main: Node) -> void:
+	const Job = preload("res://scripts/sim/job.gd")
+	const BuildingPlan = preload("res://scripts/sim/building_plan.gd")
+	const StaffFactory = preload("res://scripts/sim/staff_factory.gd")
+	for id in Catalog.archetype_ids:
+		var rolls: Dictionary = {}
+		for seed_value in range(1, 41):
+			var job: RefCounted = Job.create(id, seed_value)
+			rolls[seed_value] = StaffFactory.create(job, BuildingPlan.generate(job)).size()
+		var seeds: Array = rolls.keys()
+		seeds.sort_custom(func(a: int, b: int) -> bool: return rolls[a] < rolls[b] or (rolls[a] == rolls[b] and a < b))
+		for pair in [["smallest", seeds[0]], ["largest", seeds[-1]]]:
+			main.start_job(id, int(pair[1]))
+			main.camera.overview = true
+			Engine.time_scale = 4.0
+			main.set_speed(4.0)
+			await _until(main, 535.0)
+			Engine.time_scale = 1.0
+			main.set_speed(0.0)
+			await seconds(0.3)
+			await shot("roll_%s_%s" % [id, pair[0]])
+	main.camera.overview = false
 
 
 ## The office through a day at high speed: arrival, a working morning, lunch.

@@ -36,6 +36,12 @@ var _speed: float = 0.0
 var _door_seconds: float = 0.0
 var _dwell_seconds: float = 0.0
 var _last_stop: int = 0
+## floor -> [[id, tick last seen], ...] in the order people reached the
+## landing, so a crowded lobby boards first come, first served.
+var _landings: Dictionary = {}
+var _ticks: int = 0
+## A queued id not seen for this many steps has walked off.
+const LANDING_GRACE_STEPS: int = 10
 
 
 func _init(low: int, high: int, start: int = 0) -> void:
@@ -98,16 +104,52 @@ func press(index: int) -> void:
 		car_calls.append(index)
 
 
-## Steps inside if the doors are open at `index` and there is room; one who
-## may `squeeze` (the IT worker, who always fits) ignores the capacity.
+## Someone is standing at the landing of `index`, waiting; called every step
+## they wait, so their place in the queue is kept.
+func wait_at(id: String, index: int) -> void:
+	var queue: Array = _landings.get(index, [])
+	for entry in queue:
+		if entry[0] == id:
+			entry[1] = _ticks
+			return
+	queue.append([id, _ticks])
+	_landings[index] = queue
+
+
+## Steps inside if the doors are open at `index` and there is room for them,
+## counting those who reached the landing first; one who may `squeeze` (the
+## IT worker, who always fits) ignores the capacity and the queue.
 func board(id: String, index: int, squeeze: bool = false) -> bool:
 	if not is_open_at(index) or riders.has(id):
 		return riders.has(id)
-	if not has_room() and not squeeze:
+	if not squeeze and _ahead_of(id, index) >= capacity - riders.size():
 		return false
+	_leave_landing(id, index)
 	riders.append(id)
 	_dwell_left = maxf(_dwell_left, 0.5)
 	return true
+
+
+## How many still waiting at `index` got there before `id`.
+func _ahead_of(id: String, index: int) -> int:
+	var queue: Array = _landings.get(index, [])
+	var ahead: int = 0
+	for entry in queue.duplicate():
+		if entry[0] == id:
+			return ahead
+		if _ticks - int(entry[1]) > LANDING_GRACE_STEPS:
+			queue.erase(entry)
+		else:
+			ahead += 1
+	return ahead
+
+
+func _leave_landing(id: String, index: int) -> void:
+	var queue: Array = _landings.get(index, [])
+	for entry in queue:
+		if entry[0] == id:
+			queue.erase(entry)
+			return
 
 
 ## Steps out; the doors stay open a little longer for whoever follows.
@@ -126,6 +168,7 @@ func hurry() -> void:
 ## Empties the car and every call: the office closing for the night.
 func reset_to(index: int) -> void:
 	riders.clear()
+	_landings.clear()
 	hall_calls.clear()
 	car_calls.clear()
 	position = float(clampi(index, lowest, highest))
@@ -136,6 +179,7 @@ func reset_to(index: int) -> void:
 
 
 func step(delta: float) -> void:
+	_ticks += 1
 	match state:
 		State.IDLE:
 			_start_next()
@@ -176,13 +220,16 @@ func _start_next() -> void:
 
 
 ## The nearest call ahead in the travel direction; when none lies ahead the
-## car turns round. With no calls at all it stays where it is.
-func _next_stop() -> int:
+## car turns round. With no calls at all it stays where it is. A car already
+## `moving` skips the floor it is just pulling away from: a landing button
+## pressed there (a full car leaving a crowd behind) waits for the
+## way back instead of reopening the doors, which would never let it leave.
+func _next_stop(moving: bool = false) -> int:
 	var pending: Array[int] = calls()
 	if pending.is_empty():
 		direction = 0
 		return current_floor()
-	var ahead: Array[int] = _calls_ahead(pending, direction)
+	var ahead: Array[int] = _calls_ahead(pending, direction, moving)
 	if ahead.is_empty():
 		var nearest: int = pending[0]
 		for index in pending:
@@ -197,18 +244,21 @@ func _next_stop() -> int:
 	return best
 
 
-func _calls_ahead(pending: Array[int], heading: int) -> Array[int]:
+func _calls_ahead(pending: Array[int], heading: int, strict: bool) -> Array[int]:
 	var result: Array[int] = []
 	if heading == 0:
 		return result
 	for index in pending:
+		# The floor the car is pulling away from is still under it, not ahead.
+		if strict and index == _last_stop and is_equal_approx(float(index), position):
+			continue
 		if (heading > 0 and float(index) >= position - 0.001) or (heading < 0 and float(index) <= position + 0.001):
 			result.append(index)
 	return result
 
 
 func _move(delta: float) -> void:
-	var target: int = _next_stop()
+	var target: int = _next_stop(true)
 	if direction == 0:
 		direction = signi(target - current_floor())
 	var travel: float = _speed * speed_scale * delta

@@ -17,11 +17,7 @@ tools unless that changes.
 
 ## 1. Bugs and reliability
 
-- [ ] **Staff ranges are wide inside a tier** (startup 4 to 21, bank 31 to
-  65 in `headcount_report`). Check the smallest and largest rolls of each
-  archetype in the capture tour (`--only=buildings`) for empty floors and
-  for lift queues, and narrow the range in `data/companies.json` where one
-  breaks.
+Nothing open.
 
 ## 2. Required before a store build
 
@@ -75,8 +71,9 @@ resize. Windows between 1280x720 and 1920x1080 get one layout unit per
 pixel. Larger screens are scaled up so the layout stays at least 1920x1080
 (4K doubles), and smaller ones are shrunk to a 1280x720 layout. The Interface
 size setting (`content_scale_factor`) still multiplies on top. Use the
-toolkit's copy once it is lifted (see `godot_toolkit/TODO.md`); until then,
-copy spiritwright's file.
+toolkit's `res://addons/hatchery/settings/screen_fit.gd` (it also handles
+high-DPI screens and takes the smallest layout as an argument) rather than
+copying spiritwright's file.
 
 - [ ] `project.godot`: viewport 1280x720 -> 1920x1080 (already `expand`, no
   window override). Mount screen fit in the main scene's `_ready`.
@@ -93,6 +90,13 @@ copy spiritwright's file.
 - [ ] Toggle full screen and drag-resize the window mid-screen: anything
   sized once at build time (e.g. `get_viewport_rect()` read in `_ready`)
   must follow `resized`, or it keeps the old width.
+
+- [ ] **Lift throughput in tier 4.** With one 8-person car, rolls over about
+  50 staff (megacorp, bank, data centre) queue 20 to 30 deep in the lobby at
+  9:00 and about 25 people are still not at their desk at 9:35
+  (`headcount_report`). Add stairs between neighbouring floors (the
+  invariants allow them) or a second car for tier 4, then rerun the report
+  and the `roll_*_largest` captures.
 
 ## Rules that still hold
 

@@ -90,6 +90,7 @@ func walk_toward(target: float, delta: float) -> bool:
 ## (pressing then would only hold its doors open).
 func _at_landing(elevator: RefCounted) -> void:
 	waiting = true
+	elevator.wait_at(id, floor_index)
 	if elevator.is_open_at(floor_index):
 		if elevator.board(id, floor_index, squeeze):
 			riding = true

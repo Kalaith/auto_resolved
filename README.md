@@ -62,12 +62,12 @@ every step between jobs.
 $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --headless --path . --editor --quit                          # import and parse
 & $godot --headless --path . --script res://tools/sim_checks.gd       # behaviour checks
-& $godot --path . --script res://tools/capture.gd # screenshots into docs/verification (--only=career|buildings|day|patch|menus)
+& $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
 & $godot --headless --path . --script res://tools/day_report.gd        # hand fixing, then a careful PATCH player (-- --policy=hand|patch)
 ```
 
-Captures need a window (not `--headless`). They are written flat to
+Captures need a window (not `--headless`); run them silent with `--audio-driver Dummy` (the tour also mutes itself). They are written flat to
 `docs/verification/` (the one folder for verification images; Godot ignores it).
 
 ## Publish

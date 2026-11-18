@@ -340,6 +340,17 @@ Notes on how the plan was built:
   balance numbers changed. More tickets open under this policy than under
   hand fixing (up to about 110 a day at tier 4) because the roller stops at
   `issues.max_open` and a short queue never reaches it.
+- Staff extremes (18 November 2026): `headcount_report` now plays the
+  smallest and largest roll of each archetype from arrival to lunch, and the
+  capture tour shoots them (`roll_<archetype>_smallest|largest`). Two lift
+  faults showed up and were fixed: a full car leaving the lobby reopened for
+  the crowd it had just left and never departed, and people boarded in staff
+  order so the same few waited all morning (now first come, first served at
+  each landing). Floors above ground without a desk came up in small charity,
+  design agency, university and government rolls; each gained required open
+  offices, which spread to the emptiest floors. The bank's trading floors were
+  thinned (largest roll 65 to 61). Tier-4 rolls over about 50 staff still
+  queue 20 to 30 deep in the lobby at 9:00 with one 8-person car.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
   tour, and the M0 checks still run.
