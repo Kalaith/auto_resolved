@@ -21,9 +21,6 @@ Nothing open.
 
 ## 2. Required before a store build
 
-- [ ] **Windows executable details.** The Windows preset has
-  `application/modify_resources=false` and no icon. Set the icon from
-  `assets/icon.svg`, plus product name, company, version and copyright.
 - [ ] **Gamepad and focus.** No pad bindings or focus handling were found.
   Add focus navigation to the title, job board, PATCH panel, incident view
   and menus with the toolkit's `ui/focus.gd`, and pad bindings with
