@@ -25,10 +25,6 @@ Nothing open.
 
 ## 3. Verification an agent can do
 
-- [ ] **Browser pass.** `.\publish.ps1 -BuildOnly`, serve `builds/web` from a
-  fresh local port and drive it in Chrome: title, new career, the tutorial
-  day, a manual fix, a PATCH approval, end of day, reload and Continue. Check
-  the console for errors and that every drawn string is ASCII.
 - [ ] **Touch pass.** Repeat the capture tour's `day` and `patch` parts with
   emulated touch input only (tap to walk, tap a device, tap a ticket) and fix
   anything that needs hover or a key.

@@ -351,6 +351,14 @@ Notes on how the plan was built:
   offices, which spread to the emptiest floors. The bank's trading floors were
   thinned (largest roll 65 to 61). Tier-4 rolls over about 50 staff still
   queue 20 to 30 deep in the lobby at 9:00 with one 8-person car.
+- Browser pass (18 November 2026): the web export served locally and driven
+  in Chrome by mouse: title (version shown, no Quit on the web), new career,
+  tutorial skipped, a hand fix by tapping a ticket (lift ride included), a
+  PATCH approval, the end of day 1 with management's warning, then a reload
+  and Continue onto day 2 with the queue restored. The console showed only
+  the engine banner, and no data or script string is outside ASCII. Under
+  automation Chrome throttled frames, so 4x ran nearer real time; that is
+  the 40-ticks-a-frame cap, not a fault in the build.
 - Per the project owner's instruction, no new headless check modules were
   added after M0; behaviour was verified by running the game and the capture
   tour, and the M0 checks still run.
