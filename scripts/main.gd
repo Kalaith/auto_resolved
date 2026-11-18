@@ -25,6 +25,7 @@ const SettingsFlow = preload("res://scripts/settings_flow.gd")
 const AudioDirector = preload("res://scripts/audio_director.gd")
 const Tutorial = preload("res://scripts/tutorial.gd")
 const TickPump = preload("res://addons/hatchery/core/tick_pump.gd")
+const Display = preload("res://addons/hatchery/settings/display.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -217,10 +218,12 @@ func open_menu() -> void:
 	if flow.career != null and not office.notice_given:
 		choices.append(["Hand in notice", func() -> void: flow.hand_in_notice(office)])
 	choices.append(["Settings", open_settings])
-	choices.append(["Quit to title", func() -> void: flow.show_title()])
+	choices.append(["Quit to title", quit_to_title])
+	if Display.can_quit():
+		choices.append(["Quit game", quit_game])
 	choices.append(["Back", func() -> void: pass, true])
 	var body: String = "Handing in notice finishes today, then comes the exit interview: quitting keeps all your PATCH Points.\n" + \
-		"The career saves at the end of each workday; quitting to the title now loses today."
+		"The career saves at the end of each workday; quitting now loses today."
 	if office.notice_given:
 		body = "You have handed in your notice: today is your last day.\n" + body
 	hud.notice.open("%s - day %d" % [job.company_name, office.clock.day], body, choices)
@@ -229,15 +232,24 @@ func open_menu() -> void:
 ## Leaving a job mid-day asks first: the career saved last night, so Continue
 ## starts this same day again from the morning and today's work is gone.
 func quit_to_title() -> void:
+	_leave_day("Quit to title", func() -> void: flow.show_title())
+
+
+## Closes the game (desktop builds only), asking first as above.
+func quit_game() -> void:
+	_leave_day("Quit game", func() -> void: get_tree().quit())
+
+
+func _leave_day(label: String, leave: Callable) -> void:
 	if office == null or flow.career == null:
-		flow.show_title()
+		leave.call()
 		return
 	var day: int = office.clock.day
 	var body: String = "The career saves at the end of each workday, and today is not over. " + 		"Continue will start day %d again from this morning: today's fixes, PATCH's work and anything that broke are not kept." % day
 	if office.notice_given:
 		body += " Your notice is not kept either."
 	hud.notice.open("Leave day %d unfinished?" % day, body, [
-		["Quit to title", func() -> void: flow.show_title()],
+		[label, leave],
 		["Keep working", func() -> void: pass, true]])
 
 

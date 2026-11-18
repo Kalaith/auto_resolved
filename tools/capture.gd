@@ -218,10 +218,11 @@ func _menus(main: Node) -> void:
 	main.open_menu()
 	await seconds(0.4)
 	await shot("menus_job_menu")
-	main.quit_to_title()
+	_press(main.hud.notice, "Quit game")
 	await seconds(0.4)
 	await shot("menus_quit_unfinished_day")
 	main.hud.notice.visible = false
+	main.settings.close()
 	main.open_settings()
 	await seconds(0.4)
 	await shot("menus_settings")
@@ -237,3 +238,12 @@ func _menus(main: Node) -> void:
 func _until(main: Node, minute: float) -> void:
 	while main.office.clock.minute < minute and main.office.day_running:
 		await frames(5)
+
+
+## Presses the notice's button labelled `text`, as a click would.
+func _press(notice: Control, text: String) -> void:
+	for button in notice._buttons.get_children():
+		if button is Button and button.text == text:
+			button.pressed.emit()
+			return
+	push_error("No '%s' button on the notice" % text)

@@ -21,8 +21,6 @@ Nothing open.
 
 ## 2. Required before a store build
 
-- [ ] **Quit on desktop.** No script calls `get_tree().quit()`. Add Quit to
-  the title and the job menu on desktop builds only.
 - [ ] **Windows executable details.** The Windows preset has
   `application/modify_resources=false` and no icon. Set the icon from
   `assets/icon.svg`, plus product name, company, version and copyright.

@@ -1,9 +1,10 @@
 extends "res://scripts/ui/screens/screen_base.gd"
 ## The title: the premise in two lines, Continue career (with where it
-## stands), New career, Settings and Credits, and the game's version.
+## stands), New career, Settings, Credits, Quit (desktop), and the version.
 const TitleBackdrop = preload("res://addons/hatchery/ui/title_backdrop.gd")
 const TITLE_ART: Texture2D = preload("res://assets/art/ui/title_screen.png")
 const CreditsPage = preload("res://addons/hatchery/ui/credits_page.gd")
+const Display = preload("res://addons/hatchery/settings/display.gd")
 
 signal continue_chosen
 signal new_chosen
@@ -27,6 +28,10 @@ func build_page() -> void:
 	buttons.add_child(ui.button("New career", func() -> void: new_chosen.emit(), saved.is_empty()))
 	buttons.add_child(ui.button("Settings", func() -> void: settings_chosen.emit()))
 	buttons.add_child(ui.button("Credits", func() -> void: CreditsPage.open(self, ui)))
+	# A browser owns its tab, so only desktop builds offer Quit. Nothing is
+	# unsaved at the title: the career saves at every step between jobs.
+	if Display.can_quit():
+		buttons.add_child(ui.button("Quit", func() -> void: get_tree().quit()))
 	if not problem.is_empty():
 		column.add_child(text(problem, 14, ui.palette.warn, 470.0))
 	column.add_child(text("Mouse or touch: tap to walk and to use things. Keyboard: A/D walk, E use, W/S pick a floor in the lift, P pause, Tab overview.", 13, ui.palette.muted, 470.0))

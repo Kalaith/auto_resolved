@@ -43,7 +43,7 @@ job ends with an exit interview, PATCH's update and the job board.
 | Games button (in the IT office) | Play games at the IT desk: a big stress drop for 30 office minutes |
 | P, 1 / 2 / 3 | Pause, normal, double, fast |
 | Tab | Whole-building overview |
-| Esc, Menu | Hand in notice, settings, quit to title |
+| Esc, Menu | Hand in notice, settings, quit to title or (desktop) quit the game; mid-day both ask first |
 | F1 / F2 / F6 (debug builds) | Force PATCH's next execution to succeed / backfire / pick the backfire |
 | F3 / F4 (debug builds) | Open a random ticket / skip to the end of the day |
 
