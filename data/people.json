@@ -19,6 +19,10 @@
 		{"id": "legal", "label": "Legal", "colour": "7a5a46"}
 	],
 	"management": {"id": "management", "label": "Management", "colour": "2d2d38"},
+	"recurring": [
+		{"id": "marta", "name": "Marta Quill", "tech_confidence": 0.3, "patience": 0.8},
+		{"id": "devon", "name": "Devon Pike", "tech_confidence": 0.7, "patience": 0.35}
+	],
 	"traits": {
 		"tech_confidence": [0.1, 0.9],
 		"patience": [0.2, 0.9]

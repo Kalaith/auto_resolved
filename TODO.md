@@ -32,42 +32,6 @@ Nothing open.
 - [ ] **Sprites for props** (guide M7, last bullet): `room_props.gd` still
   draws every prop as shapes and `assets/` holds only the icon and title
   art. Replace props one kind at a time, keeping prop ids and layout.
-- [ ] **Named recurring staff** (GDD question 5): let one or two people
-  follow the player between jobs through `data/people.json` and
-  `text_staff.json`, remembering an incident from the last job.
-
-## Screen fit: a real 1920x1080 layout (from spiritwright, 18 Nov 2026)
-
-Spiritwright (commit `4a335a1`) now lays out at 1920x1080 on a 1080p screen
-instead of stretching a 1280x720 layout by 1.5x, so bigger screens show more
-room, not bigger text. How it works: `project.godot` has a 1920x1080 viewport
-with `stretch/mode="canvas_items"` and `stretch/aspect="expand"`, and
-`scripts/ui/screen_fit.gd` (started from `main.gd`'s `_ready` with
-`ScreenFit.watch(get_tree().root)`) sets `root.content_scale_size` on every
-resize. Windows between 1280x720 and 1920x1080 get one layout unit per
-pixel. Larger screens are scaled up so the layout stays at least 1920x1080
-(4K doubles), and smaller ones are shrunk to a 1280x720 layout. The Interface
-size setting (`content_scale_factor`) still multiplies on top. Use the
-toolkit's `res://addons/hatchery/settings/screen_fit.gd` (it also handles
-high-DPI screens and takes the smallest layout as an argument) rather than
-copying spiritwright's file.
-
-- [ ] `project.godot`: viewport 1280x720 -> 1920x1080 (already `expand`, no
-  window override). Mount screen fit in the main scene's `_ready`.
-- [ ] No hardcoded 1280/720 in scripts, so layouts should follow; check that
-  side panels and the HUD use their extra room at 1920 (spiritwright widens
-  its map side panel to 500 at 1700+ wide instead of 410).
-- [ ] The Interface size slider (`settings_flow.gd`, 85-150%) stays on
-  `content_scale_factor`; check 150% still fits a 1280x720 layout.
-- [ ] Capture every screen (title, settings, the main play screen and each
-  panel/overlay) at 1920x1080, 1600x900, 1280x720 and 1280x800, and look at
-  them: nothing pinned to the old 1280 edge, no panel left skinny in the
-  middle of a wide layout, no text overlapping. Then play the web build in
-  Chrome at a full-screen 1080p window and a small one.
-- [ ] Toggle full screen and drag-resize the window mid-screen: anything
-  sized once at build time (e.g. `get_viewport_rect()` read in `_ready`)
-  must follow `resized`, or it keeps the old width.
-
 ## Rules that still hold
 
 - Nothing in `scripts/sim/` touches the scene tree, `Time` or global

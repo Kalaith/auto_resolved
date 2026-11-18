@@ -27,6 +27,9 @@ var offers: Array[Dictionary] = []
 var stage: String = "board"
 ## The finale has been shown; it comes once per career.
 var finale_seen: bool = false
+## The recurring people following the player: id -> {"company", "archetype"}
+## from the last job (people.json lists who they are).
+var companions: Dictionary = {}
 
 
 static func fresh(seed_value: int) -> RefCounted:
@@ -57,6 +60,24 @@ func finale_due() -> bool:
 		if int(record.get("tier", 0)) >= 4 and str(record.get("ended", "")) == "quit":
 			return true
 	return false
+
+
+## After a job: the recurring people follow on, remembering this company and
+## `memories` (id -> incident archetype, "" for none).
+func follow_from(company: String, memories: Dictionary) -> void:
+	for entry in Catalog.people.get("recurring", []):
+		var id: String = str(entry.id)
+		companions[id] = {"company": company, "archetype": str(memories.get(id, ""))}
+
+
+## Who follows the player into the next job, in people.json order.
+func companion_list() -> Array:
+	var result: Array = []
+	for entry in Catalog.people.get("recurring", []):
+		var id: String = str(entry.id)
+		if companions.has(id):
+			result.append({"id": id, "company": str(companions[id].company), "archetype": str(companions[id].archetype)})
+	return result
 
 
 func make_offers() -> void:
@@ -115,7 +136,7 @@ func take_offer(index: int) -> void:
 func to_dict() -> Dictionary:
 	return {
 		"schema": SCHEMA, "career_seed": career_seed, "patch": patch.to_dict(),
-		"career": {"reputation": reputation, "earnings": earnings, "points": points, "history": history.duplicate(true), "finale_seen": finale_seen},
+		"career": {"reputation": reputation, "earnings": earnings, "points": points, "history": history.duplicate(true), "finale_seen": finale_seen, "companions": companions.duplicate(true)},
 		"current_job": current_job.duplicate(true), "offers": offers.duplicate(true), "stage": stage,
 	}
 
@@ -129,6 +150,13 @@ static func from_dict(data: Dictionary) -> RefCounted:
 	career.points = int(data.career.points)
 	# Saves from before the finale have no flag: not seen yet.
 	career.finale_seen = bool(data.career.get("finale_seen", false))
+	# Older saves have nobody following yet; malformed entries are dropped.
+	var following: Variant = data.career.get("companions", {})
+	if following is Dictionary:
+		for id in following:
+			var entry: Variant = following[id]
+			if entry is Dictionary and entry.get("company") is String and entry.get("archetype") is String:
+				career.companions[str(id)] = {"company": entry.company, "archetype": entry.archetype}
 	for entry in data.career.history:
 		career.history.append(entry)
 	career.current_job = data.current_job

@@ -54,8 +54,14 @@ func refresh(office: RefCounted) -> void:
 	if office != null and office.has_method("tickets_for_person"):
 		for ticket in office.tickets_for_person(person.id):
 			lines.append("Waiting on: #%d %s" % [ticket.id, ticket.title])
+	if not person.followed_from.is_empty():
+		lines.append("Worked with you at %s, and followed you here." % person.followed_from)
 	if not person.history.is_empty():
-		lines.append("Remembers: " + ", ".join(person.history.slice(-3)))
+		var notes: Array[String] = []
+		for note in person.history.slice(-3):
+			# "incident:bulk_misread" reads as "PATCH's bulk misread".
+			notes.append("PATCH's " + note.trim_prefix("incident:").replace("_", " ") if note.begins_with("incident:") else note)
+		lines.append("Remembers: " + ", ".join(notes))
 	_body.text = "\n".join(lines)
 
 

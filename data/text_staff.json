@@ -23,6 +23,7 @@
 		"staff.ticket.museum_catalog_slow": "The collection search is taking ages.|I could walk to the archive faster than this search.|The catalog is loading one record at a time.|The exhibit label is ready. The lookup is not.",
 		"staff.thanks.player": "Thanks!|You're a lifesaver.|Back in business.|Oh, that was quick.|Cheers, IT.|I can get back to work. A novel feeling.|Thank you. I will try not to break it immediately.",
 		"staff.thanks.patch": "Huh, it just fixed itself.|Thanks, PATCH. I think?|Did the robot do that?|Fixed before I finished complaining.|That was almost suspiciously helpful.|Tell PATCH I said thanks. No, actually, I will.",
+		"staff.followed": "Small world. I was at {company} too, remember?|After {company} I thought: why not follow the one IT person who answers?|Hello again! Same IT person as at {company}. Same problems, too.",
 		"staff.late": "Still waiting on IT...|Did my ticket get lost?|Is anyone looking at this?|I'll just stare at the wall, then.|I have started a second task. This one is also waiting.|The ticket says urgent. I have aged a little since raising it.",
 		"staff.incident.wrong_target": "Why did I get a password reset email?|That change was meant for someone else!|I have the same surname as the other person. That is not consent.|Could we check the name before changing the account?",
 		"staff.incident.overreach": "Everything changed and nobody asked us.|Who did this to the whole floor?|I asked for one printer, not a new office policy.|Can we put the rest of the building back, please?",

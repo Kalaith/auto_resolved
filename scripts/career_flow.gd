@@ -93,7 +93,7 @@ func _resume() -> void:
 
 func _start_job() -> void:
 	var job: Dictionary = career.current_job
-	main.start_job(str(job.archetype), int(job.seed), career.patch, job.state, int(job.day) + 1)
+	main.start_job(str(job.archetype), int(job.seed), career.patch, job.state, int(job.day) + 1, career.companion_list())
 	if career.history.is_empty() and int(job.day) == 0:
 		main.tutorial.start()
 
@@ -173,12 +173,34 @@ func _exit(office: RefCounted, ended: String) -> void:
 	screen.setup(_ui())
 	var record: Dictionary = {"archetype": office.job.archetype_id, "name": office.job.company_name, "tier": office.job.tier,
 		"days": int(stats.days), "ended": ended, "grade": grade, "points": int(points.total), "pay": int(stats.pay)}
+	var memories: Dictionary = _companion_memories(office)
 	screen.done.connect(func(promoted: String) -> void:
 		career.finish_job(record, int(points.total), change, promoted)
+		career.follow_from(str(office.job.company_name), memories)
 		_save()
 		_show_upgrades())
 	main.end_job()
 	screens.show(screen)
+
+
+## What each recurring person takes from this job to the next: their own
+## latest incident if they were here, else the job's latest incident.
+func _companion_memories(office: RefCounted) -> Dictionary:
+	var latest: String = ""
+	for incident in office.patch_desk.incidents:
+		latest = str(incident.archetype)
+	var memories: Dictionary = {}
+	for entry in Catalog.people.get("recurring", []):
+		memories[str(entry.id)] = latest
+	for person in office.staff:
+		if person.followed_from.is_empty():
+			continue
+		for entry in Catalog.people.get("recurring", []):
+			if str(entry.name) == person.name:
+				for note in person.history:
+					if note.begins_with("incident:"):
+						memories[str(entry.id)] = note.trim_prefix("incident:")
+	return memories
 
 
 func _show_upgrades() -> void:

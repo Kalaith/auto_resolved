@@ -121,11 +121,11 @@ func _connect_hud() -> void:
 
 ## Replaces the whole office with the building for a job. A saved `state`
 ## from an earlier day is laid back over it, and the office opens on `day`.
-func start_job(archetype: String, job_seed: int, patch: RefCounted = null, state: Dictionary = {}, day: int = 1) -> void:
+func start_job(archetype: String, job_seed: int, patch: RefCounted = null, state: Dictionary = {}, day: int = 1, companions: Array = []) -> void:
 	end_job()
 	flow.clear_screen()
 	job = Job.create(archetype, job_seed)
-	office = OfficeSim.create(job, patch)
+	office = OfficeSim.create(job, patch, companions)
 	if not state.is_empty():
 		OfficeSnapshot.restore(office, state)
 	plan = office.plan

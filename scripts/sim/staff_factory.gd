@@ -19,7 +19,9 @@ const STAFFED: Dictionary = {
 const CHAIR_OFFSET: float = -14.0
 
 
-static func create(job: RefCounted, plan: RefCounted) -> Array:
+## `companions` are the recurring people following the player here:
+## [{"id", "company", "archetype"}] (see Career.companion_list).
+static func create(job: RefCounted, plan: RefCounted, companions: Array = []) -> Array:
 	var rng: RandomNumberGenerator = Det.fork(job.seed_value, "staff")
 	var people: Dictionary = Catalog.people
 	var departments: Array = people.departments.duplicate()
@@ -41,6 +43,7 @@ static func create(job: RefCounted, plan: RefCounted) -> Array:
 				var person: Employee = _person(rng, staff.size(), room, float(item.x), department, used_names)
 				person.role = STAFFED[room.type]
 				staff.append(person)
+	_seat_companions(job, staff, companions)
 	return staff
 
 
@@ -69,6 +72,38 @@ static func _person(rng: RandomNumberGenerator, index: int, room: Dictionary, de
 static func _landing_spot(rng: RandomNumberGenerator) -> float:
 	var side: float = -1.0 if rng.randf() < 0.5 else 1.0
 	return side * rng.randf_range(58.0, 110.0)
+
+
+## Puts each companion at a worker's desk chosen from the job's own stream:
+## their name and traits, the company they came from, and the incident they
+## remember from it.
+static func _seat_companions(job: RefCounted, staff: Array, companions: Array) -> void:
+	if companions.is_empty():
+		return
+	var rng: RandomNumberGenerator = Det.fork(job.seed_value, "companions")
+	var seats: Array = staff.filter(func(person: Employee) -> bool: return person.role == "worker")
+	Det.shuffle(rng, seats)
+	var known: Dictionary = {}
+	for entry in Catalog.people.get("recurring", []):
+		known[str(entry.id)] = entry
+	var taken: Dictionary = {}
+	for person in staff:
+		taken[person.name] = person
+	for index in range(mini(companions.size(), seats.size())):
+		var companion: Dictionary = companions[index]
+		if not known.has(str(companion.get("id", ""))):
+			continue
+		var data: Dictionary = known[str(companion.id)]
+		var person: Employee = seats[index]
+		# A random colleague who happened to share the name steps aside.
+		if taken.has(str(data.name)) and taken[str(data.name)] != person:
+			taken[str(data.name)].name += " Jr"
+		person.name = str(data.name)
+		person.tech_confidence = float(data.tech_confidence)
+		person.patience = float(data.patience)
+		person.followed_from = str(companion.get("company", ""))
+		if not str(companion.get("archetype", "")).is_empty():
+			person.history.append("incident:" + str(companion.archetype))
 
 
 static func unique_name(rng: RandomNumberGenerator, used: Dictionary) -> String:

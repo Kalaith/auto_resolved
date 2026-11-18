@@ -166,6 +166,7 @@ func _career(main: Node) -> void:
 	flow.screens.current.finished.emit()
 	await seconds(0.5)
 	await shot("career_job_board")
+	await _recurring_staff(main, flow)
 	flow.career.history.append({"archetype": "bank", "name": "Sterling Trust", "tier": 4, "days": 6, "ended": "quit", "grade": "B", "points": 14, "pay": 3120})
 	flow._show_finale()
 	await seconds(0.5)
@@ -422,3 +423,22 @@ func _tap(at: Vector2) -> void:
 		event.pressed = down
 		Input.parse_input_event(event)
 		await frames(3)
+
+
+## The recurring colleagues at the next job: Marta files a ticket, says hello
+## again, and her card says where she worked with you.
+func _recurring_staff(main: Node, flow: Node) -> void:
+	flow.career.follow_from("Marlow Bakery Wholesale", {"marta": "bulk_misread", "devon": ""})
+	main.start_job("startup", 2024, flow.career.patch, {}, 1, flow.career.companion_list())
+	Engine.time_scale = 4.0
+	await _until(main, 560.0)
+	Engine.time_scale = 1.0
+	main.set_speed(0.0)
+	for person in main.office.staff:
+		if person.name == "Marta Quill" and person.present:
+			main.camera.overview = true
+			main.office.helpdesk.open_ticket(main.office, "password", main.office.device(person.device_id))
+			main.hud.person_card.open_for(person)
+	await seconds(1.4)
+	await shot("career_recurring_staff")
+	main.camera.overview = false

@@ -39,6 +39,9 @@ var busy_until: float = 0.0
 var next_decision: float = 0.0
 ## Recent IT trouble, remembered for reactions: ticket ids and incident kinds.
 var history: Array[String] = []
+## The company this person worked at with the player before, if they are one
+## of the recurring staff who follow the player between jobs.
+var followed_from: String = ""
 
 
 func full_name() -> String:

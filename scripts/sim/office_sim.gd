@@ -57,19 +57,19 @@ var _used_names: Dictionary = {}
 
 
 ## `patch_state` is the career's PATCH; null gives a fresh v1.0.
-static func create(for_job: RefCounted, patch_state: RefCounted = null) -> RefCounted:
+static func create(for_job: RefCounted, patch_state: RefCounted = null, companions: Array = []) -> RefCounted:
 	var office: RefCounted = load("res://scripts/sim/office_sim.gd").new()
-	office._setup(for_job, patch_state if patch_state != null else PatchState.new())
+	office._setup(for_job, patch_state if patch_state != null else PatchState.new(), companions)
 	return office
 
 
-func _setup(for_job: RefCounted, patch_state: RefCounted) -> void:
+func _setup(for_job: RefCounted, patch_state: RefCounted, companions: Array) -> void:
 	job = for_job
 	patch = patch_state
 	plan = BuildingPlan.generate(job)
 	elevator = Elevator.new(plan.lowest, plan.highest, 0, for_job.tier)
 	clock = WorkClock.new()
-	staff = StaffFactory.create(job, plan)
+	staff = StaffFactory.create(job, plan, companions)
 	for person in staff:
 		_by_id[person.id] = person
 		_used_names[person.name] = true

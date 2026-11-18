@@ -18,6 +18,8 @@ var bubbles: Array[Dictionary] = []
 var _rng := RandomNumberGenerator.new()
 var _font: Font
 var _late_said: Dictionary = {}
+## Recurring people who have already said hello again at this job.
+var _greeted: Dictionary = {}
 var _next_late_check: float = 0.0
 
 
@@ -25,6 +27,7 @@ func setup(sim: RefCounted) -> void:
 	office = sim
 	bubbles.clear()
 	_late_said.clear()
+	_greeted.clear()
 	_rng.seed = hash(sim.job.seed_value)
 	_font = ThemeDB.fallback_font
 	z_index = 6
@@ -55,6 +58,10 @@ func _ticket_opened(ticket: RefCounted) -> void:
 		if not nearby.is_empty():
 			say(Det.pick(_rng, nearby).id, "staff.ticket." + ticket.issue)
 		return
+	if not person.followed_from.is_empty() and not _greeted.has(person.id):
+		_greeted[person.id] = true
+		say(person.id, "staff.followed", {"company": person.followed_from})
+		return
 	for note in person.history:
 		if note.begins_with("incident:") and _rng.randf() < 0.5:
 			say(person.id, "staff.remember." + note.trim_prefix("incident:"))
@@ -63,8 +70,8 @@ func _ticket_opened(ticket: RefCounted) -> void:
 
 
 ## Shows a line from `key` (variants split by "|") over `who`; `{name}` in a
-## line becomes the speaker's first name.
-func say(who: String, key: String) -> void:
+## line becomes the speaker's first name, and `extra` fills the rest.
+func say(who: String, key: String, extra: Dictionary = {}) -> void:
 	var text: RefCounted = CatalogPeople.staff_text
 	if not text.has(key):
 		return
@@ -72,7 +79,9 @@ func say(who: String, key: String) -> void:
 	if person == null or not person.present:
 		return
 	var variants: PackedStringArray = text.label(key).split("|")
-	var line: String = TextCatalog.fill(variants[_rng.randi_range(0, variants.size() - 1)], {"name": person.name.get_slice(" ", 0)})
+	var values: Dictionary = {"name": person.name.get_slice(" ", 0)}
+	values.merge(extra)
+	var line: String = TextCatalog.fill(variants[_rng.randi_range(0, variants.size() - 1)], values)
 	bubbles = bubbles.filter(func(item: Dictionary) -> bool: return item.who != who)
 	bubbles.append({"who": who, "line": line, "left": SECONDS})
 	while bubbles.size() > MAX_BUBBLES:

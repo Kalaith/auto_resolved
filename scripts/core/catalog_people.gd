@@ -17,7 +17,7 @@ static var staff_text: TextCatalog = TextCatalog.new(["res://data/text_staff.jso
 static func check_staff_text(errors: Array[String], issue_ids: Array[String], archetypes: Array) -> void:
 	staff_text.reload()
 	errors.append_array(staff_text.problems())
-	var required: Array = ["staff.thanks.player", "staff.thanks.patch", "staff.late", "staff.manager_visit"]
+	var required: Array = ["staff.thanks.player", "staff.thanks.patch", "staff.late", "staff.manager_visit", "staff.followed"]
 	for id in issue_ids:
 		required.append("staff.ticket." + id)
 	for id in archetypes:
@@ -43,6 +43,21 @@ static func load_into(errors: Array[String], schema: int) -> Dictionary:
 			_check_department(rules.at("departments[%s]" % str(entry.get("id", "?")) if entry is Dictionary else "departments"), entry)
 	if rules.object(data, "management"):
 		_check_department(rules.at("management"), data.management)
+	# The one or two people who follow the player from job to job.
+	if rules.list(data, "recurring", false):
+		rules.unique_ids(data.recurring)
+		if data.recurring.size() > 2:
+			rules.fail("recurring lists at most two people")
+		for entry in data.recurring:
+			var check: RefCounted = rules.at("recurring[%s]" % str(entry.get("id", "?")) if entry is Dictionary else "recurring")
+			if not entry is Dictionary:
+				check.fail("must be an object")
+				continue
+			check.text(entry, "id")
+			check.text(entry, "name")
+			for key in TRAITS:
+				if not DataRules.fraction(entry.get(key)):
+					check.fail("%s must be a fraction" % key)
 	if rules.object(data, "traits"):
 		for key in TRAITS:
 			var span: Variant = data.traits.get(key)

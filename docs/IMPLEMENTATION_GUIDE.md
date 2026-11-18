@@ -360,6 +360,14 @@ Notes on how the plan was built:
   job worked; Keep working goes on to the job board. The save gains an
   optional `career.finale_seen` (older saves load as not seen), so the career
   schema stays at 1.
+- Recurring staff (18 November 2026): `people.json` names two people
+  (`recurring`) who follow the player from the second job on. Each new job
+  seats them at worker desks from its own `companions` stream, with the last
+  company and an incident archetype from it (theirs if they were there, else
+  the job's latest). Their first ticket at a job says hello again
+  (`staff.followed` in `text_staff.json`), later ones can recall the
+  incident, and their card says where you worked together. The save gains
+  an optional `career.companions` (older saves: nobody follows yet).
 - Browser pass (18 November 2026): the web export served locally and driven
   in Chrome by mouse: title (version shown, no Quit on the web), new career,
   tutorial skipped, a hand fix by tapping a ticket (lift ride included), a
