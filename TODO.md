@@ -21,8 +21,6 @@ Nothing open.
 
 ## 2. Required before a store build
 
-- [ ] **Version.** `project.godot` has no `config/version`. Add `0.1.0`,
-  show it on the title, and keep `publish.json` in step.
 - [ ] **Quit on desktop.** No script calls `get_tree().quit()`. Add Quit to
   the title and the job menu on desktop builds only.
 - [ ] **Windows executable details.** The Windows preset has
