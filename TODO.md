@@ -1,6 +1,6 @@
 # Auto-Resolved: agent TODO
 
-Updated 16 November 2026. Only outstanding work an agent can do alone belongs
+Updated 18 November 2026. Only outstanding work an agent can do alone belongs
 here: bug fixes, required improvements and next steps. Playtests, listening,
 publishing and decisions that need the owner are left out on purpose. Remove a
 task when it is done; what is built is described in
@@ -29,9 +29,10 @@ Nothing open.
 
 ## 4. Next steps
 
-- [ ] **Sprites for props** (guide M7, last bullet): `room_props.gd` still
-  draws every prop as shapes and `assets/` holds only the icon and title
-  art. Replace props one kind at a time, keeping prop ids and layout.
+Nothing open. Prop sprites (guide M7) wait on art from the owner: no prop
+art exists yet, and the title art came from the owner's image prompt
+(`docs/art/title_image.md`).
+
 ## Rules that still hold
 
 - Nothing in `scripts/sim/` touches the scene tree, `Time` or global
