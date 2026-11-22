@@ -55,25 +55,27 @@ read one_more_upgrade's `scripts/presentation/main.gd` (search for
 `scripts/presentation/run_report.gd`, `tools/analytics_check.gd` and the
 Analytics line in its `AGENTS.md`.
 
-- [ ] **Config.** Add `data/analytics.json`:
+- [ ] **Register the game (the user's step).** Intake keys come from the
+  portal's game registry, not from the game. Ask the user to register the slug
+  `auto_resolved` on the Hatchery Signals dashboard's Games page
+  (`https://webhatchery.au/game_analytics/games`, admin login) and to give you
+  the key it shows (`hs-` and 48 hex digits). The page also shows the finished
+  `data/analytics.json`. Do not make up a key. A batch with an unregistered or
+  wrong key gets HTTP 403 and is dropped; the game is not affected. If the key
+  is not available yet, do the other steps with
+  `"write_key": "unregistered-auto_resolved"` and leave this box unticked.
+- [ ] **Config.** Add `data/analytics.json` with the key from the Games page:
   ```json
   {
   	"schema_version": 1,
   	"endpoint": "https://webhatchery.au/game_analytics/api/v1/events",
   	"game": "auto_resolved",
-  	"write_key": "<prefix>-<40 hex digits>"
+  	"write_key": "<the key from the Games page>"
   }
   ```
-  Make a new random key, for example in PowerShell:
-  `"ar-" + -join ((1..20) | ForEach-Object { '{0:x2}' -f (Get-Random -Maximum 256) })`.
   The key ships in the build. It identifies the game and is not a secret.
   Check that each preset's `include_filter` in `export_presets.cfg` takes it
   (`data/*.json` or `*.json` already does).
-- [ ] **Portal key (the user's step).** The portal accepts a batch only if
-  `GAME_WRITE_KEYS_JSON` in `apps/game_analytics/backend/.env` (local and
-  production) has `"auto_resolved": "<the key>"`. Do not read or edit that
-  `.env`. Tell the user the slug and key so they can add them. Until they do,
-  every batch gets HTTP 403 and is dropped. The game is not affected.
 - [ ] **Mount the client.** Start it in `scripts/main.gd`'s `_ready`, which
   lives for the whole launch. The pattern:
   ```gdscript
@@ -136,10 +138,10 @@ Analytics line in its `AGENTS.md`.
   `--headless --editor --path . --quit`.
 - [ ] **Docs.** Add an Analytics line to `AGENTS.md`, modelled on
   one_more_upgrade's: the client and where it starts, `data/analytics.json`
-  and the key that must match `GAME_WRITE_KEYS_JSON.auto_resolved`, what the
-  reports hold (ids, counts and flags only, never free text), when reporting
-  is off, and the check command. Add the check to the checks list. Capture the
-  settings screen with the new toggle and look at it.
+  and that its key comes from the portal's Games page, what the reports hold
+  (ids, counts and flags only, never free text), when reporting is off, and
+  the check command. Add the check to the checks list. Capture the settings
+  screen with the new toggle and look at it.
 
 ## Rules that still hold
 
