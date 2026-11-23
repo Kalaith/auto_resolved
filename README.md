@@ -68,6 +68,7 @@ $godot = 'C:\Program Files\Godot\Godot_v4.7.2-stable_win64_console.exe'
 & $godot --path . --audio-driver Dummy --script res://tools/capture.gd # silent screenshots into docs/verification (--only=career|buildings|day|patch|menus|pad|touch)
 & $godot --headless --path . --script res://tools/headcount_report.gd  # staff per archetype
 & $godot --headless --path . --script res://tools/day_report.gd        # hand fixing, then a careful PATCH player (-- --policy=hand|patch)
+& $godot --headless --path . --script res://tools/analytics_check.gd   # analytics config, milestones and job reports
 ```
 
 Captures need a window (not `--headless`); run them silent with `--audio-driver Dummy` (the tour also mutes itself). They are written flat to
