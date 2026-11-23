@@ -26,6 +26,8 @@ const AudioDirector = preload("res://scripts/audio_director.gd")
 const Tutorial = preload("res://scripts/tutorial.gd")
 const TickPump = preload("res://addons/hatchery/core/tick_pump.gd")
 const Display = preload("res://addons/hatchery/settings/display.gd")
+const SignalsClient = preload("res://addons/hatchery/telemetry/signals_client.gd")
+const SignalsConfig = preload("res://addons/hatchery/telemetry/signals_config.gd")
 
 const Z_CAR: int = 1
 const Z_RIDERS: int = 2
@@ -57,6 +59,8 @@ var flow: Node
 var settings: Node
 var audio: Node
 var tutorial: Node
+## Anonymous play stats for Hatchery Signals; career_flow.gd sends the job reports.
+var analytics: SignalsClient
 ## 0 pauses the office; the player and the elevator still move.
 var time_scale: float = 1.0
 var _world: Node2D
@@ -72,6 +76,7 @@ func _ready() -> void:
 	add_child(settings)
 	settings.palette = hud.ui.palette
 	settings.apply("colour_safe")
+	_start_analytics()
 	camera = OfficeCamera.new()
 	add_child(camera)
 	work = WorkController.new()
@@ -104,6 +109,17 @@ func _ready() -> void:
 		start_job(start_archetype, fixed_seed if fixed_seed != 0 else _fresh_seed())
 	else:
 		flow.show_title()
+
+
+## Reporting runs for the whole launch; active time counts while a workday runs.
+func _start_analytics() -> void:
+	analytics = SignalsClient.new()
+	add_child(analytics)
+	analytics.is_playing = func() -> bool: return office != null and office.day_running
+	analytics.start("res://data/analytics.json", SignalsConfig.allowed(), bool(settings.value(SignalsClient.SETTING_KEY)), false)
+	settings.settings.changed.connect(func(key: String) -> void:
+		if key == SignalsClient.SETTING_KEY or key.is_empty():
+			analytics.set_enabled(bool(settings.value(SignalsClient.SETTING_KEY))))
 
 
 func _connect_hud() -> void:
@@ -303,6 +319,7 @@ func _on_event(event: Dictionary) -> void:
 	tutorial.on_event(event)
 	match str(event.type):
 		"day_ended":
+			analytics.milestone_once("first_day_completed")
 			hud.patch_panel.close_panel()
 			flow.on_day_ended(office, int(event.day))
 		"incident_opened":
@@ -315,6 +332,9 @@ func _on_event(event: Dictionary) -> void:
 			hud.toast("You snapped at someone. Management heard about it.")
 		"worker_slacking":
 			hud.toast("People have noticed you wandering about. Look busy: go back to IT.")
+		"ticket_resolved":
+			if str(event.by) == "player":
+				analytics.milestone_once("first_issue_fixed")
 		"ticket_opened":
 			if int(event.ticket) <= 3:
 				hud.toast("New ticket: %s" % office.helpdesk.queue.get_ticket(int(event.ticket)).title)

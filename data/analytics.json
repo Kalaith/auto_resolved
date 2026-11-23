@@ -1,0 +1,6 @@
+{
+	"schema_version": 1,
+	"endpoint": "https://webhatchery.au/game_analytics/api/v1/events",
+	"game": "auto_resolved",
+	"write_key": "hs-5af2583ceb24def2b4ecfb5e4449d86c411e503eb5f72b29"
+}

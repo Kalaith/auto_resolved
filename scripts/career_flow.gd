@@ -16,6 +16,7 @@ const JobBoardScreen = preload("res://scripts/ui/screens/job_board.gd")
 const FinaleScreen = preload("res://scripts/ui/screens/finale.gd")
 const DayReport = preload("res://scripts/ui/day_report.gd")
 const Catalog = preload("res://scripts/core/catalog.gd")
+const RunReport = preload("res://scripts/run_report.gd")
 
 var main: Node
 var store := CareerStore.new()
@@ -70,9 +71,12 @@ func _continue() -> void:
 
 
 func _new_career() -> void:
+	var previous: RefCounted = store.load_career() if store.exists() else null
 	if store.exists() and not store.keep_previous():
 		show_title(store.last_error())
 		return
+	if previous != null and previous.stage == "job":
+		main.analytics.run_ended(RunReport.abandoned(previous, main.analytics.run_seconds()))
 	career = Career.fresh(_seeds.randi_range(1, 2147483646))
 	_save()
 	_resume()
@@ -81,7 +85,7 @@ func _new_career() -> void:
 func _resume() -> void:
 	match career.stage:
 		"job":
-			_start_job()
+			_start_job(false)
 		"upgrades":
 			_show_upgrades()
 		_:
@@ -91,9 +95,17 @@ func _resume() -> void:
 			_show_board()
 
 
-func _start_job() -> void:
+## `fresh`: the job was just taken from the board, so its run report goes
+## out; a continued job only restarts the run clock.
+func _start_job(fresh: bool) -> void:
 	var job: Dictionary = career.current_job
 	main.start_job(str(job.archetype), int(job.seed), career.patch, job.state, int(job.day) + 1, career.companion_list())
+	if not fresh:
+		main.analytics.run_started({})
+	else:
+		main.analytics.run_started(RunReport.started(career, main.office))
+		if not career.history.is_empty():
+			main.analytics.milestone_once("second_company_started")
 	if career.history.is_empty() and int(job.day) == 0:
 		main.tutorial.start()
 
@@ -174,6 +186,8 @@ func _exit(office: RefCounted, ended: String) -> void:
 	var record: Dictionary = {"archetype": office.job.archetype_id, "name": office.job.company_name, "tier": office.job.tier,
 		"days": int(stats.days), "ended": ended, "grade": grade, "points": int(points.total), "pay": int(stats.pay)}
 	var memories: Dictionary = _companion_memories(office)
+	main.analytics.run_ended(RunReport.ended(career, office, ended, main.analytics.run_seconds()))
+	main.analytics.milestone_once("first_job_ended")
 	screen.done.connect(func(promoted: String) -> void:
 		career.finish_job(record, int(points.total), change, promoted)
 		career.follow_from(str(office.job.company_name), memories)
@@ -209,9 +223,12 @@ func _show_upgrades() -> void:
 	screen.career = career
 	screen.setup(_ui())
 	screen.buy_chosen.connect(func(id: String) -> void:
-		if career.buy(id) and not _save():
-			career.refund(id)
-			screen.message = "The save failed, so nothing was spent. " + store.last_error()
+		if career.buy(id):
+			if _save():
+				main.analytics.milestone_once("first_patch_upgrade")
+			else:
+				career.refund(id)
+				screen.message = "The save failed, so nothing was spent. " + store.last_error()
 		screen.rebuild())
 	screen.finished.connect(func() -> void:
 		if career.finale_due():
@@ -226,6 +243,7 @@ func _show_upgrades() -> void:
 ## The career's closing beat; afterwards it carries on to the job board.
 func _show_finale() -> void:
 	main.end_job()
+	main.analytics.game_completed()
 	var screen: Control = FinaleScreen.new()
 	screen.career = career
 	screen.setup(_ui())
@@ -250,6 +268,6 @@ func _show_board() -> void:
 	screen.offer_taken.connect(func(index: int) -> void:
 		career.take_offer(index)
 		_save()
-		_start_job())
+		_start_job(true))
 	screen.title_chosen.connect(func() -> void: show_title())
 	screens.show(screen)

@@ -10,10 +10,12 @@ const SettingsBundle = preload("res://addons/hatchery/settings/settings_bundle.g
 const KeyBindings = preload("res://addons/hatchery/input/key_bindings.gd")
 const PadBindings = preload("res://addons/hatchery/input/pad_bindings.gd")
 const EngineSettings = preload("res://addons/hatchery/settings/engine_settings.gd")
+const SignalsClient = preload("res://addons/hatchery/telemetry/signals_client.gd")
 
 const DEFAULTS: Dictionary = {
 	"master": 0.8, "effects": 0.8, "ambience": 0.5, "muted": false,
 	"fullscreen": false, "ui_scale": 0.23, "colour_safe": false,
+	SignalsClient.SETTING_KEY: true,
 }
 const KEY_ACTIONS: Dictionary = {
 	"move_left": "Walk left", "move_right": "Walk right", "interact": "Use / call the lift / go",
@@ -33,6 +35,7 @@ const WORDS: Dictionary = {
 	"setting_master": "Volume", "setting_effects": "Effects", "setting_ambience": "Office hum",
 	"setting_muted": "Mute", "setting_fullscreen": "Fullscreen", "setting_ui_scale": "Interface size",
 	"setting_colour_safe": "Colour-safe good and bad colours",
+	"setting_" + SignalsClient.SETTING_KEY: SignalsClient.SETTING_LABEL,
 }
 
 var settings: SettingsBundle
@@ -52,7 +55,7 @@ func _ready() -> void:
 	engine.extra = _apply_own
 	settings.sections = [
 		{"title": "settings_sound", "sliders": ["master", "effects", "ambience"], "toggles": ["muted"]},
-		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe"]},
+		{"title": "settings_display", "sliders": ["ui_scale"], "toggles": ["fullscreen", "colour_safe", SignalsClient.SETTING_KEY]},
 	]
 	settings.text = func(key: String, english: String) -> String:
 		var action: String = key.trim_prefix("action_")
