@@ -108,8 +108,8 @@ func _work_day(office: RefCounted, day: int) -> void:
 
 func _check_ids(report: Dictionary, where: String) -> void:
 	_check(Catalog.archetype_ids.has(str(report["company"])), "%s: company '%s' is not an archetype" % [where, report["company"]])
-	_check((report["lab"] as Dictionary).size() == Catalog.upgrade_ids.size(), "%s: lab does not list every PATCH upgrade" % where)
-	for id: Variant in report["lab"]:
+	_check((report["patch_upgrades"] as Dictionary).size() == Catalog.upgrade_ids.size(), "%s: patch_upgrades does not list every PATCH upgrade" % where)
+	for id: Variant in report["patch_upgrades"]:
 		_check(Catalog.upgrade_ids.has(str(id)), "%s: '%s' is not a PATCH upgrade" % [where, id])
 
 

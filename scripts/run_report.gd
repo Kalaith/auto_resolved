@@ -7,8 +7,6 @@ extends RefCounted
 const Catalog = preload("res://scripts/core/catalog.gd")
 const CareerRules = preload("res://scripts/sim/career_rules.gd")
 
-const MODE: String = "career"
-
 
 ## Sent when a job begins from the job board (not when a saved day continues).
 static func started(career: RefCounted, office: RefCounted) -> Dictionary:
@@ -63,8 +61,8 @@ static func abandoned(career: RefCounted, seconds: int) -> Dictionary:
 ## What carries between jobs: PATCH's upgrades and the career so far.
 static func _career_part(career: RefCounted) -> Dictionary:
 	return {
-		"mode": MODE, "job_number": career.history.size() + 1,
-		"lab": upgrade_levels(career.patch), "patch_version": career.patch.upgrades.size(),
+		"job_number": career.history.size() + 1,
+		"patch_upgrades": upgrade_levels(career.patch), "patch_version": career.patch.upgrades.size(),
 		"guardrails": career.patch.guardrails.size(), "reputation": int(career.reputation),
 	}
 
