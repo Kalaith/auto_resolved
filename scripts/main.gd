@@ -116,7 +116,9 @@ func _start_analytics() -> void:
 	analytics = SignalsClient.new()
 	add_child(analytics)
 	analytics.is_playing = func() -> bool: return office != null and office.day_running
-	analytics.start("res://data/analytics.json", SignalsConfig.allowed(), bool(settings.value(SignalsClient.SETTING_KEY)), false)
+	# Capture tours (a SceneTree with shot()) never report.
+	var allowed: bool = SignalsConfig.allowed() and not get_tree().has_method("shot")
+	analytics.start("res://data/analytics.json", allowed, bool(settings.value(SignalsClient.SETTING_KEY)), false)
 	settings.settings.changed.connect(func(key: String) -> void:
 		if key == SignalsClient.SETTING_KEY or key.is_empty():
 			analytics.set_enabled(bool(settings.value(SignalsClient.SETTING_KEY))))
